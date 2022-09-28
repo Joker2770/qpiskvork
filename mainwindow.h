@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QProcess>
 
 class MainWindow : public QMainWindow
 {
@@ -10,5 +11,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    void readyRead();
+
+private:
+    QProcess *myProcess = nullptr;
 };
 #endif // MAINWINDOW_H
