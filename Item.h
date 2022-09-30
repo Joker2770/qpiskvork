@@ -1,4 +1,4 @@
-﻿/**
+/**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
     Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
 

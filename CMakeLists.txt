@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
+		manager.cpp
+		manager.h
         res.qrc
 )
 
