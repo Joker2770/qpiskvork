@@ -23,7 +23,15 @@
 #include <QMainWindow>
 #include <QPainter>
 #include <QPaintEvent>
-#include <QTimer>
+#include <QPoint>
+#include <QMap>
+
+#include "Item.h"
+
+#define CHESS_ROWS		15
+#define CHESS_COLUMES	15
+#define RECT_WIDTH		50
+#define RECT_HEIGHT		50
 
 class MainWindow : public QMainWindow
 {
@@ -35,5 +43,16 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *);
+
+private:
+    void DrawChessboard();
+    void DrawItems();
+    void DrawItemWithMouse();
+
+    void DrawChessAtPoint(QPainter& painter,QPoint& pt);
+
+private:
+    QVector<Item> mItems;
+    bool mIsBlackTurn;
 };
 #endif // MAINWINDOW_H
