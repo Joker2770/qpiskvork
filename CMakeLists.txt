@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
+        Item.cpp
+        Item.h
         manager.cpp
         manager.h
         board.cpp

@@ -8,15 +8,30 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <vector>
+#include <utility>
 #include<iostream>
 using namespace std;
+
+enum STONECOLOR
+{
+    BLACK = 1,
+    WHITE = 2
+};
 
 class Board
 {
 public:
-    Board(int Bsize);
-    Board(int xSize, int ySize);
+    Board();
     ~Board();
+
+    pair<int, int> coord2idx(const int iCoord);
+    int idx2Coord(const pair<int, int> idx);
+
+    int BSize;
+
+    //first - coord, second - color.
+    vector<pair<int, int>> vRecord;
 };
 
 #endif
