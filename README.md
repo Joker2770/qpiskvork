@@ -5,7 +5,7 @@ Another gomoku manager for adapting to Windows and Linux systems.
 This program is devoted to become a gomoku manager with the [protocol](http://petr.lastovicka.sweb.cz/protocl2en.htm).
 
 ## dependencies
-dependencies of build.
+dependencies of compiling.
 * Qt5+
 * qmake or cmake
 
