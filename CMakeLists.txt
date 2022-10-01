@@ -18,8 +18,10 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-		manager.cpp
-		manager.h
+        manager.cpp
+        manager.h
+        board.cpp
+        board.h
         res.qrc
 )
 
