@@ -17,12 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Item.cpp \
+    board.cpp \
     main.cpp \
     mainwindow.cpp \
     manager.cpp
 
 HEADERS += \
     Item.h \
+    board.h \
     mainwindow.h \
     manager.h
 
