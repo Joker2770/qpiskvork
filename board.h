@@ -32,6 +32,8 @@
 #include<iostream>
 using namespace std;
 
+#define MAXBSIZE 25
+
 enum STONECOLOR
 {
     BLACK = 1,
