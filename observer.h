@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: manager.cpp
+    > File Name: observer.h
     > Author: Jintao Yang
     > Mail: 18608842770@163.com 
-    > Created Time: Fri Sep 30 10:32:33 2022
+    > Created Time: Sun Oct  2 10:03:38 2022
  ************************************************************************/
 
 /**
@@ -24,7 +24,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "manager.h"
+#ifndef OBSERVER_H
+#define OBSERVER_H
+
 #include<iostream>
 using namespace std;
 
+class Observer{
+public:
+    virtual void Update(int) = 0;
+};
+
+#endif

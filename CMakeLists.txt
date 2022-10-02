@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
         mainwindow.h
         Item.cpp
         Item.h
+        subject.h
+        observer.h
         manager.cpp
         manager.h
         board.cpp

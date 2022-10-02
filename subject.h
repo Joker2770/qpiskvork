@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: manager.cpp
+    > File Name: subject.h
     > Author: Jintao Yang
     > Mail: 18608842770@163.com 
-    > Created Time: Fri Sep 30 10:32:33 2022
+    > Created Time: Sun Oct  2 10:13:50 2022
  ************************************************************************/
 
 /**
@@ -24,7 +24,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "manager.h"
+#ifndef SUBJECT_H
+#define SUBJECT_H
+
+#include "observer.h"
 #include<iostream>
 using namespace std;
 
+class Subject{
+public:
+    virtual void Attach(Observer *) = 0;
+    virtual void Detach(Observer *) = 0;
+    virtual void Notify() = 0;
+};
+
+#endif

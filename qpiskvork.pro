@@ -26,7 +26,9 @@ HEADERS += \
     Item.h \
     board.h \
     mainwindow.h \
-    manager.h
+    manager.h \
+    observer.h \
+    subject.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

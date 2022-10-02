@@ -24,6 +24,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#ifndef MANAGER_H
+#define MANAGER_H
+
+#include "observer.h"
+#include "subject.h"
 #include<iostream>
 using namespace std;
+
+class Manager : Observer
+{
+public:
+    Manager(Subject *pSubject) : m_pSubject(pSubject){};
+    void Update(int);
+private:
+    Subject *m_pSubject;
+};
+
+#endif
 
