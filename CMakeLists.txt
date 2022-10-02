@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
         manager.h
         board.cpp
         board.h
+        player.cpp
+        player.h
         res.qrc
 )
 

@@ -1,0 +1,46 @@
+/*************************************************************************
+    > File Name: player.cpp
+    > Author: Jintao Yang
+    > Mail: 18608842770@163.com 
+    > Created Time: Sun Oct  2 14:02:28 2022
+ ************************************************************************/
+
+/**
+    qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
+    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#include "player.h"
+#include<iostream>
+using namespace std;
+
+
+void Player::Attach(Observer *pObserver){
+    m_ObserverList.push_back(pObserver);
+}
+
+void Player::Detach(Observer *pObserver){
+    m_ObserverList.remove(pObserver);
+}
+
+void Player::Notify(){
+    std::list<Observer *>::iterator it = m_ObserverList.begin();
+    while (it != m_ObserverList.end()){
+        (*it)->Update(m_iState);
+        ++it;
+    }
+}

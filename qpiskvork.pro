@@ -20,7 +20,8 @@ SOURCES += \
     board.cpp \
     main.cpp \
     mainwindow.cpp \
-    manager.cpp
+    manager.cpp \
+    player.cpp
 
 HEADERS += \
     Item.h \
@@ -28,6 +29,7 @@ HEADERS += \
     mainwindow.h \
     manager.h \
     observer.h \
+    player.h \
     subject.h
 
 # Default rules for deployment.
