@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
         board.h
         player.cpp
         player.h
+        timer.cpp
+        timer.h
         res.qrc
 )
 
