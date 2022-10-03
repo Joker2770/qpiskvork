@@ -23,12 +23,63 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    resize((CHESS_COLUMES + 1)*RECT_WIDTH  ,(CHESS_ROWS + 1)*RECT_HEIGHT);
+    gWidget = new QWidget(this);
+    this->setCentralWidget(gWidget);
+    gridLayout = new QGridLayout();
+
+#ifdef USE_DEFAULT_MENU_BAR
+    this->pMenuBar = this->menuBar();
+#else
+    this->pMenuBar = new QMenuBar(this);
+#endif
+    this->pMenuSetting = new QMenu("Setting", this);
+    this->pMenuPlayer = new QMenu("Player", this);
+    this->pActionBoardSize = new QAction("Board Size", this);
+    this->pMenuSetting->addAction(this->pActionBoardSize);
+    this->pMenuBar->addMenu(this->pMenuSetting);
+    this->pMenuBar->addMenu(this->pMenuPlayer);
+#ifndef USE_DEFAULT_MENU_BAR
+    setMenuBar(this->pMenuBar);
+#endif
+
+    this->gWidget->setLayout(this->gridLayout);
+
+    resize((CHESS_COLUMES + 1)*RECT_WIDTH  ,(CHESS_ROWS + 1)*RECT_HEIGHT + this->pMenuBar->height());
     mIsBlackTurn = true;
 }
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->pActionBoardSize)
+    {
+        delete this->pActionBoardSize;
+        this->pActionBoardSize = nullptr;
+    }
+    if (nullptr != this->pMenuPlayer)
+    {
+        delete this->pMenuPlayer;
+        this->pMenuPlayer = nullptr;
+    }
+    if (nullptr != this->pMenuSetting)
+    {
+        delete this->pMenuSetting;
+        this->pMenuSetting = nullptr;
+    }
+    if (nullptr != this->pMenuBar)
+    {
+        delete this->pMenuBar;
+        this->pMenuBar = nullptr;
+    }
+    if (nullptr != this->gridLayout)
+    {
+        delete this->gridLayout;
+        this->gridLayout = nullptr;
+    }
+    if (nullptr != this->gWidget)
+    {
+        delete this->gWidget;
+        this->gWidget = nullptr;
+    }
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)

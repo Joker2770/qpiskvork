@@ -21,6 +21,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGridLayout>
+#include <QMenuBar>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPoint>
@@ -40,6 +42,16 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    QWidget *gWidget;
+    QGridLayout *gridLayout;
+    QMenuBar *pMenuBar;
+    QMenu *pMenuSetting;
+    QMenu *pMenuPlayer;
+    QAction *pActionBoardSize;
+
+//public slots:
+//    void OnActionBoardSize();
 
 protected:
     void paintEvent(QPaintEvent *);
