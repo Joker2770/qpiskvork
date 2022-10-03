@@ -27,28 +27,13 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "observer.h"
-#include "subject.h"
-#include <list>
 #include<iostream>
 using namespace std;
 
-class Player : Subject
+class Player
 {
 public:
-    void Attach(Observer *pObserver);
-    void Detach(Observer *pObserver);
-    void Notify();
-    void SetState(int state){
-        m_iState = state;
-    }
-
-    int GetState(){
-        return m_iState;
-    }
 private:
-    std::list<Observer *> m_ObserverList;
-    int m_iState;
 };
 
 #endif

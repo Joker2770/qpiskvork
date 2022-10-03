@@ -52,3 +52,19 @@ int Board::idx2Coord(const pair<int, int> idx)
     i_coord = idx.second * this->BSize + idx.first;
     return i_coord;
 }
+
+void Board::Attach(Observer *pObserver){
+    m_ObserverList.push_back(pObserver);
+}
+
+void Board::Detach(Observer *pObserver){
+    m_ObserverList.remove(pObserver);
+}
+
+void Board::Notify(){
+    std::list<Observer *>::iterator it = m_ObserverList.begin();
+    while (it != m_ObserverList.end()){
+        (*it)->Update(m_iState);
+        ++it;
+    }
+}

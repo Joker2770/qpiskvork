@@ -32,7 +32,7 @@
 #include<iostream>
 using namespace std;
 
-class Manager : Observer
+class Manager : public Observer
 {
 public:
     Manager(Subject *pSubject) : m_pSubject(pSubject){};

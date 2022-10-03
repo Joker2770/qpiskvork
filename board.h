@@ -27,8 +27,10 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "subject.h"
 #include <vector>
 #include <utility>
+#include <list>
 #include<iostream>
 using namespace std;
 
@@ -40,7 +42,7 @@ enum STONECOLOR
     WHITE = 2
 };
 
-class Board
+class Board : public Subject
 {
 public:
     Board();
@@ -49,10 +51,25 @@ public:
     pair<int, int> coord2idx(const int iCoord);
     int idx2Coord(const pair<int, int> idx);
 
+    void Attach(Observer *pObserver);
+    void Detach(Observer *pObserver);
+    void Notify();
+    void SetState(int state){
+        m_iState = state;
+    }
+
+    int GetState(){
+        return m_iState;
+    }
+
     int BSize;
 
     //first - coord, second - color.
     vector<pair<int, int>> vRecord;
+
+private:
+    std::list<Observer *> m_ObserverList;
+    int m_iState;
 };
 
 #endif

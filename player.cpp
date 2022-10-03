@@ -27,20 +27,3 @@
 #include "player.h"
 #include<iostream>
 using namespace std;
-
-
-void Player::Attach(Observer *pObserver){
-    m_ObserverList.push_back(pObserver);
-}
-
-void Player::Detach(Observer *pObserver){
-    m_ObserverList.remove(pObserver);
-}
-
-void Player::Notify(){
-    std::list<Observer *>::iterator it = m_ObserverList.begin();
-    while (it != m_ObserverList.end()){
-        (*it)->Update(m_iState);
-        ++it;
-    }
-}
