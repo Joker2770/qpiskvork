@@ -50,6 +50,7 @@ public:
 
     pair<int, int> coord2idx(const int iCoord);
     int idx2Coord(const pair<int, int> idx);
+    bool isPosEmpty(const pair<int, int> idx);
 
     void Attach(Observer *pObserver);
     void Detach(Observer *pObserver);
