@@ -45,11 +45,20 @@ MainWindow::MainWindow(QWidget *parent)
     this->gWidget->setLayout(this->gridLayout);
 
     resize((CHESS_COLUMES + 1)*RECT_WIDTH  ,(CHESS_ROWS + 1)*RECT_HEIGHT + this->pMenuBar->height());
+
+    this->mBoard = new Board();
+    this->mBoard->BSize = 15;
+
     mIsBlackTurn = true;
 }
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->mBoard)
+    {
+        delete this->mBoard;
+        this->mBoard = nullptr;
+    }
     if (nullptr != this->pActionBoardSize)
     {
         delete this->pActionBoardSize;
@@ -112,10 +121,10 @@ void MainWindow::DrawItems()
     QPainter painter(this);
     painter.setPen(QPen(QColor(Qt::transparent)));
 
-    for (int i = 0; i<mItems.size(); i++)
+    for (int i = 0; i < this->mBoard->vRecord.size(); i++)
     {
-        Item item = mItems[i];
-        if (item.mBlack)
+        QPoint p;
+        if (this->mBoard->vRecord.at(i).second == BLACK)
         {
             painter.setBrush(Qt::black);
         }
@@ -123,7 +132,9 @@ void MainWindow::DrawItems()
         {
             painter.setBrush(Qt::white);
         }
-        DrawChessAtPoint(painter,item.mPt);
+        p.setX(this->mBoard->coord2idx(this->mBoard->vRecord.at(i).first).first);
+        p.setY(this->mBoard->coord2idx(this->mBoard->vRecord.at(i).first).second);
+        DrawChessAtPoint(painter, p);
     }
 }
 

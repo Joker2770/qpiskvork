@@ -36,13 +36,13 @@ using namespace std;
 
 #define MAXBSIZE 25
 
-enum STONECOLOR
+typedef enum stone_color
 {
     BLACK = 1,
     WHITE = 2
-};
+} STONECOLOR;
 
-class Board : public Subject
+class Board final : public Subject
 {
 public:
     Board();

@@ -28,7 +28,7 @@
 #include <QPoint>
 #include <QMap>
 
-#include "Item.h"
+#include "board.h"
 
 #define CHESS_ROWS		15
 #define CHESS_COLUMES	15
@@ -64,7 +64,7 @@ private:
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
 private:
-    QVector<Item> mItems;
+    Board *mBoard;
     bool mIsBlackTurn;
 };
 #endif // MAINWINDOW_H

@@ -18,8 +18,6 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        Item.cpp
-        Item.h
         subject.h
         observer.h
         manager.cpp
