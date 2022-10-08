@@ -94,8 +94,8 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
     DrawChessboard();
-    DrawItemWithMouse();
     DrawItems();
+    DrawItemWithMouse();
 
     update();
 }
@@ -166,5 +166,43 @@ void MainWindow::DrawItemWithMouse()
     //DrawChessAtPoint(painter,pt);
 
     painter.drawEllipse(mapFromGlobal(QCursor::pos()),RECT_WIDTH / 2,RECT_HEIGHT / 2);
-
 }
+
+void MainWindow::mousePressEvent(QMouseEvent * e)
+{
+    QPoint pt;
+    pt.setX( (e->pos().x() ) / RECT_WIDTH);
+    pt.setY( (e->pos().y() ) / RECT_HEIGHT);
+
+    pair<int, int> p_idx(pt.x(), pt.y());
+    int tmpCoord = this->mBoard->idx2Coord(p_idx);
+
+    for (int i = 0; i < this->mBoard->vRecord.size(); ++i)
+    {
+        if (this->mBoard->vRecord.at(i).first == tmpCoord)
+        {
+            return;
+        }
+    }
+
+    pair<int, int> p_record;
+    p_record.first = tmpCoord;
+    if (this->mBoard->vRecord.size() < this->mBoard->iMaxRecordSize)
+    {
+        if (mIsBlackTurn)
+        {
+            p_record.second = BLACK;
+            this->mBoard->vRecord.push_back(p_record);
+        }
+        else
+        {
+            p_record.second = WHITE;
+            this->mBoard->vRecord.push_back(p_record);
+        }
+    }
+
+    //if connect five
+
+    mIsBlackTurn = !mIsBlackTurn;
+}
+

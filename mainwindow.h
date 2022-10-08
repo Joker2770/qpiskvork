@@ -55,6 +55,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *);
 
 private:
     void DrawChessboard();

@@ -31,7 +31,7 @@ using namespace std;
 Board::Board()
 {
     this->vRecord.clear();
-    this->iRecordSize = this->BSize * this->BSize;
+    this->iMaxRecordSize = this->BSize * this->BSize;
 }
 
 Board::~Board()

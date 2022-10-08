@@ -67,7 +67,7 @@ public:
 
     //first - coord, second - color.
     vector<pair<int, int>> vRecord;
-    int iRecordSize;
+    int iMaxRecordSize;
 
 private:
     std::list<Observer *> m_ObserverList;
