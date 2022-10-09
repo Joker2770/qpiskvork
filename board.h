@@ -54,6 +54,7 @@ public:
     bool isPosOutOfBoard(const pair<int, int> idx);
     bool setBSize(int);
     int getBSize();
+    int getMaxRecordSize();
 
     void Attach(Observer *pObserver);
     void Detach(Observer *pObserver);
@@ -68,10 +69,10 @@ public:
 
     //first - coord, second - color.
     vector<pair<int, int>> vRecord;
-    int iMaxRecordSize;
 
 private:
     int BSize;
+    int iMaxRecordSize;
     std::list<Observer *> m_ObserverList;
     int m_iState;
 };

@@ -31,7 +31,6 @@ using namespace std;
 Board::Board() : BSize(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
-    this->iMaxRecordSize = this->BSize * this->BSize;
 }
 
 Board::~Board()
@@ -83,6 +82,11 @@ bool Board::setBSize(int i_size)
 int Board::getBSize()
 {
     return this->BSize;
+}
+
+int Board::getMaxRecordSize()
+{
+    return this->BSize * this->BSize;
 }
 
 void Board::Attach(Observer *pObserver){

@@ -185,7 +185,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
     pair<int, int> p_record;
     p_record.first = tmpCoord;
-    if (this->mBoard->vRecord.size() < this->mBoard->iMaxRecordSize)
+    if (this->mBoard->vRecord.size() < this->mBoard->getMaxRecordSize())
     {
         if (mIsBlackTurn)
         {
