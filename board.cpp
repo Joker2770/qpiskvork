@@ -74,6 +74,17 @@ bool Board::isPosOutOfBoard(const pair<int, int> idx)
     else    return true;
 }
 
+bool Board::setBSize(int i_size)
+{
+    this->BSize = i_size;
+    return true;
+}
+
+int Board::getBSize()
+{
+    return this->BSize;
+}
+
 void Board::Attach(Observer *pObserver){
     m_ObserverList.push_back(pObserver);
 }

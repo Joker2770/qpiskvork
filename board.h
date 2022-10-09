@@ -52,6 +52,8 @@ public:
     int idx2Coord(const pair<int, int> idx);
     bool isPosEmpty(const pair<int, int> idx);
     bool isPosOutOfBoard(const pair<int, int> idx);
+    bool setBSize(int);
+    int getBSize();
 
     void Attach(Observer *pObserver);
     void Detach(Observer *pObserver);
@@ -64,13 +66,12 @@ public:
         return m_iState;
     }
 
-    int BSize;
-
     //first - coord, second - color.
     vector<pair<int, int>> vRecord;
     int iMaxRecordSize;
 
 private:
+    int BSize;
     std::list<Observer *> m_ObserverList;
     int m_iState;
 };
