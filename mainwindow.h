@@ -30,8 +30,6 @@
 
 #include "board.h"
 
-#define CHESS_ROWS		15
-#define CHESS_COLUMES	15
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
 

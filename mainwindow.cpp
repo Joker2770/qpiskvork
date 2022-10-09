@@ -44,10 +44,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->gWidget->setLayout(this->gridLayout);
 
-    resize((CHESS_COLUMES + 1)*RECT_WIDTH  ,(CHESS_ROWS + 1)*RECT_HEIGHT + this->pMenuBar->height());
-
     this->mBoard = new Board();
     this->mBoard->BSize = 15;
+
+    resize(this->mBoard->BSize* RECT_WIDTH, this->mBoard->BSize*RECT_HEIGHT + this->pMenuBar->height());
 
     mIsBlackTurn = true;
 }
@@ -107,9 +107,9 @@ void MainWindow::DrawChessboard()
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black),2));
 
-    for(int i = 0; i < CHESS_COLUMES - 1; ++i)
+    for(int i = 0; i < this->mBoard->BSize - 1; ++i)
     {
-        for (int j = 0; j < CHESS_ROWS - 1; ++j)
+        for (int j = 0; j < this->mBoard->BSize - 1; ++j)
             painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
     }
 }
