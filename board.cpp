@@ -28,7 +28,7 @@
 #include<iostream>
 using namespace std;
 
-Board::Board()
+Board::Board() : BSize(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
     this->iMaxRecordSize = this->BSize * this->BSize;
@@ -65,6 +65,12 @@ bool Board::isPosEmpty(const pair<int, int> idx)
         else return true;
     }
     return false;
+}
+
+bool Board::isPosOutOfBoard(const pair<int, int> idx)
+{
+    if (0 < this->idx2Coord(idx) < this->iMaxRecordSize)    return false;
+    else    return true;
 }
 
 void Board::Attach(Observer *pObserver){
