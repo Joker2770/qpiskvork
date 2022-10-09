@@ -69,7 +69,8 @@ bool Board::isPosEmpty(const pair<int, int> idx)
 
 bool Board::isPosOutOfBoard(const pair<int, int> idx)
 {
-    if (0 < this->idx2Coord(idx) < this->iMaxRecordSize)    return false;
+    int i_tmpCoord = this->idx2Coord(idx);
+    if (0 <= i_tmpCoord && i_tmpCoord < this->iMaxRecordSize)    return false;
     else    return true;
 }
 

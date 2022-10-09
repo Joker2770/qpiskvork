@@ -107,12 +107,10 @@ void MainWindow::DrawChessboard()
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black),2));
 
-    for(int i = 0;i<CHESS_COLUMES; i++)
+    for(int i = 0; i < CHESS_COLUMES - 1; ++i)
     {
-        for (int j = 0; j<CHESS_ROWS; j++)
-        {
+        for (int j = 0; j < CHESS_ROWS - 1; ++j)
             painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
-        }
     }
 }
 
@@ -175,14 +173,14 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     pt.setY( (e->pos().y() ) / RECT_HEIGHT);
 
     pair<int, int> p_idx(pt.x(), pt.y());
+    if (this->mBoard->isPosOutOfBoard(p_idx))   return;
+
     int tmpCoord = this->mBoard->idx2Coord(p_idx);
 
     for (int i = 0; i < this->mBoard->vRecord.size(); ++i)
     {
         if (this->mBoard->vRecord.at(i).first == tmpCoord)
-        {
             return;
-        }
     }
 
     pair<int, int> p_record;
