@@ -32,12 +32,22 @@ MainWindow::MainWindow(QWidget *parent)
 #else
     this->pMenuBar = new QMenuBar(this);
 #endif
+
+    this->pMenuGame = new QMenu("Game", this);
     this->pMenuSetting = new QMenu("Setting", this);
     this->pMenuPlayer = new QMenu("Player", this);
+    this->pMenuAbout = new QMenu("About", this);
     this->pActionBoardSize = new QAction("Board Size", this);
+    this->pActionStart = new QAction("Start", this);
+    this->pActionEnd = new QAction("End", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
+    this->pMenuGame->addAction(this->pActionStart);
+    this->pMenuGame->addAction(this->pActionEnd);
+    this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
+    this->pMenuBar->addMenu(this->pMenuAbout);
+
 #ifndef USE_DEFAULT_MENU_BAR
     setMenuBar(this->pMenuBar);
 #endif
@@ -59,10 +69,25 @@ MainWindow::~MainWindow()
         delete this->mBoard;
         this->mBoard = nullptr;
     }
+    if (nullptr != this->pActionStart)
+    {
+        delete this->pActionStart;
+        this->pActionStart = nullptr;
+    }
+    if (nullptr != this->pActionEnd)
+    {
+        delete this->pActionEnd;
+        this->pActionEnd = nullptr;
+    }
     if (nullptr != this->pActionBoardSize)
     {
         delete this->pActionBoardSize;
         this->pActionBoardSize = nullptr;
+    }
+    if (nullptr != this->pMenuGame)
+    {
+        delete this->pMenuGame;
+        this->pMenuGame = nullptr;
     }
     if (nullptr != this->pMenuPlayer)
     {
@@ -73,6 +98,11 @@ MainWindow::~MainWindow()
     {
         delete this->pMenuSetting;
         this->pMenuSetting = nullptr;
+    }
+    if (nullptr != this->pMenuAbout)
+    {
+        delete this->pMenuAbout;
+        this->pMenuAbout = nullptr;
     }
     if (nullptr != this->pMenuBar)
     {

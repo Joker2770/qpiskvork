@@ -44,9 +44,13 @@ public:
     QWidget *gWidget;
     QGridLayout *gridLayout;
     QMenuBar *pMenuBar;
+    QMenu *pMenuGame;
     QMenu *pMenuSetting;
     QMenu *pMenuPlayer;
+    QMenu *pMenuAbout;
     QAction *pActionBoardSize;
+    QAction *pActionStart;
+    QAction *pActionEnd;
 
 //public slots:
 //    void OnActionBoardSize();
