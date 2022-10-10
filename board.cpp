@@ -55,15 +55,16 @@ int Board::idx2Coord(const pair<int, int> idx)
 
 bool Board::isPosEmpty(const pair<int, int> idx)
 {
+    if (this->vRecord.empty())
+        return true;
     int i_coord = 0;
     i_coord = idx.second * this->BSize + idx.first;
-    vector<pair<int, int>>::iterator iter;
-    for (iter = this->vRecord.begin(); iter != this->vRecord.end(); ++iter)
+    for (int i = 0; i < this->vRecord.size(); ++i)
     {
-        if (iter->first == i_coord) return false;
-        else return true;
+        if (this->vRecord.at(i).first == i_coord)
+            return false;
     }
-    return false;
+    return true;
 }
 
 bool Board::isPosOutOfBoard(const pair<int, int> idx)

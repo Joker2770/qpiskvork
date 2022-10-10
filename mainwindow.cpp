@@ -207,11 +207,13 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
     int tmpCoord = this->mBoard->idx2Coord(p_idx);
 
-    for (int i = 0; i < this->mBoard->vRecord.size(); ++i)
-    {
-        if (this->mBoard->vRecord.at(i).first == tmpCoord)
-            return;
-    }
+//    for (int i = 0; i < this->mBoard->vRecord.size(); ++i)
+//    {
+//        if (this->mBoard->vRecord.at(i).first == tmpCoord)
+//            return;
+//    }
+    if (!this->mBoard->isPosEmpty(p_idx))
+        return;
 
     pair<int, int> p_record;
     p_record.first = tmpCoord;
