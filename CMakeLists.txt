@@ -28,6 +28,11 @@ set(PROJECT_SOURCES
         player.h
         timer.cpp
         timer.h
+        rules.h
+        FreeStyleGomoku.cpp
+        FreeStyleGomoku.h
+        StandardGomoku.cpp
+        StandardGomoku.h
         res.qrc
 )
 

@@ -16,6 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    FreeStyleGomoku.cpp \
+    StandardGomoku.cpp \
     board.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -24,11 +26,14 @@ SOURCES += \
     timer.cpp
 
 HEADERS += \
+    FreeStyleGomoku.h \
+    StandardGomoku.h \
     board.h \
     mainwindow.h \
     manager.h \
     observer.h \
     player.h \
+    rules.h \
     subject.h \
     timer.h
 
