@@ -149,10 +149,10 @@ void MainWindow::DrawItems()
     QPainter painter(this);
     painter.setPen(QPen(QColor(Qt::transparent)));
 
-    for (int i = 0; i < this->mBoard->vRecord.size(); i++)
+    for (int i = 0; i < this->mBoard->getVRecord().size(); i++)
     {
         QPoint p;
-        if (this->mBoard->vRecord.at(i).second == BLACK)
+        if (this->mBoard->getVRecord().at(i).second == BLACK)
         {
             painter.setBrush(Qt::black);
         }
@@ -160,8 +160,8 @@ void MainWindow::DrawItems()
         {
             painter.setBrush(Qt::white);
         }
-        p.setX(this->mBoard->coord2idx(this->mBoard->vRecord.at(i).first).first);
-        p.setY(this->mBoard->coord2idx(this->mBoard->vRecord.at(i).first).second);
+        p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first);
+        p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second);
         DrawChessAtPoint(painter, p);
     }
 }
@@ -203,36 +203,23 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     pt.setY( (e->pos().y() ) / RECT_HEIGHT);
 
     pair<int, int> p_idx(pt.x(), pt.y());
-    if (this->mBoard->isPosOutOfBoard(p_idx))   return;
 
-    int tmpCoord = this->mBoard->idx2Coord(p_idx);
-
-//    for (int i = 0; i < this->mBoard->vRecord.size(); ++i)
-//    {
-//        if (this->mBoard->vRecord.at(i).first == tmpCoord)
-//            return;
-//    }
-    if (!this->mBoard->isPosEmpty(p_idx))
-        return;
-
-    pair<int, int> p_record;
-    p_record.first = tmpCoord;
-    if (this->mBoard->vRecord.size() < this->mBoard->getMaxRecordSize())
+    bool b_succ = false;
+    if (this->mBoard->getVRecord().size() < this->mBoard->getMaxRecordSize())
     {
         if (mIsBlackTurn)
         {
-            p_record.second = BLACK;
-            this->mBoard->vRecord.push_back(p_record);
+            b_succ = this->mBoard->placeStone(p_idx, BLACK);
         }
         else
         {
-            p_record.second = WHITE;
-            this->mBoard->vRecord.push_back(p_record);
+            b_succ = this->mBoard->placeStone(p_idx, WHITE);
         }
     }
 
     //if connect five
 
-    mIsBlackTurn = !mIsBlackTurn;
+    if (b_succ)
+        mIsBlackTurn = !mIsBlackTurn;
 }
 

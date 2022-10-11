@@ -55,6 +55,10 @@ public:
     bool setBSize(int);
     int getBSize();
     int getMaxRecordSize();
+    vector<pair<int, int>>& getVRecord();
+    bool placeStone(const pair<int, int> idx, STONECOLOR color);
+    bool takeBackStone();
+    void clearBoard();
 
     void Attach(Observer *pObserver);
     void Detach(Observer *pObserver);
@@ -67,10 +71,10 @@ public:
         return m_iState;
     }
 
+private:
     //first - coord, second - color.
     vector<pair<int, int>> vRecord;
 
-private:
     int BSize;
     int iMaxRecordSize;
     std::list<Observer *> m_ObserverList;

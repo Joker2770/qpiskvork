@@ -59,7 +59,7 @@ bool Board::isPosEmpty(const pair<int, int> idx)
         return true;
     int i_coord = 0;
     i_coord = idx.second * this->BSize + idx.first;
-    for (int i = 0; i < this->vRecord.size(); ++i)
+    for (unsigned int i = 0; i < this->vRecord.size(); ++i)
     {
         if (this->vRecord.at(i).first == i_coord)
             return false;
@@ -88,6 +88,41 @@ int Board::getBSize()
 int Board::getMaxRecordSize()
 {
     return this->BSize * this->BSize;
+}
+
+vector<pair<int, int>>& Board::getVRecord()
+{
+    return this->vRecord;
+}
+
+bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
+{
+    if (this->isPosEmpty(idx) && !this->isPosOutOfBoard(idx))
+    {
+        pair<int, int> p_coord(idx2Coord(idx), color);
+        this->vRecord.push_back(p_coord);
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Board::takeBackStone()
+{
+    int i_size_1 = this->vRecord.size();
+    this->vRecord.pop_back();
+    int i_size_2 = this->vRecord.size();
+    if (i_size_1 > i_size_2)    return true;
+    else return false;
+}
+
+void Board::clearBoard()
+{
+    vector<pair<int, int>>::iterator iter = this->vRecord.begin();
+    for (; iter != this->vRecord.end();)
+    {
+        iter = this->vRecord.erase(iter);
+    }
 }
 
 void Board::Attach(Observer *pObserver){
