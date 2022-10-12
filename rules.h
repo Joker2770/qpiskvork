@@ -34,7 +34,7 @@ using namespace std;
 class rules
 {
 public:
-    virtual bool checkWin(const Board *board, STONECOLOR color) = 0;
+    virtual bool checkWin(Board *board) = 0;
 };
 
 #endif

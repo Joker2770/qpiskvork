@@ -28,7 +28,7 @@
 #include "StandardGomoku.h"
 using namespace std;
 
-bool StandardGomoku::checkWin(const Board *board, STONECOLOR color)
+bool StandardGomoku::checkWin(Board *board)
 {
     return false;
 }

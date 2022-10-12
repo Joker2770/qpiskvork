@@ -34,7 +34,7 @@ using namespace std;
 class FreeStyleGomoku final : public rules
 {
 public:
-    bool checkWin(const Board *board, STONECOLOR color);
+    bool checkWin(Board *board);
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include <QMap>
 
 #include "board.h"
+#include "FreeStyleGomoku.h"
 
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
@@ -69,5 +70,7 @@ private:
 private:
     Board *mBoard;
     bool mIsBlackTurn;
+
+    FreeStyleGomoku *freeStyleGomoku;
 };
 #endif // MAINWINDOW_H

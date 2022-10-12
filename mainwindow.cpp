@@ -18,6 +18,7 @@
 */
 
 #include <QMessageBox>
+#include <QMessageBox>
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -60,10 +61,17 @@ MainWindow::MainWindow(QWidget *parent)
     resize(this->mBoard->getBSize() * RECT_WIDTH, this->mBoard->getBSize() * RECT_HEIGHT + this->pMenuBar->height());
 
     mIsBlackTurn = true;
+
+    this->freeStyleGomoku = new FreeStyleGomoku();
 }
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->freeStyleGomoku)
+    {
+        delete  this->freeStyleGomoku;
+        this->freeStyleGomoku = nullptr;
+    }
     if (nullptr != this->mBoard)
     {
         delete this->mBoard;
@@ -218,6 +226,15 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     }
 
     //if connect five
+    if (this->freeStyleGomoku->checkWin(this->mBoard))
+    {
+        if (this->mIsBlackTurn)
+            QMessageBox::information(this, "game over!", "Black win!");
+        else
+            QMessageBox::information(this, "game over!", "White win!");
+        this->mBoard->clearBoard();
+        return ;
+    }
 
     if (b_succ)
         mIsBlackTurn = !mIsBlackTurn;
