@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
     mIsBlackTurn = true;
 
     this->freeStyleGomoku = new FreeStyleGomoku();
+
+    connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
 }
 
 MainWindow::~MainWindow()
@@ -247,3 +249,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         mIsBlackTurn = !mIsBlackTurn;
 }
 
+void MainWindow::OnActionClearBoard()
+{
+    this->mBoard->clearBoard();
+}

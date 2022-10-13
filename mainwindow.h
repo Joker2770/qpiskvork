@@ -54,8 +54,8 @@ public:
     QAction *pActionEnd;
     QAction *pActionClear;
 
-//public slots:
-//    void OnActionBoardSize();
+public slots:
+    void OnActionClearBoard();
 
 protected:
     void paintEvent(QPaintEvent *);
