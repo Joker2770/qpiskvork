@@ -41,9 +41,11 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionBoardSize = new QAction("Board Size", this);
     this->pActionStart = new QAction("Start", this);
     this->pActionEnd = new QAction("End", this);
+    this->pActionClear = new QAction("Clear", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionEnd);
+    this->pMenuGame->addAction(this->pActionClear);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -86,6 +88,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionEnd;
         this->pActionEnd = nullptr;
+    }
+    if (nullptr != this->pActionClear)
+    {
+        delete this->pActionClear;
+        this->pActionClear = nullptr;
     }
     if (nullptr != this->pActionBoardSize)
     {

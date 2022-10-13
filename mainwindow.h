@@ -52,6 +52,7 @@ public:
     QAction *pActionBoardSize;
     QAction *pActionStart;
     QAction *pActionEnd;
+    QAction *pActionClear;
 
 //public slots:
 //    void OnActionBoardSize();
