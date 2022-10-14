@@ -42,6 +42,13 @@ typedef enum stone_color
     WHITE = 2
 } STONECOLOR;
 
+typedef enum board_status
+{
+    PLACEOK = 1,
+    PLACEERROR = 2,
+    BOARDFULL = 3
+} BOARDSTATUS;
+
 class Board final : public Subject
 {
 public:
