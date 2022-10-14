@@ -110,10 +110,13 @@ bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
 bool Board::takeBackStone()
 {
     int i_size_1 = this->vRecord.size();
-    this->vRecord.pop_back();
+    if (!this->vRecord.empty())
+        this->vRecord.pop_back();
     int i_size_2 = this->vRecord.size();
-    if (i_size_1 > i_size_2)    return true;
-    else return false;
+    if (i_size_1 > i_size_2)
+        return true;
+    else
+        return false;
 }
 
 void Board::clearBoard()

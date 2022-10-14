@@ -53,9 +53,11 @@ public:
     QAction *pActionStart;
     QAction *pActionEnd;
     QAction *pActionClear;
+    QAction *pActionTakeBack;
 
 public slots:
     void OnActionClearBoard();
+    void OnActionTakeBack();
 
 protected:
     void paintEvent(QPaintEvent *);

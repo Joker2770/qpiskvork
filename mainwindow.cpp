@@ -42,10 +42,12 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionStart = new QAction("Start", this);
     this->pActionEnd = new QAction("End", this);
     this->pActionClear = new QAction("Clear", this);
+    this->pActionTakeBack = new QAction("Take Back", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionEnd);
     this->pMenuGame->addAction(this->pActionClear);
+    this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -67,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->freeStyleGomoku = new FreeStyleGomoku();
 
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
+    connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
 }
 
 MainWindow::~MainWindow()
@@ -95,6 +98,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionClear;
         this->pActionClear = nullptr;
+    }
+    if (nullptr != this->pActionTakeBack)
+    {
+        delete this->pActionTakeBack;
+        this->pActionTakeBack = nullptr;
     }
     if (nullptr != this->pActionBoardSize)
     {
@@ -252,4 +260,13 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::OnActionClearBoard()
 {
     this->mBoard->clearBoard();
+    cout << "1..." << endl;
+}
+
+void MainWindow::OnActionTakeBack()
+{
+    cout << "2..." << endl;
+    bool b_succ = this->mBoard->takeBackStone();
+    if (!b_succ)
+        QMessageBox::information(this, "Error!", "Failied to take back!");
 }
