@@ -158,7 +158,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 void MainWindow::DrawChessboard()
 {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black),2));
 
@@ -260,12 +260,10 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::OnActionClearBoard()
 {
     this->mBoard->clearBoard();
-    cout << "1..." << endl;
 }
 
 void MainWindow::OnActionTakeBack()
 {
-    cout << "2..." << endl;
     bool b_succ = this->mBoard->takeBackStone();
     if (!b_succ)
         QMessageBox::information(this, "Error!", "Failied to take back!");
