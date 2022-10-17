@@ -33,9 +33,9 @@ using namespace std;
 class Player
 {
 public:
-private:
     bool m_isMyTurn;
     int m_currColor;
+private:
 };
 
 #endif
