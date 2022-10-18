@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: board.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Fri Sep 30 18:05:28 2022
  ************************************************************************/
 
@@ -31,7 +31,7 @@
 #include <vector>
 #include <utility>
 #include <list>
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 #define MAXBSIZE 25
@@ -62,7 +62,7 @@ public:
     bool setBSize(int);
     int getBSize();
     int getMaxRecordSize();
-    vector<pair<int, int>>& getVRecord();
+    vector<pair<int, int>> &getVRecord();
     bool placeStone(const pair<int, int> idx, STONECOLOR color);
     bool takeBackStone();
     void clearBoard();
@@ -70,16 +70,18 @@ public:
     void Attach(Observer *pObserver);
     void Detach(Observer *pObserver);
     void Notify();
-    void SetState(int state){
+    void SetState(int state)
+    {
         m_iState = state;
     }
 
-    int GetState(){
+    int GetState()
+    {
         return m_iState;
     }
 
 private:
-    //first - coord, second - color.
+    // first - coord, second - color.
     vector<pair<int, int>> vRecord;
 
     int BSize;

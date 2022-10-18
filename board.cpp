@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: board.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Fri Sep 30 18:05:37 2022
  ************************************************************************/
 
@@ -25,7 +25,7 @@
 */
 
 #include "board.h"
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 Board::Board() : BSize(15), iMaxRecordSize(15 * 15)
@@ -35,7 +35,6 @@ Board::Board() : BSize(15), iMaxRecordSize(15 * 15)
 
 Board::~Board()
 {
-
 }
 
 pair<int, int> Board::coord2idx(int i_coord)
@@ -70,8 +69,10 @@ bool Board::isPosEmpty(const pair<int, int> idx)
 bool Board::isPosOutOfBoard(const pair<int, int> idx)
 {
     int i_tmpCoord = this->idx2Coord(idx);
-    if (0 <= i_tmpCoord && i_tmpCoord < this->iMaxRecordSize)    return false;
-    else    return true;
+    if (0 <= i_tmpCoord && i_tmpCoord < this->iMaxRecordSize)
+        return false;
+    else
+        return true;
 }
 
 bool Board::setBSize(int i_size)
@@ -90,7 +91,7 @@ int Board::getMaxRecordSize()
     return this->BSize * this->BSize;
 }
 
-vector<pair<int, int>>& Board::getVRecord()
+vector<pair<int, int>> &Board::getVRecord()
 {
     return this->vRecord;
 }
@@ -128,17 +129,21 @@ void Board::clearBoard()
     }
 }
 
-void Board::Attach(Observer *pObserver){
+void Board::Attach(Observer *pObserver)
+{
     m_ObserverList.push_back(pObserver);
 }
 
-void Board::Detach(Observer *pObserver){
+void Board::Detach(Observer *pObserver)
+{
     m_ObserverList.remove(pObserver);
 }
 
-void Board::Notify(){
+void Board::Notify()
+{
     std::list<Observer *>::iterator it = m_ObserverList.begin();
-    while (it != m_ObserverList.end()){
+    while (it != m_ObserverList.end())
+    {
         (*it)->Update(m_iState);
         ++it;
     }
