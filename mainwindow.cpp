@@ -267,4 +267,6 @@ void MainWindow::OnActionTakeBack()
     bool b_succ = this->mBoard->takeBackStone();
     if (!b_succ)
         QMessageBox::information(this, "Error!", "Failied to take back!");
+    else
+        this->mIsBlackTurn = !this->mIsBlackTurn;
 }
