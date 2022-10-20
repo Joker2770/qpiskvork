@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
+        commands.h
         subject.h
         observer.h
         manager.cpp

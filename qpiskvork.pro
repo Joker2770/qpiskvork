@@ -29,6 +29,7 @@ HEADERS += \
     FreeStyleGomoku.h \
     StandardGomoku.h \
     board.h \
+    commands.h \
     mainwindow.h \
     manager.h \
     observer.h \
