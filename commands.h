@@ -41,3 +41,10 @@ const char[] RECTSTART = "RECTSTART";
 const char[] RESTART = "RESTART";
 const char[] TAKEBACK = "TAKEBACK";
 const char[] PLAY = "PLAY";
+
+// Commands that are sent by the brain
+const char[] UNKNOWN = "UNKNOWN";
+const char[] ERROR = "ERROR";
+const char[] DEBUG = "DEBUG";
+const char[] MESSAGE = "MESSAGE";
+const char[] SUGGEST = "SUGGEST";
