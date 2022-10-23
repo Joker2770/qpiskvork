@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionEnd = new QAction("End", this);
     this->pActionClear = new QAction("Clear", this);
     this->pActionTakeBack = new QAction("Take Back", this);
+    this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionEnd);
@@ -70,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
+    connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
 }
 
 MainWindow::~MainWindow()
@@ -143,6 +145,11 @@ MainWindow::~MainWindow()
     {
         delete this->gWidget;
         this->gWidget = nullptr;
+    }
+    if (nullptr != this->pDialogBoardSize)
+    {
+        delete this->pDialogBoardSize;
+        this->pDialogBoardSize = nullptr;
     }
 }
 
@@ -269,4 +276,19 @@ void MainWindow::OnActionTakeBack()
         QMessageBox::information(this, "Error!", "Failied to take back!");
     else
         this->mIsBlackTurn = !this->mIsBlackTurn;
+}
+
+void MainWindow::OnActionBoardSize()
+{
+    bool getInfo = false;
+    QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo, Qt::WindowFlags(0), Qt::ImhNone);
+    if (getInfo)
+    {
+        bool ok = false;
+        int iTmp = down.toInt(&ok);
+        if (ok)
+            this->mBoard->setBSize(iTmp);
+//        else
+//            ;
+    }
 }

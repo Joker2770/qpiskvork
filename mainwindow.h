@@ -27,6 +27,7 @@
 #include <QPaintEvent>
 #include <QPoint>
 #include <QMap>
+#include <QInputDialog>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -54,10 +55,12 @@ public:
     QAction *pActionEnd;
     QAction *pActionClear;
     QAction *pActionTakeBack;
+    QInputDialog *pDialogBoardSize;
 
 public slots:
     void OnActionClearBoard();
     void OnActionTakeBack();
+    void OnActionBoardSize();
 
 protected:
     void paintEvent(QPaintEvent *);

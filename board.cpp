@@ -77,7 +77,9 @@ bool Board::isPosOutOfBoard(const pair<int, int> idx)
 
 bool Board::setBSize(int i_size)
 {
+    this->clearBoard();
     this->BSize = i_size;
+    this->iMaxRecordSize = this->BSize*this->BSize;
     return true;
 }
 
