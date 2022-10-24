@@ -61,9 +61,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->gWidget->setLayout(this->gridLayout);
 
     this->mBoard = new Board();
-    this->mBoard->setBSize(15);
+    // pair<int, int> pBSize(15, 15);
+    // this->mBoard->setBSize(pBSize);
 
-    resize(this->mBoard->getBSize() * RECT_WIDTH, this->mBoard->getBSize() * RECT_HEIGHT + this->pMenuBar->height());
+    resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
 
     mIsBlackTurn = true;
 
@@ -169,9 +170,9 @@ void MainWindow::DrawChessboard()
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black),2));
 
-    for(int i = 0; i < this->mBoard->getBSize() - 1; ++i)
+    for(int i = 0; i < this->mBoard->getBSize().first - 1; ++i)
     {
-        for (int j = 0; j < this->mBoard->getBSize() - 1; ++j)
+        for (int j = 0; j < this->mBoard->getBSize().second - 1; ++j)
             painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
     }
 }
@@ -286,8 +287,9 @@ void MainWindow::OnActionBoardSize()
     {
         bool ok = false;
         int iTmp = down.toInt(&ok);
+        pair<int, int> pTmp(iTmp, iTmp);
         if (ok)
-            this->mBoard->setBSize(iTmp);
+            this->mBoard->setBSize(pTmp);
 //        else
 //            ;
     }

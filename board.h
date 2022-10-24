@@ -59,8 +59,8 @@ public:
     int idx2Coord(const pair<int, int> idx);
     bool isPosEmpty(const pair<int, int> idx);
     bool isPosOutOfBoard(const pair<int, int> idx);
-    bool setBSize(int);
-    int getBSize();
+    bool setBSize(const pair<int, int> wh);
+    pair<int, int> getBSize();
     int getMaxRecordSize();
     vector<pair<int, int>> &getVRecord();
     bool placeStone(const pair<int, int> idx, STONECOLOR color);
@@ -84,7 +84,9 @@ private:
     // first - coord, second - color.
     vector<pair<int, int>> vRecord;
 
-    int BSize;
+    // int BSize;
+    int i_width;
+    int i_height;
     int iMaxRecordSize;
     std::list<Observer *> m_ObserverList;
     int m_iState;

@@ -28,7 +28,7 @@
 #include <iostream>
 using namespace std;
 
-Board::Board() : BSize(15), iMaxRecordSize(15 * 15)
+Board::Board() : i_width(15), i_height(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
 }
@@ -40,15 +40,15 @@ Board::~Board()
 pair<int, int> Board::coord2idx(int i_coord)
 {
     pair<int, int> idx;
-    idx.first = i_coord % this->BSize;
-    idx.second = i_coord / this->BSize;
+    idx.first = i_coord % this->i_width;
+    idx.second = i_coord / this->i_width;
     return idx;
 }
 
 int Board::idx2Coord(const pair<int, int> idx)
 {
     int i_coord = 0;
-    i_coord = idx.second * this->BSize + idx.first;
+    i_coord = idx.second * this->i_width + idx.first;
     return i_coord;
 }
 
@@ -56,8 +56,7 @@ bool Board::isPosEmpty(const pair<int, int> idx)
 {
     if (this->vRecord.empty())
         return true;
-    int i_coord = 0;
-    i_coord = idx.second * this->BSize + idx.first;
+    int i_coord = idx2Coord(idx);
     for (unsigned int i = 0; i < this->vRecord.size(); ++i)
     {
         if (this->vRecord.at(i).first == i_coord)
@@ -68,28 +67,30 @@ bool Board::isPosEmpty(const pair<int, int> idx)
 
 bool Board::isPosOutOfBoard(const pair<int, int> idx)
 {
-    if (0 <= idx.first && idx.first < this->BSize && 0 <= idx.second && idx.second < this->BSize)
+    if (0 <= idx.first && idx.first < this->i_width && 0 <= idx.second && idx.second < this->i_height)
         return false;
     else
         return true;
 }
 
-bool Board::setBSize(int i_size)
+bool Board::setBSize(const pair<int, int> wh)
 {
     this->clearBoard();
-    this->BSize = i_size;
-    this->iMaxRecordSize = this->BSize*this->BSize;
+    this->i_width = wh.first;
+    this->i_height = wh.second;
+    this->iMaxRecordSize = this->i_width*this->i_height;
     return true;
 }
 
-int Board::getBSize()
+pair<int, int> Board::getBSize()
 {
-    return this->BSize;
+    pair<int, int> pTmp(this->i_width, this->i_height);
+    return pTmp;
 }
 
 int Board::getMaxRecordSize()
 {
-    return this->BSize * this->BSize;
+    return this->i_width * this->i_height;
 }
 
 vector<pair<int, int>> &Board::getVRecord()
