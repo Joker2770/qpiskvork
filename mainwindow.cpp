@@ -282,15 +282,17 @@ void MainWindow::OnActionTakeBack()
 void MainWindow::OnActionBoardSize()
 {
     bool getInfo = false;
-    QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo, Qt::WindowFlags(0), Qt::ImhNone);
+    QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo,
+                                             Qt::WindowFlags(), Qt::ImhNone);
     if (getInfo)
     {
         bool ok = false;
         int iTmp = down.toInt(&ok);
         pair<int, int> pTmp(iTmp, iTmp);
         if (ok)
+        {
             this->mBoard->setBSize(pTmp);
-//        else
-//            ;
+            resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
+        }
     }
 }

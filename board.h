@@ -34,7 +34,8 @@
 #include <iostream>
 using namespace std;
 
-#define MAXBSIZE 25
+#define MAXBSIZE (25)
+#define MINBSIZE (8)
 
 typedef enum stone_color
 {

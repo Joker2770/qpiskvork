@@ -75,7 +75,7 @@ bool Board::isPosOutOfBoard(const pair<int, int> idx)
 
 bool Board::setBSize(const pair<int, int> wh)
 {
-    if (wh.first <= MAXBSIZE && wh.second <= MAXBSIZE)
+    if (8 <= wh.first && wh.first <= MAXBSIZE && 8 <= wh.second && wh.second <= MAXBSIZE)
     {
         this->clearBoard();
         this->i_width = wh.first;
