@@ -291,8 +291,8 @@ void MainWindow::OnActionBoardSize()
         pair<int, int> pTmp(iTmp, iTmp);
         if (ok)
         {
-            this->mBoard->setBSize(pTmp);
-            resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
+            if (this->mBoard->setBSize(pTmp))
+                resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
         }
     }
 }
