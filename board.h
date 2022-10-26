@@ -88,7 +88,7 @@ private:
     // int BSize;
     int i_width;
     int i_height;
-    int iMaxRecordSize;
+    unsigned int iMaxRecordSize;
     std::list<Observer *> m_ObserverList;
     int m_iState;
 };
