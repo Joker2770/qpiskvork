@@ -35,6 +35,8 @@ class StandardGomoku final : public rules
 {
 public:
     bool checkWin(Board *board);
+private:
+    int countNearStone(Board *board, const pair<int, int>& p_drt);
 };
 
 #endif

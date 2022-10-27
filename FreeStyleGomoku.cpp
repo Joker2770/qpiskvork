@@ -28,7 +28,7 @@
 #include "FreeStyleGomoku.h"
 using namespace std;
 
-int countNearStone(Board *board, const pair<int, int>& p_drt)
+int FreeStyleGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
 {
     int i_count = 0;
     pair<int, int> p_last_move = board->getVRecord().back();

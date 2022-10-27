@@ -28,7 +28,42 @@
 #include "StandardGomoku.h"
 using namespace std;
 
+int StandardGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
+{
+    int i_count = 0;
+    pair<int, int> p_last_move = board->getVRecord().back();
+    pair<int, int> p_idx = board->coord2idx(board->getVRecord().back().first);
+    pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
+
+    while (!board->isPosOutOfBoard(p_drt_idx) && !board->isPosEmpty(p_drt_idx))
+    {
+        for (unsigned int i = 0; i < board->getVRecord().size(); ++i)
+        {
+            if (board->getVRecord().at(i).first == board->idx2Coord(p_drt_idx) && board->getVRecord().at(i).second == p_last_move.second)
+                i_count++;
+        }
+        p_drt_idx.first += p_drt.first;
+        p_drt_idx.second += p_drt.second;
+    }
+
+    return i_count;
+}
+
 bool StandardGomoku::checkWin(Board *board)
 {
+    pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0)
+            , p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
+    int i_up = countNearStone(board, p_drt_up);
+    int i_down = countNearStone(board, p_drt_down);
+    int i_left = countNearStone(board, p_drt_left);
+    int i_right = countNearStone(board, p_drt_right);
+    int i_leftup = countNearStone(board, p_drt_leftup);
+    int i_rightdown = countNearStone(board, p_drt_rightdown);
+    int i_leftdown = countNearStone(board, p_drt_leftdown);
+    int i_rightup = countNearStone(board, p_drt_rightup);
+
+    if (i_up + i_down == 4 || i_left + i_right == 4 || i_leftup + i_rightdown == 4 || i_leftdown + i_rightup == 4)
+        return true;
+
     return false;
 }
