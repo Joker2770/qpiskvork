@@ -33,6 +33,7 @@ using namespace std;
 class Player
 {
 public:
+    bool m_isComputer;
     bool m_isMyTurn;
     int m_currColor;
 private:
