@@ -28,3 +28,8 @@
 #include<iostream>
 using namespace std;
 
+void Manager::Update(int i_state)
+{
+    this->m_state = i_state;
+}
+

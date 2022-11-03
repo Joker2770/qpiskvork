@@ -39,6 +39,7 @@ public:
     void Update(int);
 private:
     Subject *m_pSubject;
+    int m_state;
 };
 
 #endif
