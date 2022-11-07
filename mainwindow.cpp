@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionEnd = new QAction("End", this);
     this->pActionClear = new QAction("Clear", this);
     this->pActionTakeBack = new QAction("Take Back", this);
+    this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
+    this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
     this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
@@ -53,6 +55,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
     this->pMenuBar->addMenu(this->pMenuAbout);
+
+    this->pMenuSetting->addSeparator();
+    this->pRuleActionGroup = new QActionGroup(this);
+    this->pRuleActionGroup->setExclusive(true);
+    this->pActionFreeStyleGomoku->setCheckable(true);
+    this->pActionStandardGomoku->setCheckable(true);
+    this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionFreeStyleGomoku));
+    this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionStandardGomoku));
+    this->pActionFreeStyleGomoku->setChecked(true);
 
 #ifndef USE_DEFAULT_MENU_BAR
     setMenuBar(this->pMenuBar);
@@ -112,6 +123,16 @@ MainWindow::~MainWindow()
         delete this->pActionBoardSize;
         this->pActionBoardSize = nullptr;
     }
+    if (nullptr != this->pActionFreeStyleGomoku)
+    {
+        delete this->pActionFreeStyleGomoku;
+        this->pActionFreeStyleGomoku = nullptr;
+    }
+    if (nullptr != this->pActionStandardGomoku)
+    {
+        delete this->pActionStandardGomoku;
+        this->pActionStandardGomoku = nullptr;
+    }
     if (nullptr != this->pMenuGame)
     {
         delete this->pMenuGame;
@@ -151,6 +172,11 @@ MainWindow::~MainWindow()
     {
         delete this->pDialogBoardSize;
         this->pDialogBoardSize = nullptr;
+    }
+    if (nullptr != this->pRuleActionGroup)
+    {
+        delete this->pRuleActionGroup;
+        this->pRuleActionGroup = nullptr;
     }
 }
 

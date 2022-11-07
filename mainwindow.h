@@ -28,6 +28,7 @@
 #include <QPoint>
 #include <QMap>
 #include <QInputDialog>
+#include <QActionGroup>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -55,7 +56,10 @@ public:
     QAction *pActionEnd;
     QAction *pActionClear;
     QAction *pActionTakeBack;
+    QAction *pActionFreeStyleGomoku;
+    QAction *pActionStandardGomoku;
     QInputDialog *pDialogBoardSize;
+    QActionGroup *pRuleActionGroup;
 
 public slots:
     void OnActionClearBoard();
