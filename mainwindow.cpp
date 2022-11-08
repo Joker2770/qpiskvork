@@ -79,7 +79,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     mIsBlackTurn = true;
 
-    this->freeStyleGomoku = new FreeStyleGomoku();
+    this->m_freeStyleGomoku = new FreeStyleGomoku();
+    this->m_standardGomoku = new StandardGomoku();
 
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
@@ -88,10 +89,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (nullptr != this->freeStyleGomoku)
+    if (nullptr != this->m_freeStyleGomoku)
     {
-        delete  this->freeStyleGomoku;
-        this->freeStyleGomoku = nullptr;
+        delete  this->m_freeStyleGomoku;
+        this->m_freeStyleGomoku = nullptr;
+    }
+    if (nullptr != this->m_standardGomoku)
+    {
+        delete this->m_standardGomoku;
+        this->m_standardGomoku = nullptr;
     }
     if (nullptr != this->mBoard)
     {
@@ -277,7 +283,21 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     }
 
     //if connect five
-    if (this->freeStyleGomoku->checkWin(this->mBoard))
+    bool isWin = false;
+    if (this->pActionFreeStyleGomoku->isChecked())
+    {
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+    }
+    else if (this->pActionStandardGomoku->isChecked())
+    {
+        isWin = this->m_standardGomoku->checkWin(this->mBoard);
+    }
+    else
+    {
+        /* code */
+    }
+
+    if (isWin)
     {
         if (this->mIsBlackTurn)
             QMessageBox::information(this, "game over!", "Black win!");

@@ -32,6 +32,7 @@
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
+#include "StandardGomoku.h"
 
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
@@ -81,6 +82,7 @@ private:
     Board *mBoard;
     bool mIsBlackTurn;
 
-    FreeStyleGomoku *freeStyleGomoku;
+    FreeStyleGomoku *m_freeStyleGomoku;
+    StandardGomoku *m_standardGomoku;
 };
 #endif // MAINWINDOW_H
