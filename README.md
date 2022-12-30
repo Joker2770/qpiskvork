@@ -2,7 +2,7 @@
 Another gomoku manager for adapting to Windows and Linux systems.
 
 ## summary
-This program is devoted to become a gomoku manager with the [protocol](http://petr.lastovicka.sweb.cz/protocl2en.htm).
+This program aims to become a gomoku manager with the [protocol](http://petr.lastovicka.sweb.cz/protocl2en.htm).
 
 ## dependencies
 dependencies of compiling.
