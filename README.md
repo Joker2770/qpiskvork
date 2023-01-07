@@ -1,4 +1,7 @@
 # qpiskvork
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/81b307ac0e004c58adeef0c80f620310)](https://app.codacy.com/gh/Joker2770/qpiskvork?utm_source=github.com&utm_medium=referral&utm_content=Joker2770/qpiskvork&utm_campaign=Badge_Grade_Settings)
+
 Another gomoku manager for adapting to Windows and Linux systems.
 
 ## summary
