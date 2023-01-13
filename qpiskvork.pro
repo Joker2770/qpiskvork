@@ -16,27 +16,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    FreeStyleGomoku.cpp \
-    StandardGomoku.cpp \
-    board.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    manager.cpp \
-    player.cpp \
-    timer.cpp
+    src/EngineLoader.cpp \
+    src/FreeStyleGomoku.cpp \
+    src/StandardGomoku.cpp \
+    src/board.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/manager.cpp \
+    src/player.cpp \
+    src/timer.cpp
 
 HEADERS += \
-    FreeStyleGomoku.h \
-    StandardGomoku.h \
-    board.h \
-    commands.h \
-    mainwindow.h \
-    manager.h \
-    observer.h \
-    player.h \
-    rules.h \
-    subject.h \
-    timer.h
+    src/EngineLoader.h \
+    src/FreeStyleGomoku.h \
+    src/StandardGomoku.h \
+    src/board.h \
+    src/commands.h \
+    src/mainwindow.h \
+    src/manager.h \
+    src/observer.h \
+    src/player.h \
+    src/rules.h \
+    src/subject.h \
+    src/timer.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

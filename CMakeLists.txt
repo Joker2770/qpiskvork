@@ -15,26 +15,27 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        commands.h
-        subject.h
-        observer.h
-        manager.cpp
-        manager.h
-        board.cpp
-        board.h
-        player.cpp
-        player.h
-        timer.cpp
-        timer.h
-        rules.h
-        FreeStyleGomoku.cpp
-        FreeStyleGomoku.h
-        StandardGomoku.cpp
-        StandardGomoku.h
-        res.qrc
+	src/FreeStyleGomoku.cpp
+	src/StandardGomoku.cpp
+	src/board.cpp
+	src/main.cpp
+	src/mainwindow.cpp
+	src/manager.cpp
+	src/player.cpp
+	src/timer.cpp
+	src/EngineLoader.cpp
+	src/FreeStyleGomoku.h
+	src/StandardGomoku.h
+	src/board.h
+	src/commands.h
+	src/mainwindow.h
+	src/manager.h
+	src/observer.h
+	src/player.h
+	src/rules.h
+	src/subject.h
+	src/timer.h
+	src/EngineLoader.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
