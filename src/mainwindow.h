@@ -59,6 +59,7 @@ public:
     QAction *pActionTakeBack;
     QAction *pActionFreeStyleGomoku;
     QAction *pActionStandardGomoku;
+    QAction *pActionVer;
     QInputDialog *pDialogBoardSize;
     QActionGroup *pRuleActionGroup;
 
@@ -66,6 +67,7 @@ public slots:
     void OnActionClearBoard();
     void OnActionTakeBack();
     void OnActionBoardSize();
+    void OnActionVer();
 
 protected:
     void paintEvent(QPaintEvent *);

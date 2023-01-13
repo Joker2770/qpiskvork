@@ -45,12 +45,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTakeBack = new QAction("Take Back", this);
     this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
+    this->pActionVer = new QAction("Ver Info", this);
     this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionEnd);
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
+    this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -85,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
+    connect(pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
 }
 
 MainWindow::~MainWindow()
@@ -138,6 +141,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionStandardGomoku;
         this->pActionStandardGomoku = nullptr;
+    }
+    if (nullptr != this->pActionVer)
+    {
+        delete this->pActionVer;
+        this->pActionVer = nullptr;
     }
     if (nullptr != this->pMenuGame)
     {
@@ -214,7 +222,7 @@ void MainWindow::DrawItems()
     QPainter painter(this);
     painter.setPen(QPen(QColor(Qt::transparent)));
 
-    for (int i = 0; i < this->mBoard->getVRecord().size(); i++)
+    for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
     {
         QPoint p;
         if (this->mBoard->getVRecord().at(i).second == BLACK)
@@ -341,4 +349,11 @@ void MainWindow::OnActionBoardSize()
                 resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
         }
     }
+}
+
+void MainWindow::OnActionVer()
+{
+    const QString strVerNum = "Ver Num: 0.0.01";
+    const QString strAll = strVerNum + "\n" + "build at " + __TIMESTAMP__;
+    QMessageBox::about(this, "Version", strAll);
 }
