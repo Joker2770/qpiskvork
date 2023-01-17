@@ -20,6 +20,7 @@ SOURCES += \
     src/FreeStyleGomoku.cpp \
     src/StandardGomoku.cpp \
     src/board.cpp \
+    src/commander.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/manager.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     src/FreeStyleGomoku.h \
     src/StandardGomoku.h \
     src/board.h \
+    src/commander.h \
     src/commands.h \
     src/mainwindow.h \
     src/manager.h \
