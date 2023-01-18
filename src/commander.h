@@ -24,6 +24,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include<iostream>
+#ifndef __COMMANDER_H__
+#define __COMMANDER_H__
+
+#include "commands.h"
+#include <iostream>
 using namespace std;
 
+class Commander
+{
+public:
+    Commander();
+    ~Commander();
+    string &move_2_send(int x, int y);
+};
+
+#endif

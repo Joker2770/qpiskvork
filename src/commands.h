@@ -24,27 +24,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include<iostream>
+#ifndef __COMMANDS_H__
+#define __COMMANDS_H__
+
+#include <iostream>
 using namespace std;
 
-// Mandatory commands
-const char[] START = "START";
-const char[] TURN = "TURN";
-const char[] BEGIN = "BEGIN";
-const char[] BOARD = "BOARD";
-const char[] INFO = "INFO";
-const char[] END = "END";
-const char[] ABOUT = "ABOUT";
+//Mandatory commands
+const char START[]  = "START";
+const char TURN[]  = "TURN";
+const char BEGIN[] = "BEGIN";
+const char BOARD[] = "BOARD";
+const char INFO[] = "INFO";
+const char END[] = "END";
+const char ABOUT[] = "ABOUT";
 
 // Optional commands
-const char[] RECTSTART = "RECTSTART";
-const char[] RESTART = "RESTART";
-const char[] TAKEBACK = "TAKEBACK";
-const char[] PLAY = "PLAY";
+const char RECTSTART[] = "RECTSTART";
+const char RESTART[] = "RESTART";
+const char TAKEBACK[] = "TAKEBACK";
+const char PLAY[] = "PLAY";
 
 // Commands that are sent by the brain
-const char[] UNKNOWN = "UNKNOWN";
-const char[] ERROR = "ERROR";
-const char[] DEBUG = "DEBUG";
-const char[] MESSAGE = "MESSAGE";
-const char[] SUGGEST = "SUGGEST";
+const char UNKNOWN[] = "UNKNOWN";
+const char ERROR[] = "ERROR";
+const char DEBUG[] = "DEBUG";
+const char MESSAGE[] = "MESSAGE";
+const char SUGGEST[] = "SUGGEST";
+
+#endif

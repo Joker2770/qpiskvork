@@ -24,6 +24,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include<iostream>
+#ifndef __ENGINELOADER_H__
+#define __ENGINELOADER_H__
+
+#include <iostream>
 using namespace std;
 
+class EngineLoader
+{
+public:
+};
+
+#endif
