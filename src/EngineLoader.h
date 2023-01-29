@@ -27,12 +27,20 @@
 #ifndef __ENGINELOADER_H__
 #define __ENGINELOADER_H__
 
+#include <QProcess>
+#include <QThread>
 #include <iostream>
 using namespace std;
 
-class EngineLoader
+class EngineLoader : QThread
 {
 public:
+    EngineLoader();
+    virtual ~EngineLoader();
+    void run();
+
+private:
+    QProcess *mProcess;
 };
 
 #endif

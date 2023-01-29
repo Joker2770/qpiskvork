@@ -28,3 +28,20 @@
 #include <iostream>
 using namespace std;
 
+EngineLoader::EngineLoader()
+{
+    this->mProcess = new QProcess();
+}
+EngineLoader::~EngineLoader()
+{
+    if (nullptr != this->mProcess)
+    {
+        delete this->mProcess;
+        this->mProcess = nullptr;
+    }
+}
+
+void EngineLoader::run()
+{
+}
+
