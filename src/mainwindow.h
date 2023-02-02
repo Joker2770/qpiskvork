@@ -33,6 +33,7 @@
 #include "board.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
+#include "EngineLoader.h"
 
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
@@ -86,5 +87,8 @@ private:
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
+
+    EngineLoader *m_engine_1;
+    EngineLoader *m_engine_2;
 };
 #endif // MAINWINDOW_H

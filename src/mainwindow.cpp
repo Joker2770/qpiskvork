@@ -84,6 +84,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
 
+    this->m_engine_1 = new EngineLoader();
+    this->m_engine_2 = new EngineLoader();
+
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
@@ -191,6 +194,16 @@ MainWindow::~MainWindow()
     {
         delete this->pRuleActionGroup;
         this->pRuleActionGroup = nullptr;
+    }
+    if (nullptr != this->m_engine_1)
+    {
+        delete this->m_engine_1;
+        this->m_engine_1 = nullptr;
+    }
+    if (nullptr != this->m_engine_2)
+    {
+        delete this->m_engine_2;
+        this->m_engine_2 = nullptr;
     }
 }
 

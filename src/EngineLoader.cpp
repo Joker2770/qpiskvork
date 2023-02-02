@@ -31,9 +31,11 @@ using namespace std;
 EngineLoader::EngineLoader()
 {
     this->mProcess = new QProcess();
+    this->mProgram.clear();
 }
 EngineLoader::~EngineLoader()
 {
+    this->mProcess->close();
     if (nullptr != this->mProcess)
     {
         delete this->mProcess;
@@ -41,7 +43,18 @@ EngineLoader::~EngineLoader()
     }
 }
 
+bool EngineLoader::setProgram(const QString &sProgram)
+{
+    this->mProgram = sProgram;
+    return !this->mProgram.isEmpty();
+}
+
 void EngineLoader::run()
 {
+    if (!this->mProgram.isEmpty())
+    {
+        this->mProcess->setProgram(this->mProgram);
+        this->mProcess->start();
+    }
 }
 

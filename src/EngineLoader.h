@@ -39,7 +39,10 @@ public:
     virtual ~EngineLoader();
     void run();
 
+    bool setProgram(const QString &sProgram);
+
 private:
+    QString mProgram;
     QProcess *mProcess;
 };
 
