@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTakeBack = new QAction("Take Back", this);
     this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
+    this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionEnd);
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
+    this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
@@ -90,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
+    connect(pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
 }
 
@@ -144,6 +147,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionStandardGomoku;
         this->pActionStandardGomoku = nullptr;
+    }
+    if (nullptr != this->pActionPlayerSetting)
+    {
+        delete this->pActionPlayerSetting;
+        this->pActionPlayerSetting = nullptr;
     }
     if (nullptr != this->pActionVer)
     {
@@ -362,6 +370,16 @@ void MainWindow::OnActionBoardSize()
                 resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
         }
     }
+}
+
+void MainWindow::OnActionPlayerSetting()
+{
+    QDialog *settingDialog = new QDialog(this);
+    settingDialog->setWindowTitle("Player Setting");
+
+    settingDialog->setAttribute(Qt::WA_DeleteOnClose);
+    settingDialog->show();
+    settingDialog->exec();
 }
 
 void MainWindow::OnActionVer()
