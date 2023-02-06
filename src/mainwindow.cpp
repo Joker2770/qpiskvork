@@ -377,32 +377,6 @@ void MainWindow::OnActionBoardSize()
 
 void MainWindow::OnActionPlayerSetting()
 {
-    /*
-    QDialog *settingDialog = new QDialog(this);
-    settingDialog->setWindowTitle("Player Setting");
-
-    //QHBoxLayout p1_hbl_1, p1_hbl_2, p2_hbl_1, p2_hbl_2;
-    QGridLayout gl, gl_p1, gl_p2;
-    QGroupBox gb_p1, gb_p2;
-
-    gl.setSpacing(5);
-    gl_p1.setSpacing(5);
-    gl_p2.setSpacing(5);
-    gb_p1.setTitle("Player1");
-    gb_p2.setTitle("Player2");
-
-    //gb_p1.setLayout(&gl_p1);
-    //gb_p2.setLayout(&gl_p2);
-    gl.addWidget(&gb_p1, 0, 0);
-    gl.addWidget(&gb_p2, 1, 0);
-
-    settingDialog->setLayout(&gl);
-    settingDialog->setAttribute(Qt::WA_DeleteOnClose);
-    settingDialog->setWindowTitle("Player Setting");
-    settingDialog->resize(300, 200);
-    settingDialog->setModal(false);
-    settingDialog->exec();
-    */
     this->m_player_setting->exec();
 }
 

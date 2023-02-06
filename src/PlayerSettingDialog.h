@@ -28,6 +28,7 @@
 #define __PLAYER_SETTING_DIALOG_H__
 
 #include <QDialog>
+#include <QPushButton>
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QLineEdit>
@@ -46,10 +47,14 @@ public:
     ~PlayerSettingDialog();
 
     QDialogButtonBox *btn_box;
+    QRadioButton *p1_rb_1, *p1_rb_2, *p2_rb_1, *p2_rb_2;
 
 private:
     QGridLayout *gl, *gl_p1, *gl_p2;
     QGroupBox *gb_p1, *gb_p2;
+    QHBoxLayout *p1_hbl_1, *p1_hbl_2, *p2_hbl_1, *p2_hbl_2;
+    QLineEdit *le_p1, *le_p2;
+    QPushButton *btn_p1, *btn_p2;
 };
 
 #endif

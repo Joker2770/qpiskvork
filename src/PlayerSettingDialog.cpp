@@ -37,15 +37,50 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->gb_p1 = new QGroupBox();
     this->gb_p2 = new QGroupBox();
     this->btn_box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    this->p1_hbl_1 = new QHBoxLayout();
+    this->p1_hbl_2 = new QHBoxLayout();
+    this->p2_hbl_1 = new QHBoxLayout();
+    this->p2_hbl_2 = new QHBoxLayout();
+    this->p1_rb_1 = new QRadioButton();
+    this->p1_rb_2 = new QRadioButton();
+    this->p2_rb_1 = new QRadioButton();
+    this->p2_rb_2 = new QRadioButton();
+    this->le_p1 = new QLineEdit();
+    this->le_p2 = new QLineEdit();
+    this->btn_p1 = new QPushButton();
+    this->btn_p2 = new QPushButton();
 
     this->gl->setSpacing(5);
     this->gl_p1->setSpacing(5);
     this->gl_p2->setSpacing(5);
+    this->p1_hbl_1->setSpacing(5);
+    this->p1_hbl_2->setSpacing(5);
+    this->p2_hbl_1->setSpacing(5);
+    this->p2_hbl_2->setSpacing(5);
     this->gb_p1->setTitle("Player1");
     this->gb_p2->setTitle("Player2");
-
-    //gb_p1->setLayout(&gl_p1);
-    //gb_p2->setLayout(&gl_p2);
+    this->p1_rb_1->setText("Human");
+    this->p1_rb_2->setText("AI");
+    this->p2_rb_1->setText("Human");
+    this->p2_rb_2->setText("AI");
+    this->p1_rb_1->setChecked(true);
+    this->p2_rb_1->setChecked(true);
+    this->btn_p1->setText("open");
+    this->btn_p2->setText("open");
+    this->p1_hbl_1->addWidget(p1_rb_1);
+    this->p1_hbl_1->addWidget(p1_rb_2);
+    this->p1_hbl_2->addWidget(le_p1);
+    this->p1_hbl_2->addWidget(btn_p1);
+    this->p2_hbl_1->addWidget(p2_rb_1);
+    this->p2_hbl_1->addWidget(p2_rb_2);
+    this->p2_hbl_2->addWidget(le_p2);
+    this->p2_hbl_2->addWidget(btn_p2);
+    this->gl_p1->addLayout(this->p1_hbl_1, 0, 0);
+    this->gl_p1->addLayout(this->p1_hbl_2, 1, 0);
+    this->gl_p2->addLayout(this->p2_hbl_1, 0, 0);
+    this->gl_p2->addLayout(this->p2_hbl_2, 1, 0);
+    this->gb_p1->setLayout(gl_p1);
+    this->gb_p2->setLayout(gl_p2);
     this->gl->addWidget(this->gb_p1, 0, 0);
     this->gl->addWidget(this->gb_p2, 1, 0);
     this->gl->addWidget(this->btn_box, 2, 0);
@@ -61,6 +96,66 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
 
 PlayerSettingDialog::~PlayerSettingDialog()
 {
+    if (nullptr != this->btn_p1)
+    {
+        delete this->btn_p1;
+        this->btn_p1 = nullptr;
+    }
+    if (nullptr != this->btn_p2)
+    {
+        delete this->btn_p2;
+        this->btn_p2 = nullptr;
+    }
+    if (nullptr != this->le_p1)
+    {
+        delete this->le_p1;
+        this->le_p1 = nullptr;
+    }
+    if (nullptr != this->le_p2)
+    {
+        delete this->le_p2;
+        this->le_p2 = nullptr;
+    }
+    if (nullptr != this->p1_rb_1)
+    {
+        delete this->p1_rb_1;
+        this->p1_rb_1 = nullptr;
+    }
+    if (nullptr != this->p1_rb_2)
+    {
+        delete this->p1_rb_2;
+        this->p1_rb_2 = nullptr;
+    }
+    if (nullptr != this->p2_rb_1)
+    {
+        delete this->p2_rb_1;
+        this->p2_rb_1 = nullptr;
+    }
+    if (nullptr != this->p2_rb_2)
+    {
+        delete this->p2_rb_2;
+        this->p2_rb_2 = nullptr;
+    }
+    if (nullptr != this->p1_hbl_1)
+    {
+        delete this->p1_hbl_1;
+        this->p1_hbl_1 = nullptr;
+    }
+    if (nullptr != this->p1_hbl_2)
+    {
+        delete this->p1_hbl_2;
+        this->p1_hbl_2 = nullptr;
+    }
+    if (nullptr != this->p2_hbl_1)
+    {
+        delete this->p2_hbl_1;
+        this->p2_hbl_1 = nullptr;
+    }
+    if (nullptr != this->p2_hbl_2)
+    {
+        delete this->p2_hbl_2;
+        this->p2_hbl_2 = nullptr;
+    }
     if (nullptr != this->btn_box)
     {
         delete this->btn_box;
