@@ -1,6 +1,6 @@
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      m_player_setting(new PlayerSettingDialog(this))
 {
     gWidget = new QWidget(this);
     this->setCentralWidget(gWidget);
@@ -94,6 +95,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
     connect(pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
+    connect(m_player_setting->btn_box, SIGNAL(accepted()), this, SLOT(OnDialogPlayerSettingAccept()));
+    connect(m_player_setting->btn_box, SIGNAL(rejected()), this, SLOT(OnDialogPlayerSettingReject()));
 }
 
 MainWindow::~MainWindow()
@@ -374,12 +377,45 @@ void MainWindow::OnActionBoardSize()
 
 void MainWindow::OnActionPlayerSetting()
 {
+    /*
     QDialog *settingDialog = new QDialog(this);
     settingDialog->setWindowTitle("Player Setting");
 
+    //QHBoxLayout p1_hbl_1, p1_hbl_2, p2_hbl_1, p2_hbl_2;
+    QGridLayout gl, gl_p1, gl_p2;
+    QGroupBox gb_p1, gb_p2;
+
+    gl.setSpacing(5);
+    gl_p1.setSpacing(5);
+    gl_p2.setSpacing(5);
+    gb_p1.setTitle("Player1");
+    gb_p2.setTitle("Player2");
+
+    //gb_p1.setLayout(&gl_p1);
+    //gb_p2.setLayout(&gl_p2);
+    gl.addWidget(&gb_p1, 0, 0);
+    gl.addWidget(&gb_p2, 1, 0);
+
+    settingDialog->setLayout(&gl);
     settingDialog->setAttribute(Qt::WA_DeleteOnClose);
-    settingDialog->show();
+    settingDialog->setWindowTitle("Player Setting");
+    settingDialog->resize(300, 200);
+    settingDialog->setModal(false);
     settingDialog->exec();
+    */
+    this->m_player_setting->exec();
+}
+
+void MainWindow::OnDialogPlayerSettingAccept()
+{
+    printf("accept\n");
+    QMessageBox::information(this, "accept!", "Accept!");
+}
+
+void MainWindow::OnDialogPlayerSettingReject()
+{
+    printf("reject\n");
+    QMessageBox::information(this, "accept!", "Reject!");
 }
 
 void MainWindow::OnActionVer()

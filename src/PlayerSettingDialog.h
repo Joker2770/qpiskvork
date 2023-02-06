@@ -1,0 +1,56 @@
+/*************************************************************************
+    > File Name: PlayerSettingDialog.h
+    > Author: Jintao Yang
+    > Mail: 18608842770@163.com 
+    > Created Time: Sun Feb  5 15:18:50 2023
+ ************************************************************************/
+
+/**
+    qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
+    Copyright (C) 2023  Jintao Yang <yjt950840@outlook.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#ifndef __PLAYER_SETTING_DIALOG_H__
+#define __PLAYER_SETTING_DIALOG_H__
+
+#include <QDialog>
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QLineEdit>
+#include <QFileDialog>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QDialogButtonBox>
+
+#include <iostream>
+using namespace std;
+
+class PlayerSettingDialog : public QDialog
+{
+public:
+    PlayerSettingDialog(QWidget* parent=nullptr);
+    ~PlayerSettingDialog();
+
+    QDialogButtonBox *btn_box;
+
+private:
+    QGridLayout *gl, *gl_p1, *gl_p2;
+    QGroupBox *gb_p1, *gb_p2;
+};
+
+#endif
+

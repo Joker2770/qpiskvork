@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
 	src/timer.cpp
 	src/EngineLoader.cpp
 	src/commander.cpp
+	src/PlayerSettingDialog.cpp
 	src/FreeStyleGomoku.h
 	src/StandardGomoku.h
 	src/board.h
@@ -38,6 +39,7 @@ set(PROJECT_SOURCES
 	src/timer.h
 	src/EngineLoader.h
 	src/commander.h
+	src/PlayerSettingDialog.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

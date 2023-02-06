@@ -1,6 +1,6 @@
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,11 +30,13 @@
 #include <QInputDialog>
 #include <QActionGroup>
 #include <QDialog>
+#include <QSharedPointer>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
 #include "EngineLoader.h"
+#include "PlayerSettingDialog.h"
 
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
@@ -72,12 +74,15 @@ public slots:
     void OnActionBoardSize();
     void OnActionPlayerSetting();
     void OnActionVer();
+    void OnDialogPlayerSettingAccept();
+    void OnDialogPlayerSettingReject();
 
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
 
 private:
+    QSharedPointer<PlayerSettingDialog> m_player_setting;
     void DrawChessboard();
     void DrawItems();
     void DrawItemWithMouse();

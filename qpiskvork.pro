@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/EngineLoader.cpp \
     src/FreeStyleGomoku.cpp \
+    src/PlayerSettingDialog.cpp \
     src/StandardGomoku.cpp \
     src/board.cpp \
     src/commander.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
 HEADERS += \
     src/EngineLoader.h \
     src/FreeStyleGomoku.h \
+    src/PlayerSettingDialog.h \
     src/StandardGomoku.h \
     src/board.h \
     src/commander.h \
