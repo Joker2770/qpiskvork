@@ -49,8 +49,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QWidget *gWidget;
-    QGridLayout *gridLayout;
     QMenuBar *pMenuBar;
     QMenu *pMenuGame;
     QMenu *pMenuSetting;

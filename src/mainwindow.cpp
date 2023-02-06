@@ -25,10 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       m_player_setting(new PlayerSettingDialog(this))
 {
-    gWidget = new QWidget(this);
-    this->setCentralWidget(gWidget);
-    gridLayout = new QGridLayout();
-
 #ifdef USE_DEFAULT_MENU_BAR
     this->pMenuBar = this->menuBar();
 #else
@@ -73,8 +69,6 @@ MainWindow::MainWindow(QWidget *parent)
 #ifndef USE_DEFAULT_MENU_BAR
     setMenuBar(this->pMenuBar);
 #endif
-
-    this->gWidget->setLayout(this->gridLayout);
 
     this->mBoard = new Board();
     // pair<int, int> pBSize(15, 15);
@@ -185,16 +179,6 @@ MainWindow::~MainWindow()
     {
         delete this->pMenuBar;
         this->pMenuBar = nullptr;
-    }
-    if (nullptr != this->gridLayout)
-    {
-        delete this->gridLayout;
-        this->gridLayout = nullptr;
-    }
-    if (nullptr != this->gWidget)
-    {
-        delete this->gWidget;
-        this->gWidget = nullptr;
     }
     if (nullptr != this->pDialogBoardSize)
     {
