@@ -7,7 +7,7 @@
 
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,21 @@
 */
 
 #include "player.h"
+#include "board.h"
+
 #include<iostream>
 using namespace std;
+
+Player::Player()
+{
+    this->m_currColor = BLACK;
+    this->m_isComputer = false;
+    this->m_isMyTurn = true;
+}
+
+Player::~Player()
+{
+
+}
 
 

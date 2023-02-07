@@ -7,7 +7,7 @@
 
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,10 +33,15 @@ using namespace std;
 class Player
 {
 public:
+    Player();
+    ~Player();
+
     bool m_isComputer;
     bool m_isMyTurn;
     int m_currColor;
+
 private:
+
 };
 
 #endif
