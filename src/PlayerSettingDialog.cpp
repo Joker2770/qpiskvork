@@ -25,6 +25,7 @@
 */
 
 #include "PlayerSettingDialog.h"
+
 #include <iostream>
 using namespace std;
 

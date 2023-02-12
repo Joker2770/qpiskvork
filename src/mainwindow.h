@@ -74,6 +74,8 @@ public slots:
     void OnActionVer();
     void OnDialogPlayerSettingAccept();
     void OnDialogPlayerSettingReject();
+    void On_p1_btnOpen_clicked();
+    void On_p2_btnOpen_clicked();
 
 protected:
     void paintEvent(QPaintEvent *);
