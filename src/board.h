@@ -45,8 +45,8 @@ typedef enum stone_color
 
 typedef enum board_status
 {
-    PLACEOK = 1,
-    PLACEERROR = 2,
+    BLACKNEXT = 1,
+    WHITENEXT = 2,
     BOARDFULL = 3
 } BOARDSTATUS;
 
