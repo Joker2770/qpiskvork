@@ -138,20 +138,31 @@ void Board::clearBoard()
 
 void Board::Attach(Observer *pObserver)
 {
-    m_ObserverList.push_back(pObserver);
+    m_vObserver.push_back(pObserver);
 }
 
 void Board::Detach(Observer *pObserver)
 {
-    m_ObserverList.remove(pObserver);
+    for (auto it = m_vObserver.begin(); it != m_vObserver.end(); ++it)
+    {
+        if (*it == pObserver)
+        {
+            m_vObserver.erase(it);
+            break;
+        }
+    }
 }
 
 void Board::Notify()
 {
-    std::list<Observer *>::iterator it = m_ObserverList.begin();
-    while (it != m_ObserverList.end())
+    // std::list<Observer *>::iterator it = m_ObserverList.begin();
+    // while (it != m_vObserver.end())
+    // {
+    //     (*it)->Update(m_iState);
+    //     ++it;
+    // }
+    for (auto observer : m_vObserver)
     {
-        (*it)->Update(m_iState);
-        ++it;
+        observer->Update(m_iState);
     }
 }

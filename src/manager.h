@@ -35,8 +35,15 @@ using namespace std;
 class Manager : public Observer
 {
 public:
-    Manager(Subject *pSubject) : m_pSubject(pSubject){};
-    void Update(int);
+    Manager(Subject *pSubject) : m_pSubject(pSubject)
+    {
+        this->m_pSubject->Attach(this);
+    }
+    ~Manager()
+    {
+        this->m_pSubject->Detach(this);
+    }
+    void Update(int) override;
 private:
     Subject *m_pSubject;
     int m_state;

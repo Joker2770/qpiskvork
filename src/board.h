@@ -68,9 +68,9 @@ public:
     bool takeBackStone();
     void clearBoard();
 
-    void Attach(Observer *pObserver);
-    void Detach(Observer *pObserver);
-    void Notify();
+    void Attach(Observer *pObserver) override;
+    void Detach(Observer *pObserver) override;
+    void Notify() override;
     void SetState(int state)
     {
         m_iState = state;
@@ -89,7 +89,7 @@ private:
     int i_width;
     int i_height;
     unsigned int iMaxRecordSize;
-    std::list<Observer *> m_ObserverList;
+    std::vector<Observer *> m_vObserver;
     int m_iState;
 };
 
