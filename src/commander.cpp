@@ -25,5 +25,28 @@
 */
 
 #include "commander.h"
+#include "commands.h"
+
+#include <QString>
 #include <iostream>
 using namespace std;
+
+Commander::Commander()
+{
+
+}
+
+Commander::~Commander()
+{
+
+}
+
+const string Commander::move_2_send(int x, int y)
+{
+    string turn_move = TURN;
+    turn_move.append(to_string(x));
+    turn_move.append(",");
+    turn_move.append(to_string(y));
+
+    return turn_move;
+}

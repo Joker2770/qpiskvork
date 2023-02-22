@@ -27,7 +27,6 @@
 #ifndef __COMMANDER_H__
 #define __COMMANDER_H__
 
-#include "commands.h"
 #include <iostream>
 using namespace std;
 
@@ -36,7 +35,7 @@ class Commander
 public:
     Commander();
     ~Commander();
-    string &move_2_send(int x, int y);
+    const string move_2_send(int x, int y);
 };
 
 #endif
