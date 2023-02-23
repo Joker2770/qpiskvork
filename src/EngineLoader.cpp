@@ -49,12 +49,16 @@ bool EngineLoader::setProgram(const QString &sProgram)
     return !this->mProgram.isEmpty();
 }
 
-void EngineLoader::run()
+void EngineLoader::startProgram()
 {
     if (!this->mProgram.isEmpty())
     {
         this->mProcess->setProgram(this->mProgram);
         this->mProcess->start();
     }
+}
+
+void EngineLoader::run()
+{
 }
 

@@ -37,9 +37,10 @@ class EngineLoader : QThread
 public:
     EngineLoader();
     virtual ~EngineLoader();
-    void run();
+    void run() override;
 
     bool setProgram(const QString &sProgram);
+    void startProgram();
 
 private:
     QString mProgram;

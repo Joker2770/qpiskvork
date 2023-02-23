@@ -21,6 +21,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include "mainwindow.h"
+#include "EngineLoader.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
