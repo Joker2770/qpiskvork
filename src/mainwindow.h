@@ -56,6 +56,7 @@ public:
     QMenu *pMenuAbout;
     QAction *pActionBoardSize;
     QAction *pActionStart;
+    QAction *pActionPause;
     QAction *pActionEnd;
     QAction *pActionClear;
     QAction *pActionTakeBack;
@@ -67,6 +68,8 @@ public:
     QActionGroup *pRuleActionGroup;
 
 public slots:
+    void OnActionStart();
+    void OnActionPause();
     void OnActionClearBoard();
     void OnActionTakeBack();
     void OnActionBoardSize();
@@ -92,6 +95,7 @@ private:
 private:
     Board *mBoard;
     bool mIsBlackTurn;
+    bool m_bPause;
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;

@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuAbout = new QMenu("About", this);
     this->pActionBoardSize = new QAction("Board Size", this);
     this->pActionStart = new QAction("Start", this);
+    this->pActionPause = new QAction("Pause", this);
     this->pActionEnd = new QAction("End", this);
     this->pActionClear = new QAction("Clear", this);
     this->pActionTakeBack = new QAction("Take Back", this);
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
+    this->pMenuGame->addAction(this->pActionPause);
     this->pMenuGame->addAction(this->pActionEnd);
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
@@ -78,7 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
 
-    mIsBlackTurn = true;
+    this->mIsBlackTurn = true;
+    this->m_bPause = true;
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
@@ -86,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_engine_1 = new EngineLoader();
     this->m_engine_2 = new EngineLoader();
 
+    connect(pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
+    connect(pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
@@ -119,6 +124,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionStart;
         this->pActionStart = nullptr;
+    }
+    if (nullptr != this->pActionPause)
+    {
+        delete this->pActionPause;
+        this->pActionPause = nullptr;
     }
     if (nullptr != this->pActionEnd)
     {
@@ -254,82 +264,101 @@ void MainWindow::DrawItems()
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
 {
-    //painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
+    if (!this->m_bPause)
+    {
+        //painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
 
-    QPoint ptCenter((pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT);
-    painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
+        QPoint ptCenter((pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT);
+        painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
+    }
 }
 
 void MainWindow::DrawItemWithMouse()
 {
-    QPainter painter(this);
-    painter.setPen(QPen(QColor(Qt::transparent)));
-
-    if (mIsBlackTurn)
+    if (!this->m_bPause)
     {
-        painter.setBrush(Qt::black);
-    }
-    else
-    {
-        painter.setBrush(Qt::white);
-    }
-    //QPoint pt;
-    //pt.setX( (QCursor::pos().x() ) / RECT_WIDTH);
-    //pt.setY( (QCursor::pos().y() ) / RECT_HEIGHT);
+        QPainter painter(this);
+        painter.setPen(QPen(QColor(Qt::transparent)));
 
-    //DrawChessAtPoint(painter,pt);
+        if (mIsBlackTurn)
+        {
+            painter.setBrush(Qt::black);
+        }
+        else
+        {
+            painter.setBrush(Qt::white);
+        }
+        //QPoint pt;
+        //pt.setX( (QCursor::pos().x() ) / RECT_WIDTH);
+        //pt.setY( (QCursor::pos().y() ) / RECT_HEIGHT);
 
-    painter.drawEllipse(mapFromGlobal(QCursor::pos()),RECT_WIDTH / 2,RECT_HEIGHT / 2);
+        //DrawChessAtPoint(painter,pt);
+
+        painter.drawEllipse(mapFromGlobal(QCursor::pos()),RECT_WIDTH / 2,RECT_HEIGHT / 2);
+    }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    QPoint pt;
-    pt.setX( (e->pos().x() ) / RECT_WIDTH);
-    pt.setY( (e->pos().y() ) / RECT_HEIGHT);
-
-    pair<int, int> p_idx(pt.x(), pt.y());
-
-    bool b_succ = false;
-    if (this->mBoard->getVRecord().size() < this->mBoard->getMaxRecordSize())
+    if (!this->m_bPause)
     {
-        if (mIsBlackTurn)
+        QPoint pt;
+        pt.setX( (e->pos().x() ) / RECT_WIDTH);
+        pt.setY( (e->pos().y() ) / RECT_HEIGHT);
+
+        pair<int, int> p_idx(pt.x(), pt.y());
+
+        bool b_succ = false;
+        if (this->mBoard->getVRecord().size() < this->mBoard->getMaxRecordSize())
         {
-            b_succ = this->mBoard->placeStone(p_idx, BLACK);
+            if (mIsBlackTurn)
+            {
+                b_succ = this->mBoard->placeStone(p_idx, BLACK);
+            }
+            else
+            {
+                b_succ = this->mBoard->placeStone(p_idx, WHITE);
+            }
+        }
+
+        //if connect five
+        bool isWin = false;
+        if (this->pActionFreeStyleGomoku->isChecked())
+        {
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        }
+        else if (this->pActionStandardGomoku->isChecked())
+        {
+            isWin = this->m_standardGomoku->checkWin(this->mBoard);
         }
         else
         {
-            b_succ = this->mBoard->placeStone(p_idx, WHITE);
+            /* code */
         }
-    }
 
-    //if connect five
-    bool isWin = false;
-    if (this->pActionFreeStyleGomoku->isChecked())
-    {
-        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-    }
-    else if (this->pActionStandardGomoku->isChecked())
-    {
-        isWin = this->m_standardGomoku->checkWin(this->mBoard);
-    }
-    else
-    {
-        /* code */
-    }
+        if (isWin)
+        {
+            if (this->mIsBlackTurn)
+                QMessageBox::information(this, "game over!", "Black win!");
+            else
+                QMessageBox::information(this, "game over!", "White win!");
+            this->mBoard->clearBoard();
+            return ;
+        }
 
-    if (isWin)
-    {
-        if (this->mIsBlackTurn)
-            QMessageBox::information(this, "game over!", "Black win!");
-        else
-            QMessageBox::information(this, "game over!", "White win!");
-        this->mBoard->clearBoard();
-        return ;
+        if (b_succ)
+            mIsBlackTurn = !mIsBlackTurn;
     }
+}
 
-    if (b_succ)
-        mIsBlackTurn = !mIsBlackTurn;
+void MainWindow::OnActionStart()
+{
+    this->m_bPause = false;
+}
+
+void MainWindow::OnActionPause()
+{
+    this->m_bPause = true;
 }
 
 void MainWindow::OnActionClearBoard()
