@@ -42,6 +42,9 @@ public:
     bool setProgram(const QString &sProgram);
     void startProgram();
 
+private slots:
+    void onReadData();
+
 private:
     QString mProgram;
     QProcess *mProcess;

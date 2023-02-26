@@ -25,13 +25,19 @@
 */
 
 #include "EngineLoader.h"
+
+#include <QDebug>
+
 #include <iostream>
 using namespace std;
 
 EngineLoader::EngineLoader()
 {
     this->mProcess = new QProcess();
+    this->mProcess->setReadChannel(QProcess::StandardOutput);
     this->mProgram.clear();
+
+    connect(this->mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadData()));
 }
 EngineLoader::~EngineLoader()
 {
@@ -56,4 +62,9 @@ void EngineLoader::startProgram()
         this->mProcess->setProgram(this->mProgram);
         this->mProcess->start();
     }
+}
+
+void EngineLoader::onReadData()
+{
+    qDebug() << this->mProcess->readAllStandardOutput();
 }
