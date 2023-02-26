@@ -28,16 +28,16 @@
 #define __ENGINELOADER_H__
 
 #include <QProcess>
-#include <QThread>
+#include <QObject>
 #include <iostream>
 using namespace std;
 
-class EngineLoader : QThread
+class EngineLoader : public QObject
 {
+    Q_OBJECT
 public:
     EngineLoader();
     virtual ~EngineLoader();
-    void run() override;
 
     bool setProgram(const QString &sProgram);
     void startProgram();

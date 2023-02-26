@@ -57,8 +57,3 @@ void EngineLoader::startProgram()
         this->mProcess->start();
     }
 }
-
-void EngineLoader::run()
-{
-}
-

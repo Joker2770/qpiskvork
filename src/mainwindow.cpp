@@ -18,8 +18,6 @@
 */
 
 #include <QMessageBox>
-#include <QDir>
-#include <QFileDialog>
 #include "mainwindow.h"
 #include "EngineLoader.h"
 
@@ -96,11 +94,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
     connect(pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
-
-    connect(this->m_player_setting->btn_box, SIGNAL(accepted()), this, SLOT(OnDialogPlayerSettingAccept()));
-    connect(this->m_player_setting->btn_box, SIGNAL(rejected()), this, SLOT(OnDialogPlayerSettingReject()));
-    connect(this->m_player_setting->btn_p1, SIGNAL(clicked()), this, SLOT(On_p1_btnOpen_clicked()));
-    connect(this->m_player_setting->btn_p2, SIGNAL(clicked()), this, SLOT(On_p2_btnOpen_clicked()));
 }
 
 MainWindow::~MainWindow()
@@ -396,38 +389,6 @@ void MainWindow::OnActionBoardSize()
 void MainWindow::OnActionPlayerSetting()
 {
     this->m_player_setting->exec();
-}
-
-void MainWindow::OnDialogPlayerSettingAccept()
-{
-    printf("accept\n");
-    QMessageBox::information(this, "accept!", "Accept!");
-}
-
-void MainWindow::OnDialogPlayerSettingReject()
-{
-    printf("reject\n");
-    QMessageBox::information(this, "accept!", "Reject!");
-}
-
-void MainWindow::On_p1_btnOpen_clicked()
-{
-    QString curPath=QDir::currentPath();
-    QString dlgTitle="Choose a file";
-    QString filter="executable file(*.exe)";
-    QString aFileName=QFileDialog::getOpenFileName(this,dlgTitle,curPath,filter);
-    if (!aFileName.isEmpty())
-        this->m_player_setting->le_p1->setText(aFileName);
-}
-
-void MainWindow::On_p2_btnOpen_clicked()
-{
-    QString curPath=QDir::currentPath();
-    QString dlgTitle="Choose a file";
-    QString filter="executable file(*.exe)";
-    QString aFileName=QFileDialog::getOpenFileName(this,dlgTitle,curPath,filter);
-    if (!aFileName.isEmpty())
-        this->m_player_setting->le_p2->setText(aFileName);
 }
 
 void MainWindow::OnActionVer()

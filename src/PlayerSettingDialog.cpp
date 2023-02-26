@@ -26,6 +26,10 @@
 
 #include "PlayerSettingDialog.h"
 
+#include <QMessageBox>
+#include <QDir>
+#include <QFileDialog>
+
 #include <iostream>
 using namespace std;
 
@@ -93,6 +97,10 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
 
     connect(btn_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(btn_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(this->btn_box, SIGNAL(accepted()), this, SLOT(OnDialogPlayerSettingAccept()));
+    connect(this->btn_box, SIGNAL(rejected()), this, SLOT(OnDialogPlayerSettingReject()));
+    connect(this->btn_p1, SIGNAL(clicked()), this, SLOT(On_p1_btnOpen_clicked()));
+    connect(this->btn_p2, SIGNAL(clicked()), this, SLOT(On_p2_btnOpen_clicked()));
 }
 
 PlayerSettingDialog::~PlayerSettingDialog()
@@ -187,6 +195,38 @@ PlayerSettingDialog::~PlayerSettingDialog()
         delete this->gb_p2;
         this->gb_p2 = nullptr;
     }
+}
+
+void PlayerSettingDialog::On_p1_btnOpen_clicked()
+{
+    QString curPath=QDir::currentPath();
+    QString dlgTitle="Choose a file";
+    //QString filter="executable file(*.exe)";
+    QString aFileName=QFileDialog::getOpenFileName(this, dlgTitle, curPath, nullptr);
+    if (!aFileName.isEmpty())
+        this->le_p1->setText(aFileName);
+}
+
+void PlayerSettingDialog::On_p2_btnOpen_clicked()
+{
+    QString curPath=QDir::currentPath();
+    QString dlgTitle="Choose a file";
+    //QString filter="executable file(*.exe)";
+    QString aFileName=QFileDialog::getOpenFileName(this, dlgTitle, curPath, nullptr);
+    if (!aFileName.isEmpty())
+        this->le_p2->setText(aFileName);
+}
+
+void PlayerSettingDialog::OnDialogPlayerSettingAccept()
+{
+    printf("accept\n");
+    QMessageBox::information(this, "accept!", "Accept!");
+}
+
+void PlayerSettingDialog::OnDialogPlayerSettingReject()
+{
+    printf("reject\n");
+    QMessageBox::information(this, "accept!", "Reject!");
 }
 
 

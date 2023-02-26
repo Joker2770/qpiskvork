@@ -35,26 +35,34 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
+#include <QObject>
 
 #include <iostream>
 using namespace std;
 
 class PlayerSettingDialog : public QDialog
 {
+    Q_OBJECT
 public:
     PlayerSettingDialog(QWidget* parent=nullptr);
     ~PlayerSettingDialog();
+
+private slots:
+    void OnDialogPlayerSettingAccept();
+    void OnDialogPlayerSettingReject();
+    void On_p1_btnOpen_clicked();
+    void On_p2_btnOpen_clicked();
+
+private:
+    QGridLayout *gl, *gl_p1, *gl_p2;
+    QGroupBox *gb_p1, *gb_p2;
+    QHBoxLayout *p1_hbl_1, *p1_hbl_2, *p2_hbl_1, *p2_hbl_2;
 
     QLineEdit *le_p1, *le_p2;
     QPushButton *btn_p1, *btn_p2;
 
     QDialogButtonBox *btn_box;
     QRadioButton *p1_rb_1, *p1_rb_2, *p2_rb_1, *p2_rb_2;
-
-private:
-    QGridLayout *gl, *gl_p1, *gl_p2;
-    QGroupBox *gb_p1, *gb_p2;
-    QHBoxLayout *p1_hbl_1, *p1_hbl_2, *p2_hbl_1, *p2_hbl_2;
 };
 
 #endif
