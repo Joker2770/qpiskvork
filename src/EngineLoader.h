@@ -41,6 +41,7 @@ public:
 
     bool setProgram(const QString &sProgram);
     void startProgram();
+    void sendCommand(const char* sCmd);
 
 private slots:
     void onReadData();
