@@ -35,7 +35,12 @@ class Commander
 public:
     Commander();
     ~Commander();
+
+    const string begin_2_send(void);
+    const string start_2_send(int i_size);
     const string move_2_send(int x, int y);
+    const string end_2_send(void);
+    const string about_2_send(void);
 };
 
 #endif

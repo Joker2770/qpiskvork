@@ -27,7 +27,7 @@
 #include "commander.h"
 #include "commands.h"
 
-#include <QString>
+#include <string>
 #include <iostream>
 using namespace std;
 
@@ -41,12 +41,45 @@ Commander::~Commander()
 
 }
 
+const string Commander::begin_2_send()
+{
+    string sBegin = BEGIN;
+    sBegin.append("\r\n");
+
+    return sBegin;
+}
+
+const string Commander::start_2_send(int i_size)
+{
+    string sStart = START;
+    sStart.append("\r\n");
+
+    return sStart;
+}
+
 const string Commander::move_2_send(int x, int y)
 {
     string turn_move = TURN;
     turn_move.append(to_string(x));
     turn_move.append(",");
     turn_move.append(to_string(y));
+    turn_move.append("\r\n");
 
     return turn_move;
+}
+
+const string Commander::end_2_send()
+{
+    string sEnd = END;
+    sEnd.append("\r\n");
+
+    return sEnd;
+}
+
+const string Commander::about_2_send()
+{
+    string sAbout = ABOUT;
+    sAbout.append("\r\n");
+
+    return sAbout;
 }

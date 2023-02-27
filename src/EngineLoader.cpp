@@ -33,6 +33,7 @@ using namespace std;
 
 EngineLoader::EngineLoader()
 {
+    this->mCmder = new Commander();
     this->mProcess = new QProcess();
     this->mProcess->setReadChannel(QProcess::StandardOutput);
     this->mProgram.clear();
@@ -46,6 +47,11 @@ EngineLoader::~EngineLoader()
     {
         delete this->mProcess;
         this->mProcess = nullptr;
+    }
+    if (nullptr != this->mCmder)
+    {
+        delete this->mCmder;
+        this->mCmder = nullptr;
     }
 }
 
