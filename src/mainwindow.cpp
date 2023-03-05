@@ -214,7 +214,6 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     DrawChessboard();
     DrawItems();
-    //DrawItemWithMouse();
 
     update();
 }
@@ -265,31 +264,6 @@ void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
         painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
     }
 }
-
-//void MainWindow::DrawItemWithMouse()
-//{
-//    if (!this->m_bPause)
-//    {
-//        QPainter painter(this);
-//        painter.setPen(QPen(QColor(Qt::transparent)));
-
-//        if (mIsBlackTurn)
-//        {
-//            painter.setBrush(Qt::black);
-//        }
-//        else
-//        {
-//            painter.setBrush(Qt::white);
-//        }
-//        //QPoint pt;
-//        //pt.setX( (QCursor::pos().x() ) / RECT_WIDTH);
-//        //pt.setY( (QCursor::pos().y() ) / RECT_HEIGHT);
-
-//        //DrawChessAtPoint(painter,pt);
-
-//        painter.drawEllipse(mapFromGlobal(QCursor::pos()),RECT_WIDTH / 2,RECT_HEIGHT / 2);
-//    }
-//}
 
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {

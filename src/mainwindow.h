@@ -84,7 +84,6 @@ private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;
     void DrawChessboard();
     void DrawItems();
-    //void DrawItemWithMouse();
 
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 

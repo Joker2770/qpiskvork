@@ -32,7 +32,7 @@ int StandardGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
 {
     int i_count = 0;
     pair<int, int> p_last_move = board->getVRecord().back();
-    pair<int, int> p_idx = board->coord2idx(board->getVRecord().back().first);
+    pair<int, int> p_idx = board->coord2idx(p_last_move.first);
     pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
 
     while (!board->isPosOutOfBoard(p_drt_idx) && !board->isPosEmpty(p_drt_idx))
@@ -44,6 +44,8 @@ int StandardGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
         }
         p_drt_idx.first += p_drt.first;
         p_drt_idx.second += p_drt.second;
+        if (abs(p_idx.first - p_drt_idx.first) > 4 || abs(p_idx.second - p_drt_idx.second) > 4)
+            break;
     }
 
     return i_count;
