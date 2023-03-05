@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     // pair<int, int> pBSize(15, 15);
     // this->mBoard->setBSize(pBSize);
 
-    resize(this->mBoard->getBSize().first * RECT_WIDTH, this->mBoard->getBSize().second * RECT_HEIGHT + this->pMenuBar->height());
+    resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
 
     this->mIsBlackTurn = true;
     this->m_bPause = true;
@@ -228,7 +228,7 @@ void MainWindow::DrawChessboard()
 
     for(int i = 0; i < this->mBoard->getBSize().first - 1; ++i)
     {
-        for (int j = 0; j < this->mBoard->getBSize().second - 1; ++j)
+        for (int j = 1; j < this->mBoard->getBSize().second; ++j)
             painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
     }
 }
@@ -250,7 +250,7 @@ void MainWindow::DrawItems()
             painter.setBrush(Qt::white);
         }
         p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first);
-        p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second);
+        p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 1);
         DrawChessAtPoint(painter, p);
     }
 }
@@ -299,7 +299,10 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         pt.setX( (e->pos().x() ) / RECT_WIDTH);
         pt.setY( (e->pos().y() ) / RECT_HEIGHT);
 
-        pair<int, int> p_idx(pt.x(), pt.y());
+        if (pt.y() < 1)
+            return;
+
+        pair<int, int> p_idx(pt.x(), pt.y() - 1);
 
         bool b_succ = false;
         if (this->mBoard->getVRecord().size() < this->mBoard->getMaxRecordSize())
