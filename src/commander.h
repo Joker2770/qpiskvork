@@ -27,6 +27,7 @@
 #ifndef __COMMANDER_H__
 #define __COMMANDER_H__
 
+#include "commands.h"
 #include <iostream>
 using namespace std;
 
@@ -36,6 +37,7 @@ public:
     Commander();
     ~Commander();
 
+    const string info_2_send(INFO_KEY info_key, const char* argv);
     const string begin_2_send(void);
     const string start_2_send(int i_size);
     const string move_2_send(int x, int y);

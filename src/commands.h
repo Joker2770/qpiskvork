@@ -30,6 +30,18 @@
 #include <iostream>
 using namespace std;
 
+typedef enum info_key
+{
+    TIMEOUT_TURN,
+    TIMEOUT_MATCH,
+    MAX_MEMORY,
+    TIME_LEFT,
+    GAME_TYPE,
+    RULE,
+    EVALUATE,
+    FOLDER
+} INFO_KEY;
+
 //Mandatory commands
 const char START[]  = "START";
 const char TURN[]  = "TURN";
@@ -51,5 +63,15 @@ const char ERROR[] = "ERROR";
 const char DEBUG[] = "DEBUG";
 const char MESSAGE[] = "MESSAGE";
 const char SUGGEST[] = "SUGGEST";
+
+// Info key
+const char timeout_turn[] = "timeout_turn";
+const char timeout_match[] = "timeout_match";
+const char max_memory[] = "max_memory";
+const char time_left[] = "time_left";
+const char game_type[] = "game_type";
+const char rule[] = "rule";
+const char evaluate[] = "evaluate";
+const char folder[] = "folder";
 
 #endif

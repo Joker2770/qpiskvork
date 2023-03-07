@@ -41,6 +41,48 @@ Commander::~Commander()
 
 }
 
+const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
+{
+    string sInfo;
+    sInfo.clear();
+    sInfo.append(INFO);
+    sInfo.append(" ");
+    switch (info_key) {
+    case TIMEOUT_TURN:
+        sInfo.append(timeout_turn);
+        break;
+    case TIMEOUT_MATCH:
+        sInfo.append(timeout_match);
+        break;
+    case MAX_MEMORY:
+        sInfo.append(max_memory);
+        break;
+    case TIME_LEFT:
+        sInfo.append(time_left);
+        break;
+    case GAME_TYPE:
+        sInfo.append(game_type);
+        break;
+    case RULE:
+        sInfo.append(rule);
+        break;
+    case EVALUATE:
+        sInfo.append(evaluate);
+        break;
+    case FOLDER:
+        sInfo.append(folder);
+        break;
+    default:
+        sInfo.append(max_memory);
+        break;
+    }
+    sInfo.append(" ");
+    sInfo.append(argv);
+    sInfo.append("\r\n");
+
+    return sInfo;
+}
+
 const string Commander::begin_2_send()
 {
     string sBegin = BEGIN;
