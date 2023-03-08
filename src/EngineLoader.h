@@ -45,6 +45,8 @@ public:
     void startProgram();
     void sendCommand(const char* sCmd);
 
+    string m_pOutStr;
+
 private slots:
     void onReadData();
 

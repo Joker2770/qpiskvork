@@ -79,5 +79,7 @@ void EngineLoader::sendCommand(const char* s_cmd)
 
 void EngineLoader::onReadData()
 {
-    qDebug() << this->mProcess->readAllStandardOutput();
+    QByteArray baOut = this->mProcess->readAllStandardOutput();
+    qDebug() << baOut;
+    this->m_pOutStr = baOut.toStdString();
 }
