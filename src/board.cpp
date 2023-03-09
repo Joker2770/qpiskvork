@@ -31,6 +31,7 @@ using namespace std;
 Board::Board() : i_width(15), i_height(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
+    this->m_iState = BLACKNEXT;
 }
 
 Board::~Board()
