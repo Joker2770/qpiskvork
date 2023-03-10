@@ -229,4 +229,22 @@ void PlayerSettingDialog::OnDialogPlayerSettingReject()
     QMessageBox::information(this, "accept!", "Reject!");
 }
 
+bool PlayerSettingDialog::isP1Human()
+{
+    return this->p1_rb_1->isChecked();
+}
 
+bool PlayerSettingDialog::isP2Human()
+{
+    return this->p2_rb_1->isChecked();
+}
+
+const QString PlayerSettingDialog::getP1Path()
+{
+    return this->le_p1->text();
+}
+
+const QString PlayerSettingDialog::getP2Path()
+{
+    return this->le_p2->text();
+}

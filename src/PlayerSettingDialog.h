@@ -47,6 +47,12 @@ public:
     PlayerSettingDialog(QWidget* parent=nullptr);
     ~PlayerSettingDialog();
 
+public:
+    bool isP1Human();
+    bool isP2Human();
+    const QString getP1Path();
+    const QString getP2Path();
+
 private slots:
     void OnDialogPlayerSettingAccept();
     void OnDialogPlayerSettingReject();
