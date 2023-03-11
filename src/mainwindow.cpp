@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionBoardSize = new QAction("Board Size", this);
     this->pActionStart = new QAction("Start", this);
     this->pActionPause = new QAction("Pause", this);
+    this->pActionContinue = new QAction("Continue", this);
     this->pActionEnd = new QAction("End", this);
     this->pActionClear = new QAction("Clear", this);
     this->pActionTakeBack = new QAction("Take Back", this);
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
+    this->pMenuGame->addAction(this->pActionContinue);
     this->pMenuGame->addAction(this->pActionEnd);
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
@@ -89,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
+    connect(pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
     connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
@@ -122,6 +125,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionPause;
         this->pActionPause = nullptr;
+    }
+    if (nullptr != this->pActionContinue)
+    {
+        delete this->pActionContinue;
+        this->pActionContinue = nullptr;
     }
     if (nullptr != this->pActionEnd)
     {
@@ -329,6 +337,10 @@ void MainWindow::OnActionStart()
 void MainWindow::OnActionPause()
 {
     this->m_bPause = true;
+}
+
+void MainWindow::OnActionContinue()
+{
 }
 
 void MainWindow::OnActionClearBoard()

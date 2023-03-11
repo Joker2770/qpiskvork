@@ -57,6 +57,7 @@ public:
     QAction *pActionBoardSize;
     QAction *pActionStart;
     QAction *pActionPause;
+    QAction *pActionContinue;
     QAction *pActionEnd;
     QAction *pActionClear;
     QAction *pActionTakeBack;
@@ -70,6 +71,7 @@ public:
 public slots:
     void OnActionStart();
     void OnActionPause();
+    void OnActionContinue();
     void OnActionClearBoard();
     void OnActionTakeBack();
     void OnActionBoardSize();
