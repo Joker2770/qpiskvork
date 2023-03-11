@@ -90,10 +90,18 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->gl->addWidget(this->gb_p2, 1, 0);
     this->gl->addWidget(this->btn_box, 2, 0);
 
+    this->le_p1->setMaxLength(256);
+    this->le_p2->setMaxLength(256);
+
     //this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowTitle("Player Setting");
     this->setModal(true);
     this->resize(450, 300);
+
+    this->m_p1_path = this->le_p1->text();
+    this->m_p2_path = this->le_p2->text();
+    this->m_is_p1_human = true;
+    this->m_is_p2_human = true;
 
     connect(btn_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(btn_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -219,32 +227,51 @@ void PlayerSettingDialog::On_p2_btnOpen_clicked()
 
 void PlayerSettingDialog::OnDialogPlayerSettingAccept()
 {
-    printf("accept\n");
-    QMessageBox::information(this, "accept!", "Accept!");
+    this->m_p1_path = this->le_p1->text();
+    this->m_p2_path = this->le_p2->text();
+    if (this->p1_rb_1->isChecked())
+        this->m_is_p1_human = true;
+    else
+        this->m_is_p1_human = false;
+
+    if (this->p2_rb_1->isChecked())
+        this->m_is_p2_human = true;
+    else
+        this->m_is_p2_human = false;
 }
 
 void PlayerSettingDialog::OnDialogPlayerSettingReject()
 {
-    printf("reject\n");
-    QMessageBox::information(this, "accept!", "Reject!");
+    this->le_p1->setText(this->m_p1_path);
+    this->le_p2->setText(this->m_p2_path);
+
+    if (this->m_is_p1_human)
+        this->p1_rb_1->setChecked(true);
+    else
+        this->p1_rb_2->setChecked(true);
+
+    if (this->m_is_p2_human)
+        this->p2_rb_1->setChecked(true);
+    else
+        this->p2_rb_2->setChecked(true);
 }
 
 bool PlayerSettingDialog::isP1Human()
 {
-    return this->p1_rb_1->isChecked();
+    return this->m_is_p1_human;
 }
 
 bool PlayerSettingDialog::isP2Human()
 {
-    return this->p2_rb_1->isChecked();
+    return this->m_is_p2_human;
 }
 
 const QString PlayerSettingDialog::getP1Path()
 {
-    return this->le_p1->text();
+    return this->m_p1_path;
 }
 
 const QString PlayerSettingDialog::getP2Path()
 {
-    return this->le_p2->text();
+    return this->m_p2_path;
 }

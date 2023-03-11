@@ -69,6 +69,11 @@ private:
 
     QDialogButtonBox *btn_box;
     QRadioButton *p1_rb_1, *p1_rb_2, *p2_rb_1, *p2_rb_2;
+
+    QString m_p1_path;
+    QString m_p2_path;
+    bool m_is_p1_human;
+    bool m_is_p2_human;
 };
 
 #endif
