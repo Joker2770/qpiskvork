@@ -41,6 +41,13 @@
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
 
+typedef enum game_state
+{
+    IDLE,
+    PLAYING,
+    PAUSing
+} GAME_STATE;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -90,6 +97,7 @@ private:
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
 private:
+    GAME_STATE mState;
     Board *mBoard;
     bool mIsBlackTurn;
     bool m_bPause;
