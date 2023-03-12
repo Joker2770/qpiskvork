@@ -25,7 +25,6 @@
 */
 
 #include "player.h"
-#include "board.h"
 
 #include<iostream>
 using namespace std;
@@ -35,11 +34,11 @@ Player::Player()
     this->m_currColor = BLACK;
     this->m_isComputer = false;
     this->m_isMyTurn = true;
+    this->m_sPath = nullptr;
 }
 
 Player::~Player()
 {
-
 }
 
 

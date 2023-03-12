@@ -29,6 +29,7 @@
 
 #include "observer.h"
 #include "subject.h"
+#include "player.h"
 
 #include <QString>
 
@@ -47,8 +48,8 @@ public:
         this->m_pSubject->Detach(this);
     }
     void Update(int) override;
-    bool AttachEngine(const QString &sPath);
-    bool DetachEngine();
+    bool AttachEngines(const Player *p1, const Player *p2);
+    bool DetachEngines();
 private:
     Subject *m_pSubject;
     int m_state;

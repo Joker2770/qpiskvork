@@ -27,6 +27,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "board.h"
+
+#include <QString>
+
 #include<iostream>
 using namespace std;
 
@@ -38,7 +42,8 @@ public:
 
     bool m_isComputer;
     bool m_isMyTurn;
-    int m_currColor;
+    STONECOLOR m_currColor;
+    QString m_sPath;
 
 private:
 

@@ -33,13 +33,13 @@ void Manager::Update(int i_state)
     this->m_state = i_state;
 }
 
-bool Manager::AttachEngine(const QString &sPath)
+bool Manager::AttachEngines(const Player *p1, const Player *p2)
 {
     bool isAttach = false;
     return isAttach;
 }
 
-bool Manager::DetachEngine()
+bool Manager::DetachEngines()
 {
     bool isDetach = false;
     return isDetach;
