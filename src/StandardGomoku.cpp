@@ -31,6 +31,8 @@ using namespace std;
 int StandardGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
 {
     int i_count = 0;
+    if (board->GetState() == BOARDEMPTY)    return 0;
+
     pair<int, int> p_last_move = board->getVRecord().back();
     pair<int, int> p_idx = board->coord2idx(p_last_move.first);
     pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
