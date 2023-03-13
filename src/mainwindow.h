@@ -99,7 +99,6 @@ private:
 private:
     GAME_STATE mState;
     Board *mBoard;
-    bool mIsBlackTurn;
     bool m_bPause;
 
     FreeStyleGomoku *m_freeStyleGomoku;

@@ -80,7 +80,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
 
-    this->mIsBlackTurn = true;
     this->m_bPause = true;
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
@@ -286,16 +285,15 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         pair<int, int> p_idx(pt.x(), pt.y() - 1);
 
-        bool b_succ = false;
-        if (this->mBoard->getVRecord().size() < this->mBoard->getMaxRecordSize())
+        if (this->mBoard->GetState() != BOARDFULL)
         {
-            if (mIsBlackTurn)
+            if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
-                b_succ = this->mBoard->placeStone(p_idx, BLACK);
+                this->mBoard->placeStone(p_idx, BLACK);
             }
-            else
+            else if (this->mBoard->GetState() == WHITENEXT)
             {
-                b_succ = this->mBoard->placeStone(p_idx, WHITE);
+                this->mBoard->placeStone(p_idx, WHITE);
             }
         }
 
@@ -316,16 +314,13 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         if (isWin)
         {
-            if (this->mIsBlackTurn)
+            if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
                 QMessageBox::information(this, "game over!", "White win!");
             this->mBoard->clearBoard();
             return ;
         }
-
-        if (b_succ)
-            mIsBlackTurn = !mIsBlackTurn;
     }
 }
 
@@ -353,8 +348,6 @@ void MainWindow::OnActionTakeBack()
     bool b_succ = this->mBoard->takeBackStone();
     if (!b_succ)
         QMessageBox::information(this, "Error!", "Failied to take back!");
-    else
-        this->mIsBlackTurn = !this->mIsBlackTurn;
 }
 
 void MainWindow::OnActionBoardSize()

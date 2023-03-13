@@ -45,9 +45,10 @@ typedef enum stone_color
 
 typedef enum board_status
 {
-    BLACKNEXT = 1,
-    WHITENEXT = 2,
-    BOARDFULL = 3
+    BOARDEMPTY,
+    BLACKNEXT,
+    WHITENEXT,
+    BOARDFULL
 } BOARDSTATUS;
 
 class Board final : public Subject
@@ -73,12 +74,12 @@ public:
     void Notify() override;
     void SetState(int state)
     {
-        m_iState = state;
+        this->m_iState = state;
     }
 
     int GetState()
     {
-        return m_iState;
+        return this->m_iState;
     }
 
 private:

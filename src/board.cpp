@@ -31,7 +31,7 @@ using namespace std;
 Board::Board() : i_width(15), i_height(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
-    this->m_iState = BLACKNEXT;
+    this->m_iState = BOARDEMPTY;
 }
 
 Board::~Board()
@@ -110,6 +110,14 @@ bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
     {
         pair<int, int> p_coord(idx2Coord(idx), color);
         this->vRecord.push_back(p_coord);
+
+        if (this->vRecord.size() >= this->iMaxRecordSize)
+            this->m_iState = BOARDFULL;
+        else if (color == WHITE)
+            this->m_iState = BLACKNEXT;
+        else if (color == BLACK)
+            this->m_iState = WHITENEXT;
+
         return true;
     }
     else
@@ -123,7 +131,11 @@ bool Board::takeBackStone()
         this->vRecord.pop_back();
     int i_size_2 = this->vRecord.size();
     if (i_size_1 > i_size_2)
+    {
+        if (this->vRecord.back().second == WHITE) this->m_iState = BLACKNEXT;
+        else if (this->vRecord.back().second == BLACK) this->m_iState = WHITENEXT;
         return true;
+    }
     else
         return false;
 }
@@ -135,6 +147,7 @@ void Board::clearBoard()
     {
         iter = this->vRecord.erase(iter);
     }
+    this->m_iState = BOARDEMPTY;
 }
 
 void Board::Attach(Observer *pObserver)
