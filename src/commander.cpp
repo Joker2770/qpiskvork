@@ -125,3 +125,9 @@ const string Commander::about_2_send()
 
     return sAbout;
 }
+
+const string Commander::response_parse(const string &str_res)
+{
+    string s_get = str_res;
+    return s_get;
+}
