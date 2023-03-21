@@ -27,8 +27,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "board.h"
-
 #include <QString>
 
 #include<iostream>
@@ -42,7 +40,6 @@ public:
 
     bool m_isComputer;
     bool m_isMyTurn;
-    STONECOLOR m_currColor;
     QString m_sPath;
 
 private:

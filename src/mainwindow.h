@@ -33,6 +33,7 @@
 #include <QSharedPointer>
 
 #include "board.h"
+#include "player.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
 #include "EngineLoader.h"
@@ -106,5 +107,7 @@ private:
 
     EngineLoader *m_engine_1;
     EngineLoader *m_engine_2;
+    Player *m_p1;
+    Player *m_p2;
 };
 #endif // MAINWINDOW_H

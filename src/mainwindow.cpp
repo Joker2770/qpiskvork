@@ -18,6 +18,7 @@
 */
 
 #include <QMessageBox>
+#include <QDebug>
 #include "mainwindow.h"
 #include "EngineLoader.h"
 
@@ -87,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->m_engine_1 = new EngineLoader();
     this->m_engine_2 = new EngineLoader();
+    this->m_p1 = new Player();
+    this->m_p2 = new Player();
 
     connect(pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
@@ -100,6 +103,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_p1)
+    {
+        delete this->m_p1;
+        this->m_p1 = nullptr;
+    }
+    if (nullptr != this->m_p2)
+    {
+        delete this->m_p2;
+        this->m_p2 = nullptr;
+    }
     if (nullptr != this->m_freeStyleGomoku)
     {
         delete  this->m_freeStyleGomoku;
@@ -327,6 +340,14 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::OnActionStart()
 {
     this->m_bPause = false;
+    this->m_p1->m_sPath = this->m_player_setting->getP1Path();
+    this->m_p2->m_sPath = this->m_player_setting->getP2Path();
+    this->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+    this->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+    qDebug() << this->m_p1->m_sPath;
+    qDebug() << this->m_p2->m_sPath;
+    this->m_p1->m_isMyTurn = true;
+    this->m_p2->m_isMyTurn = false;
 }
 
 void MainWindow::OnActionPause()
