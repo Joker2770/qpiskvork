@@ -36,7 +36,7 @@
 #include "player.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
-#include "EngineLoader.h"
+#include "manager.h"
 #include "PlayerSettingDialog.h"
 
 #define RECT_WIDTH		50
@@ -80,6 +80,7 @@ public slots:
     void OnActionStart();
     void OnActionPause();
     void OnActionContinue();
+    void OnActionEnd();
     void OnActionClearBoard();
     void OnActionTakeBack();
     void OnActionBoardSize();
@@ -105,9 +106,9 @@ private:
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
 
-    EngineLoader *m_engine_1;
-    EngineLoader *m_engine_2;
     Player *m_p1;
     Player *m_p2;
+
+    Manager *m_manager;
 };
 #endif // MAINWINDOW_H

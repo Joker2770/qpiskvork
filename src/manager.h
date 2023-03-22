@@ -30,13 +30,15 @@
 #include "observer.h"
 #include "subject.h"
 #include "player.h"
+#include "EngineLoader.h"
 
 #include <QString>
+#include <QProcess>
 
 #include<iostream>
 using namespace std;
 
-class Manager : public Observer
+class Manager final : public Observer
 {
 public:
     Manager(Subject *pSubject) : m_pSubject(pSubject)
@@ -46,6 +48,16 @@ public:
     ~Manager()
     {
         this->m_pSubject->Detach(this);
+        if (nullptr != this->m_engine_1)
+        {
+            delete this->m_engine_1;
+            this->m_engine_1 = nullptr;
+        }
+        if (nullptr != this->m_engine_2)
+        {
+            delete this->m_engine_2;
+            this->m_engine_2 = nullptr;
+        }
     }
     void Update(int) override;
     bool AttachEngines(const Player *p1, const Player *p2);
@@ -53,6 +65,9 @@ public:
 private:
     Subject *m_pSubject;
     int m_state;
+
+    EngineLoader *m_engine_1;
+    EngineLoader *m_engine_2;
 };
 
 #endif

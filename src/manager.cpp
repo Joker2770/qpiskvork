@@ -35,13 +35,39 @@ void Manager::Update(int i_state)
 
 bool Manager::AttachEngines(const Player *p1, const Player *p2)
 {
+    if (p1->m_isComputer)
+    {
+        this->m_engine_1 = new EngineLoader();
+        this->m_engine_1->setProgram(p1->m_sPath);
+        this->m_engine_1->startProgram();
+    }
+    if (p2->m_isComputer)
+    {
+        this->m_engine_2 = new EngineLoader();
+        this->m_engine_2->setProgram(p2->m_sPath);
+        this->m_engine_2->startProgram();
+    }
+
     bool isAttach = false;
+
     return isAttach;
 }
 
 bool Manager::DetachEngines()
 {
+    if (nullptr != this->m_engine_1)
+    {
+        delete this->m_engine_1;
+        this->m_engine_1 = nullptr;
+    }
+    if (nullptr != this->m_engine_2)
+    {
+        delete this->m_engine_2;
+        this->m_engine_2 = nullptr;
+    }
+
     bool isDetach = false;
+
     return isDetach;
 }
 

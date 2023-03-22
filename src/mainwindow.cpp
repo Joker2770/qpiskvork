@@ -86,23 +86,29 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
 
-    this->m_engine_1 = new EngineLoader();
-    this->m_engine_2 = new EngineLoader();
     this->m_p1 = new Player();
     this->m_p2 = new Player();
 
-    connect(pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
-    connect(pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
-    connect(pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
-    connect(pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
-    connect(pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
-    connect(pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
-    connect(pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
-    connect(pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
+    this->m_manager = new Manager(this->mBoard);
+
+    connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
+    connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
+    connect(this->pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
+    connect(this->pActionEnd, SIGNAL(triggered()), this, SLOT(OnActionEnd()));
+    connect(this->pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
+    connect(this->pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
+    connect(this->pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
+    connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
+    connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
 }
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_manager)
+    {
+        delete this->m_manager;
+        this->m_manager = nullptr;
+    }
     if (nullptr != this->m_p1)
     {
         delete this->m_p1;
@@ -217,16 +223,6 @@ MainWindow::~MainWindow()
     {
         delete this->pRuleActionGroup;
         this->pRuleActionGroup = nullptr;
-    }
-    if (nullptr != this->m_engine_1)
-    {
-        delete this->m_engine_1;
-        this->m_engine_1 = nullptr;
-    }
-    if (nullptr != this->m_engine_2)
-    {
-        delete this->m_engine_2;
-        this->m_engine_2 = nullptr;
     }
 }
 
@@ -348,6 +344,8 @@ void MainWindow::OnActionStart()
     qDebug() << this->m_p2->m_sPath;
     this->m_p1->m_isMyTurn = true;
     this->m_p2->m_isMyTurn = false;
+
+    this->m_manager->AttachEngines(this->m_p1, this->m_p2);
 }
 
 void MainWindow::OnActionPause()
@@ -357,6 +355,11 @@ void MainWindow::OnActionPause()
 
 void MainWindow::OnActionContinue()
 {
+}
+
+void MainWindow::OnActionEnd()
+{
+    this->m_manager->DetachEngines();
 }
 
 void MainWindow::OnActionClearBoard()
