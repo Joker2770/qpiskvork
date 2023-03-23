@@ -41,24 +41,8 @@ using namespace std;
 class Manager final : public Observer
 {
 public:
-    Manager(Subject *pSubject) : m_pSubject(pSubject)
-    {
-        this->m_pSubject->Attach(this);
-    }
-    ~Manager()
-    {
-        this->m_pSubject->Detach(this);
-        if (nullptr != this->m_engine_1)
-        {
-            delete this->m_engine_1;
-            this->m_engine_1 = nullptr;
-        }
-        if (nullptr != this->m_engine_2)
-        {
-            delete this->m_engine_2;
-            this->m_engine_2 = nullptr;
-        }
-    }
+    Manager(Subject *pSubject);
+    virtual ~Manager();
     void Update(int) override;
     bool AttachEngines(const Player *p1, const Player *p2);
     bool DetachEngines();

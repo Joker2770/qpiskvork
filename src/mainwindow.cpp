@@ -345,7 +345,8 @@ void MainWindow::OnActionStart()
     this->m_p1->m_isMyTurn = true;
     this->m_p2->m_isMyTurn = false;
 
-    this->m_manager->AttachEngines(this->m_p1, this->m_p2);
+    bool bAttach = this->m_manager->AttachEngines(this->m_p1, this->m_p2);
+    qDebug() << "AttachFlag: " << bAttach;
 }
 
 void MainWindow::OnActionPause()
@@ -359,7 +360,11 @@ void MainWindow::OnActionContinue()
 
 void MainWindow::OnActionEnd()
 {
-    this->m_manager->DetachEngines();
+    if (nullptr != this->m_manager)
+    {
+        bool bDetach = this->m_manager->DetachEngines();
+        qDebug() << "DetachFlag: " << bDetach;
+    }
 }
 
 void MainWindow::OnActionClearBoard()

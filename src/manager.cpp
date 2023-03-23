@@ -28,33 +28,17 @@
 #include<iostream>
 using namespace std;
 
-void Manager::Update(int i_state)
+
+Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
 {
-    this->m_state = i_state;
+    this->m_pSubject->Attach(this);
+    this->m_engine_1 = nullptr;
+    this->m_engine_2 = nullptr;
 }
 
-bool Manager::AttachEngines(const Player *p1, const Player *p2)
+Manager::~Manager()
 {
-    if (p1->m_isComputer)
-    {
-        this->m_engine_1 = new EngineLoader();
-        this->m_engine_1->setProgram(p1->m_sPath);
-        this->m_engine_1->startProgram();
-    }
-    if (p2->m_isComputer)
-    {
-        this->m_engine_2 = new EngineLoader();
-        this->m_engine_2->setProgram(p2->m_sPath);
-        this->m_engine_2->startProgram();
-    }
-
-    bool isAttach = false;
-
-    return isAttach;
-}
-
-bool Manager::DetachEngines()
-{
+    this->m_pSubject->Detach(this);
     if (nullptr != this->m_engine_1)
     {
         delete this->m_engine_1;
@@ -65,9 +49,63 @@ bool Manager::DetachEngines()
         delete this->m_engine_2;
         this->m_engine_2 = nullptr;
     }
+}
 
-    bool isDetach = false;
+void Manager::Update(int i_state)
+{
+    this->m_state = i_state;
+}
 
-    return isDetach;
+bool Manager::AttachEngines(const Player *p1, const Player *p2)
+{
+    bool isAttach_1 = false;
+    bool isAttach_2 = false;
+
+    if (p1->m_isComputer)
+    {
+        this->m_engine_1 = new EngineLoader();
+        if (this->m_engine_1->setProgram(p1->m_sPath))
+        {
+            this->m_engine_1->startProgram();
+            isAttach_1 = true;
+        }
+    }
+    else
+        isAttach_1 = true;
+
+    if (p2->m_isComputer)
+    {
+        this->m_engine_2 = new EngineLoader();
+        if (this->m_engine_2->setProgram(p2->m_sPath))
+        {
+            this->m_engine_2->startProgram();
+            isAttach_2 = true;
+        }
+    }
+    else
+        isAttach_2 = true;
+
+    return (isAttach_1 && isAttach_2);
+}
+
+bool Manager::DetachEngines()
+{
+    bool isDetach_1 = false;
+    bool isDetach_2 = false;
+
+    if (nullptr != this->m_engine_1)
+    {
+        delete this->m_engine_1;
+        this->m_engine_1 = nullptr;
+        isDetach_1 = true;
+    }
+    if (nullptr != this->m_engine_2)
+    {
+        delete this->m_engine_2;
+        this->m_engine_2 = nullptr;
+        isDetach_2 = true;
+    }
+
+    return (isDetach_1 || isDetach_2);
 }
 
