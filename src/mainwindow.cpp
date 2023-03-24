@@ -347,15 +347,20 @@ void MainWindow::OnActionStart()
 
     bool bAttach = this->m_manager->AttachEngines(this->m_p1, this->m_p2);
     qDebug() << "AttachFlag: " << bAttach;
+
+    this->mState = GAME_STATE::PLAYING;
 }
 
 void MainWindow::OnActionPause()
 {
     this->m_bPause = true;
+    this->mState = GAME_STATE::PAUSING;
 }
 
 void MainWindow::OnActionContinue()
 {
+    this->m_bPause = false;
+    this->mState = GAME_STATE::PLAYING;
 }
 
 void MainWindow::OnActionEnd()
@@ -365,41 +370,55 @@ void MainWindow::OnActionEnd()
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }
+
+    this->mState = GAME_STATE::IDLE;
 }
 
 void MainWindow::OnActionClearBoard()
 {
-    this->mBoard->clearBoard();
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        this->mBoard->clearBoard();
+    }
 }
 
 void MainWindow::OnActionTakeBack()
 {
-    bool b_succ = this->mBoard->takeBackStone();
-    if (!b_succ)
-        QMessageBox::information(this, "Error!", "Failied to take back!");
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        bool b_succ = this->mBoard->takeBackStone();
+        if (!b_succ)
+            QMessageBox::information(this, "Error!", "Failied to take back!");
+    }
 }
 
 void MainWindow::OnActionBoardSize()
 {
-    bool getInfo = false;
-    QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo,
-                                             Qt::WindowFlags(), Qt::ImhNone);
-    if (getInfo)
+    if (this->mState == GAME_STATE::IDLE)
     {
-        bool ok = false;
-        int iTmp = down.toInt(&ok);
-        pair<int, int> pTmp(iTmp, iTmp);
-        if (ok)
+        bool getInfo = false;
+        QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo,
+                                                 Qt::WindowFlags(), Qt::ImhNone);
+        if (getInfo)
         {
-            if (this->mBoard->setBSize(pTmp))
-                resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+            bool ok = false;
+            int iTmp = down.toInt(&ok);
+            pair<int, int> pTmp(iTmp, iTmp);
+            if (ok)
+            {
+                if (this->mBoard->setBSize(pTmp))
+                    resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+            }
         }
     }
 }
 
 void MainWindow::OnActionPlayerSetting()
 {
-    this->m_player_setting->exec();
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        this->m_player_setting->exec();
+    }
 }
 
 void MainWindow::OnActionVer()
