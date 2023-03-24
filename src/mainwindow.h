@@ -33,7 +33,6 @@
 #include <QSharedPointer>
 
 #include "board.h"
-#include "player.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
 #include "manager.h"
@@ -105,9 +104,6 @@ private:
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
-
-    Player *m_p1;
-    Player *m_p2;
 
     Manager *m_manager;
 };

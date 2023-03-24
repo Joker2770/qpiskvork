@@ -86,9 +86,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
 
-    this->m_p1 = new Player();
-    this->m_p2 = new Player();
-
     this->m_manager = new Manager(this->mBoard);
 
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
@@ -108,16 +105,6 @@ MainWindow::~MainWindow()
     {
         delete this->m_manager;
         this->m_manager = nullptr;
-    }
-    if (nullptr != this->m_p1)
-    {
-        delete this->m_p1;
-        this->m_p1 = nullptr;
-    }
-    if (nullptr != this->m_p2)
-    {
-        delete this->m_p2;
-        this->m_p2 = nullptr;
     }
     if (nullptr != this->m_freeStyleGomoku)
     {
@@ -285,6 +272,9 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 {
     if (!this->m_bPause)
     {
+        if ((this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer))
+            return;
+
         QPoint pt;
         pt.setX( (e->pos().x() ) / RECT_WIDTH);
         pt.setY( (e->pos().y() ) / RECT_HEIGHT);
@@ -304,6 +294,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             {
                 this->mBoard->placeStone(p_idx, WHITE);
             }
+            this->mBoard->Notify();
         }
 
         //if connect five
@@ -335,18 +326,21 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
 void MainWindow::OnActionStart()
 {
+    this->mBoard->clearBoard();
     this->m_bPause = false;
-    this->m_p1->m_sPath = this->m_player_setting->getP1Path();
-    this->m_p2->m_sPath = this->m_player_setting->getP2Path();
-    this->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-    this->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-    qDebug() << this->m_p1->m_sPath;
-    qDebug() << this->m_p2->m_sPath;
-    this->m_p1->m_isMyTurn = true;
-    this->m_p2->m_isMyTurn = false;
+    this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+    this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+    this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+    this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+    qDebug() << this->m_manager->m_p1->m_sPath;
+    qDebug() << this->m_manager->m_p2->m_sPath;
+    this->m_manager->m_p1->m_isMyTurn = true;
+    this->m_manager->m_p2->m_isMyTurn = false;
 
-    bool bAttach = this->m_manager->AttachEngines(this->m_p1, this->m_p2);
+    bool bAttach = this->m_manager->AttachEngines();
     qDebug() << "AttachFlag: " << bAttach;
+
+    bool bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
 
     this->mState = GAME_STATE::PLAYING;
 }
@@ -367,6 +361,7 @@ void MainWindow::OnActionEnd()
 {
     if (nullptr != this->m_manager)
     {
+        this->m_manager->endMatch();
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }

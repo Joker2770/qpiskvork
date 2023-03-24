@@ -25,6 +25,9 @@
 */
 
 #include "manager.h"
+#include "board.h"
+
+#include <QDebug>
 
 #include<iostream>
 using namespace std;
@@ -35,13 +38,26 @@ Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
     this->m_pSubject->Attach(this);
     this->m_engine_1 = nullptr;
     this->m_engine_2 = nullptr;
-    this->m_cmd = new Commander();
+    this->m_cmd = nullptr;
+
+    this->m_p1 = new Player();
+    this->m_p2 = new Player();
 }
 
 Manager::~Manager()
 {
     this->m_pSubject->Detach(this);
 
+    if (nullptr != this->m_p1)
+    {
+        delete this->m_p1;
+        this->m_p1 = nullptr;
+    }
+    if (nullptr != this->m_p2)
+    {
+        delete this->m_p2;
+        this->m_p2 = nullptr;
+    }
     if (nullptr != this->m_cmd)
     {
         delete this->m_cmd;
@@ -62,17 +78,31 @@ Manager::~Manager()
 void Manager::Update(int i_state)
 {
     this->m_state = i_state;
+    if (BOARDSTATUS::BOARDEMPTY == this->m_state || BOARDSTATUS::BLACKNEXT == this->m_state)
+    {
+        this->m_p1->m_isMyTurn = true;
+        this->m_p2->m_isMyTurn = false;
+        qDebug() << "P1 turn";
+    }
+    else if (BOARDSTATUS::WHITENEXT == this->m_state)
+    {
+        this->m_p1->m_isMyTurn = false;
+        this->m_p2->m_isMyTurn = true;
+        qDebug() << "P2 turn";
+    }
 }
 
-bool Manager::AttachEngines(const Player *p1, const Player *p2)
+bool Manager::AttachEngines()
 {
     bool isAttach_1 = false;
     bool isAttach_2 = false;
 
-    if (p1->m_isComputer)
+    this->m_cmd = new Commander();
+
+    if (this->m_p1->m_isComputer)
     {
         this->m_engine_1 = new EngineLoader();
-        if (this->m_engine_1->setProgram(p1->m_sPath))
+        if (this->m_engine_1->setProgram(this->m_p1->m_sPath))
         {
             this->m_engine_1->startProgram();
             isAttach_1 = true;
@@ -81,10 +111,10 @@ bool Manager::AttachEngines(const Player *p1, const Player *p2)
     else
         isAttach_1 = true;
 
-    if (p2->m_isComputer)
+    if (this->m_p2->m_isComputer)
     {
         this->m_engine_2 = new EngineLoader();
-        if (this->m_engine_2->setProgram(p2->m_sPath))
+        if (this->m_engine_2->setProgram(this->m_p2->m_sPath))
         {
             this->m_engine_2->startProgram();
             isAttach_2 = true;
@@ -100,6 +130,12 @@ bool Manager::DetachEngines()
 {
     bool isDetach_1 = false;
     bool isDetach_2 = false;
+
+    if (nullptr != this->m_cmd)
+    {
+        delete this->m_cmd;
+        this->m_cmd = nullptr;
+    }
 
     if (nullptr != this->m_engine_1)
     {
@@ -117,15 +153,15 @@ bool Manager::DetachEngines()
     return (isDetach_1 || isDetach_2);
 }
 
-bool Manager::startMatch(const Player *p1)
+bool Manager::startMatch(int i_size)
 {
     bool bStart = false;
     qint64 i_write = 0;
-    if (nullptr != p1 && nullptr != this->m_engine_1)
+    if (nullptr != this->m_p1 && nullptr != this->m_engine_1)
     {
-        if (p1->m_isComputer && p1->m_isMyTurn && !(p1->m_sPath.isEmpty()))
+        if (this->m_p1->m_isComputer && this->m_p1->m_isMyTurn && !(this->m_p1->m_sPath.isEmpty()))
         {
-            i_write = this->m_engine_1->sendCommand(this->m_cmd->begin_2_send().c_str());
+            i_write = this->m_engine_1->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
         }
     }
     if (i_write > 0)
@@ -134,4 +170,21 @@ bool Manager::startMatch(const Player *p1)
     }
 
     return bStart;
+}
+
+void Manager::endMatch()
+{
+    qint64 i_write = 0;
+
+    if (nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->end_2_send().c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
+    }
+
+    if (nullptr != this->m_engine_2)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->end_2_send().c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
+    }
 }

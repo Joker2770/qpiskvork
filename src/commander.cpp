@@ -94,6 +94,8 @@ const string Commander::begin_2_send()
 const string Commander::start_2_send(int i_size)
 {
     string sStart = START;
+    sStart.append(" ");
+    sStart.append(to_string(i_size));
     //sStart.append("\r\n");
 
     return sStart;
@@ -102,6 +104,7 @@ const string Commander::start_2_send(int i_size)
 const string Commander::move_2_send(int x, int y)
 {
     string turn_move = TURN;
+    turn_move.append(" ");
     turn_move.append(to_string(x));
     turn_move.append(",");
     turn_move.append(to_string(y));

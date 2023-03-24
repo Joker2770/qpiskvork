@@ -43,11 +43,18 @@ class Manager final : public Observer
 {
 public:
     Manager(Subject *pSubject);
+    Manager(const Manager &);
     virtual ~Manager();
     void Update(int) override;
-    bool AttachEngines(const Player *p1, const Player *p2);
+    bool AttachEngines();
     bool DetachEngines();
-    bool startMatch(const Player *p1);
+    bool startMatch(int i_size);
+    void endMatch();
+
+public:
+    Player *m_p1;
+    Player *m_p2;
+
 private:
     Subject *m_pSubject;
     int m_state;

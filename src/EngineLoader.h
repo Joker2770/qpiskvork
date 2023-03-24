@@ -27,8 +27,6 @@
 #ifndef __ENGINELOADER_H__
 #define __ENGINELOADER_H__
 
-#include "commander.h"
-
 #include <QProcess>
 #include <QObject>
 #include <iostream>
@@ -53,7 +51,6 @@ private slots:
 private:
     QString mProgram;
     QProcess *mProcess;
-    Commander *mCmder;
 };
 
 #endif

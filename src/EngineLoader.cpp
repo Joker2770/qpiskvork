@@ -33,7 +33,6 @@ using namespace std;
 
 EngineLoader::EngineLoader()
 {
-    this->mCmder = new Commander();
     this->mProcess = new QProcess();
     this->mProcess->setReadChannel(QProcess::StandardOutput);
     this->mProgram.clear();
@@ -47,11 +46,6 @@ EngineLoader::~EngineLoader()
     {
         delete this->mProcess;
         this->mProcess = nullptr;
-    }
-    if (nullptr != this->mCmder)
-    {
-        delete this->mCmder;
-        this->mCmder = nullptr;
     }
 }
 
@@ -72,14 +66,17 @@ void EngineLoader::startProgram()
 
 qint64 EngineLoader::sendCommand(const char* s_cmd)
 {
-    qint64 i_w = this->mProcess->write(s_cmd, strlen(s_cmd));
-    if (i_w < 0)    return i_w;
-    else
+    qint64 i_w = 0;
+    if (this->mProcess->isWritable())
     {
-        const char szEnd[2] = {0x0d, 0x0a};
-        i_w += this->mProcess->write(szEnd, 2);
+        i_w = this->mProcess->write(s_cmd, strlen(s_cmd));
+        if (i_w < 0)    return i_w;
+        else
+        {
+            const char szEnd[2] = {0x0d, 0x0a};
+            i_w += this->mProcess->write(szEnd, 2);
+        }
     }
-
     return i_w;
 }
 
