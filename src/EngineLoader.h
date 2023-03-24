@@ -43,7 +43,7 @@ public:
 
     bool setProgram(const QString &sProgram);
     void startProgram();
-    void sendCommand(const char* sCmd);
+    qint64 sendCommand(const char* sCmd);
 
     string m_pOutStr;
 

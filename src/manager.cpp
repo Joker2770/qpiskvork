@@ -25,6 +25,7 @@
 */
 
 #include "manager.h"
+
 #include<iostream>
 using namespace std;
 
@@ -34,11 +35,18 @@ Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
     this->m_pSubject->Attach(this);
     this->m_engine_1 = nullptr;
     this->m_engine_2 = nullptr;
+    this->m_cmd = new Commander();
 }
 
 Manager::~Manager()
 {
     this->m_pSubject->Detach(this);
+
+    if (nullptr != this->m_cmd)
+    {
+        delete this->m_cmd;
+        this->m_cmd = nullptr;
+    }
     if (nullptr != this->m_engine_1)
     {
         delete this->m_engine_1;
@@ -109,3 +117,21 @@ bool Manager::DetachEngines()
     return (isDetach_1 || isDetach_2);
 }
 
+bool Manager::startMatch(const Player *p1)
+{
+    bool bStart = false;
+    qint64 i_write = 0;
+    if (nullptr != p1 && nullptr != this->m_engine_1)
+    {
+        if (p1->m_isComputer && p1->m_isMyTurn && !(p1->m_sPath.isEmpty()))
+        {
+            i_write = this->m_engine_1->sendCommand(this->m_cmd->begin_2_send().c_str());
+        }
+    }
+    if (i_write > 0)
+    {
+        bStart = true;
+    }
+
+    return bStart;
+}

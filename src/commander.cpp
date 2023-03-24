@@ -78,7 +78,7 @@ const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
     }
     sInfo.append(" ");
     sInfo.append(argv);
-    sInfo.append("\r\n");
+    //sInfo.append("\r\n");
 
     return sInfo;
 }
@@ -86,7 +86,7 @@ const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
 const string Commander::begin_2_send()
 {
     string sBegin = BEGIN;
-    sBegin.append("\r\n");
+    //sBegin.append("\r\n");
 
     return sBegin;
 }
@@ -94,7 +94,7 @@ const string Commander::begin_2_send()
 const string Commander::start_2_send(int i_size)
 {
     string sStart = START;
-    sStart.append("\r\n");
+    //sStart.append("\r\n");
 
     return sStart;
 }
@@ -105,7 +105,7 @@ const string Commander::move_2_send(int x, int y)
     turn_move.append(to_string(x));
     turn_move.append(",");
     turn_move.append(to_string(y));
-    turn_move.append("\r\n");
+    //turn_move.append("\r\n");
 
     return turn_move;
 }
@@ -113,7 +113,7 @@ const string Commander::move_2_send(int x, int y)
 const string Commander::end_2_send()
 {
     string sEnd = END;
-    sEnd.append("\r\n");
+    //sEnd.append("\r\n");
 
     return sEnd;
 }
@@ -121,7 +121,7 @@ const string Commander::end_2_send()
 const string Commander::about_2_send()
 {
     string sAbout = ABOUT;
-    sAbout.append("\r\n");
+    //sAbout.append("\r\n");
 
     return sAbout;
 }

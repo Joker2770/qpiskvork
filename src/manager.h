@@ -31,6 +31,7 @@
 #include "subject.h"
 #include "player.h"
 #include "EngineLoader.h"
+#include "commander.h"
 
 #include <QString>
 #include <QProcess>
@@ -46,12 +47,15 @@ public:
     void Update(int) override;
     bool AttachEngines(const Player *p1, const Player *p2);
     bool DetachEngines();
+    bool startMatch(const Player *p1);
 private:
     Subject *m_pSubject;
     int m_state;
 
     EngineLoader *m_engine_1;
     EngineLoader *m_engine_2;
+
+    Commander *m_cmd;
 };
 
 #endif

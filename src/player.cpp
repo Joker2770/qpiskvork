@@ -33,7 +33,7 @@ Player::Player()
 {
     this->m_isComputer = false;
     this->m_isMyTurn = true;
-    this->m_sPath = nullptr;
+    this->m_sPath.clear();
 }
 
 Player::~Player()

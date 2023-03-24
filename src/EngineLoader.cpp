@@ -70,11 +70,17 @@ void EngineLoader::startProgram()
     }
 }
 
-void EngineLoader::sendCommand(const char* s_cmd)
+qint64 EngineLoader::sendCommand(const char* s_cmd)
 {
-    this->mProcess->write(s_cmd, strlen(s_cmd));
-    const char szEnd[2] = {0x0d, 0x0a};
-    this->mProcess->write(szEnd, 2);
+    qint64 i_w = this->mProcess->write(s_cmd, strlen(s_cmd));
+    if (i_w < 0)    return i_w;
+    else
+    {
+        const char szEnd[2] = {0x0d, 0x0a};
+        i_w += this->mProcess->write(szEnd, 2);
+    }
+
+    return i_w;
 }
 
 void EngineLoader::onReadData()
