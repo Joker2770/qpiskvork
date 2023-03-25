@@ -29,6 +29,7 @@
 
 #include <QProcess>
 #include <QObject>
+
 #include <iostream>
 using namespace std;
 
@@ -44,7 +45,10 @@ public:
     void startProgram();
     qint64 sendCommand(const char* sCmd);
 
-    string m_pOutStr;
+    string m_sOutStr;
+
+signals:
+    void responsed();
 
 private slots:
     void onReadData();

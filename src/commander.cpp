@@ -41,6 +41,13 @@ Commander::~Commander()
 
 }
 
+string Commander::format_string(string& res) {
+    //delete 0x0d,0x0a
+    res.erase(remove(res.begin(), res.end(), '\r'), res.end());
+    res.erase(remove(res.begin(), res.end(), '\n'), res.end());
+    return res;
+}
+
 const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
 {
     string sInfo;
@@ -129,8 +136,16 @@ const string Commander::about_2_send()
     return sAbout;
 }
 
-const string Commander::response_parse(const string &str_res)
+const string Commander::response_filter(const string &str_res)
 {
-    string s_get = str_res;
+    string s_get, s_tmp;
+    s_tmp = str_res;
+    if (!(s_get.empty()) && str_res.find("OK") != str_res.npos)
+        s_get = this->format_string(s_tmp);
     return s_get;
+}
+
+void Commander::response_parse(const string &str)
+{
+
 }

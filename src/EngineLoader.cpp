@@ -37,6 +37,8 @@ EngineLoader::EngineLoader()
     this->mProcess->setReadChannel(QProcess::StandardOutput);
     this->mProgram.clear();
 
+    this->m_sOutStr.clear();
+
     connect(this->mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadData()));
 }
 EngineLoader::~EngineLoader()
@@ -82,7 +84,11 @@ qint64 EngineLoader::sendCommand(const char* s_cmd)
 
 void EngineLoader::onReadData()
 {
-    QByteArray baOut = this->mProcess->readAllStandardOutput();
+    this->m_sOutStr.clear();
+    QByteArray baOut = nullptr;
+    baOut = this->mProcess->readAllStandardOutput();
     qDebug() << baOut;
-    this->m_pOutStr = baOut.toStdString();
+    this->m_sOutStr = baOut.toStdString();
+
+    emit responsed();
 }

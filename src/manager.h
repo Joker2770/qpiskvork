@@ -55,14 +55,14 @@ public:
     Player *m_p1;
     Player *m_p2;
 
+    Commander *m_cmd;
+
 private:
     Subject *m_pSubject;
     int m_state;
 
     EngineLoader *m_engine_1;
     EngineLoader *m_engine_2;
-
-    Commander *m_cmd;
 };
 
 #endif
