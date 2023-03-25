@@ -155,21 +155,46 @@ bool Manager::DetachEngines()
 
 bool Manager::startMatch(int i_size)
 {
-    bool bStart = false;
-    qint64 i_write = 0;
+    bool bStart_1 = false;
+    bool bStart_2 = false;
+
     if (nullptr != this->m_p1 && nullptr != this->m_engine_1)
     {
-        if (this->m_p1->m_isComputer && this->m_p1->m_isMyTurn && !(this->m_p1->m_sPath.isEmpty()))
+        if (this->m_p1->m_isComputer && !(this->m_p1->m_sPath.isEmpty()))
         {
-            i_write = this->m_engine_1->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
+            qint64 i_write_1 = 0;
+            i_write_1 = this->m_engine_1->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
+            qDebug() << "i_write_1: " << i_write_1;
+            if (i_write_1 > 0)
+            {
+                bStart_1 = true;
+            }
         }
     }
-    if (i_write > 0)
+    else
     {
-        bStart = true;
+        bStart_1 = true;
     }
 
-    return bStart;
+    if (nullptr != this->m_p2 && nullptr != this->m_engine_2)
+    {
+        if (this->m_p2->m_isComputer && !(this->m_p2->m_sPath.isEmpty()))
+        {
+            qint64 i_write_2 = 0;
+            i_write_2 = this->m_engine_2->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
+            qDebug() << "i_write_2: " << i_write_2;
+            if (i_write_2 > 0)
+            {
+                bStart_2 = true;
+            }
+        }
+    }
+    else
+    {
+        bStart_2 = true;
+    }
+
+    return (bStart_1 && bStart_2);
 }
 
 void Manager::endMatch()

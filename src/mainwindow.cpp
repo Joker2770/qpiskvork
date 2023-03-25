@@ -341,6 +341,7 @@ void MainWindow::OnActionStart()
     qDebug() << "AttachFlag: " << bAttach;
 
     bool bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+    qDebug() << "StartFlag: " << bStart;
 
     this->mState = GAME_STATE::PLAYING;
 }
