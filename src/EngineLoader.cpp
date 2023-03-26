@@ -94,27 +94,26 @@ void EngineLoader::onReadData()
     vector<string>::iterator iter;
     for (iter = v_strOut.begin(); iter != v_strOut.end(); ++iter)
     {
-        this->response_parse(this->response_filter(*iter));
+        this->response_parse(*iter);
     }
 }
 
 vector<string> EngineLoader::split(const string &str, const string &pattern)
 {
-    vector<string> res;
-    if(str == "")
-        return res;
+    string::size_type pos;
+    vector<string> result;
     string strs = str + pattern;
-    size_t pos = strs.find(pattern);
-
-    while(pos != strs.npos)
-    {
-        string temp = strs.substr(0, pos);
-        res.push_back(temp);
-        strs = strs.substr(pos+1, strs.size());
-        pos = strs.find(pattern);
+    int size = strs.size();
+    for (int i = 0; i < size; ++i) {
+        pos = strs.find(pattern, i);
+        if (pos < size)
+        {
+            string s = strs.substr(i, pos - i);
+            result.push_back(s);
+            i = pos + pattern.size() -1;
+        }
     }
-
-    return res;
+    return result;
 }
 
 vector<int> EngineLoader::split(const string &str, char sep)
@@ -165,6 +164,7 @@ const string EngineLoader::response_filter(const string &str_res)
 
 void EngineLoader::response_parse(const string &str)
 {
+    qDebug() << str.c_str();
     string s_tmp = str;
     if (s_tmp.empty())
         return;

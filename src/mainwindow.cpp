@@ -318,6 +318,9 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         if (isWin)
         {
+            this->mState = GAME_STATE::IDLE;
+            this->m_manager->endMatch();
+            this->m_manager->DetachEngines();
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
@@ -341,7 +344,8 @@ void MainWindow::OnActionStart()
     this->m_manager->m_p1->m_isMyTurn = true;
     this->m_manager->m_p2->m_isMyTurn = false;
 
-    bool bAttach = this->m_manager->AttachEngines();
+    bool bAttach = false;
+    bAttach = this->m_manager->AttachEngines();
     qDebug() << "AttachFlag: " << bAttach;
 
     if (nullptr != this->m_manager->m_engine_1)
@@ -349,11 +353,43 @@ void MainWindow::OnActionStart()
     if (nullptr != this->m_manager->m_engine_2)
         connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
 
-    bool bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
-    qDebug() << "StartFlag: " << bStart;
+    bool bStart = false;
+    if (bAttach)
+    {
+        bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+        qDebug() << "StartFlag: " << bStart;
+    }
+
+    bool bSendInfo_1 = false;
+    bool bSendInfo_2 = false;
+    if (bStart)
+    {
+        bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+
+        bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+    }
+
+    if (nullptr != this->m_manager->m_engine_1 && bSendInfo_1)
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnBegin()));
 
     if (nullptr != this->m_manager->m_engine_1)
-        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnBegin()));
+    {
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+    }
+    if (nullptr != this->m_manager->m_engine_2)
+    {
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+    }
 
     this->mState = GAME_STATE::PLAYING;
 }
@@ -482,6 +518,9 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
         if (isWin)
         {
+            this->mState = GAME_STATE::IDLE;
+            this->m_manager->endMatch();
+            this->m_manager->DetachEngines();
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
@@ -535,6 +574,9 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 
         if (isWin)
         {
+            this->mState = GAME_STATE::IDLE;
+            this->m_manager->endMatch();
+            this->m_manager->DetachEngines();
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
@@ -549,4 +591,21 @@ void MainWindow::OnBegin()
 {
     if (nullptr != this->m_manager)
         this->m_manager->beginMatch();
+}
+
+void MainWindow::OnBoard()
+{
+
+}
+
+void MainWindow::OnResponseError()
+{
+    this->OnActionEnd();
+    QMessageBox::information(this, "game over!", "Error!");
+}
+
+void MainWindow::OnResponseUnknown()
+{
+    this->OnActionEnd();
+    QMessageBox::information(this, "game over!", "Unknown!");
 }

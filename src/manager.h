@@ -49,6 +49,8 @@ public:
     bool AttachEngines();
     bool DetachEngines();
     bool startMatch(int i_size);
+    bool infoMatch_p1(INFO_KEY key, const char* szValue);
+    bool infoMatch_p2(INFO_KEY key, const char* szValue);
     void beginMatch();
     void turn_2_p1(int i_x, int i_y);
     void turn_2_p2(int i_x, int i_y);

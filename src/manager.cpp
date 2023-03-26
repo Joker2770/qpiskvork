@@ -214,6 +214,36 @@ void Manager::beginMatch()
     }
 }
 
+bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
+{
+    bool bSend = false;
+    qint64 i_write = 0;
+
+    if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
+        else bSend = true;
+    }
+
+    return bSend;
+}
+
+bool Manager::infoMatch_p2(INFO_KEY key, const char* szValue)
+{
+    bool bSend = false;
+    qint64 i_write = 0;
+
+    if (this->m_p2->m_isComputer && nullptr != this->m_engine_2)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
+        else bSend = true;
+    }
+
+    return bSend;
+}
+
 void Manager::turn_2_p1(int iX, int iY)
 {
     qint64 i_write = 0;
@@ -229,10 +259,10 @@ void Manager::turn_2_p2(int iX, int iY)
 {
     qint64 i_write = 0;
 
-    if (this->m_p2->m_isComputer && nullptr != this->m_engine_1)
+    if (this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
         i_write = this->m_engine_2->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
-        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
+        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_2!";
     }
 }
 
