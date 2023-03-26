@@ -85,6 +85,9 @@ public slots:
     void OnActionBoardSize();
     void OnActionPlayerSetting();
     void OnActionVer();
+    void OnBegin();
+    void OnP1PlaceStone(int x, int y);
+    void OnP2PlaceStone(int x, int y);
 
 protected:
     void paintEvent(QPaintEvent *);

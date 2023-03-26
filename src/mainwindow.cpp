@@ -290,10 +290,12 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
                 bSucceed = this->mBoard->placeStone(p_idx, BLACK);
+                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
             }
             else if (this->mBoard->GetState() == WHITENEXT)
             {
                 bSucceed = this->mBoard->placeStone(p_idx, WHITE);
+                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
             }
             if (bSucceed)
                 this->mBoard->Notify();
@@ -342,8 +344,16 @@ void MainWindow::OnActionStart()
     bool bAttach = this->m_manager->AttachEngines();
     qDebug() << "AttachFlag: " << bAttach;
 
+    if (nullptr != this->m_manager->m_engine_1)
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
+    if (nullptr != this->m_manager->m_engine_2)
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
+
     bool bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
     qDebug() << "StartFlag: " << bStart;
+
+    if (nullptr != this->m_manager->m_engine_1)
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnBegin()));
 
     this->mState = GAME_STATE::PLAYING;
 }
@@ -427,4 +437,116 @@ void MainWindow::OnActionVer()
     const QString strVerNum = "Ver Num: 0.0.01";
     const QString strAll = strVerNum + "\n" + "build at " + __TIMESTAMP__;
     QMessageBox::about(this, "Version", strAll);
+}
+
+void MainWindow::OnP1PlaceStone(int x, int y)
+{
+    if (!this->m_bPause)
+    {
+        if (!this->m_manager->m_p1->m_isMyTurn || !this->m_manager->m_p1->m_isComputer)
+            return;
+
+        pair<int, int> p_idx(x, y);
+
+        if (this->mBoard->GetState() != BOARDFULL)
+        {
+            bool bSucceed = false;
+            if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, BLACK);
+                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+            }
+            else if (this->mBoard->GetState() == WHITENEXT)
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, WHITE);
+                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+            }
+            if (bSucceed)
+                this->mBoard->Notify();
+        }
+
+        //if connect five
+        bool isWin = false;
+        if (this->pActionFreeStyleGomoku->isChecked())
+        {
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        }
+        else if (this->pActionStandardGomoku->isChecked())
+        {
+            isWin = this->m_standardGomoku->checkWin(this->mBoard);
+        }
+        else
+        {
+            /* code */
+        }
+
+        if (isWin)
+        {
+            if (this->mBoard->getVRecord().back().second == BLACK)
+                QMessageBox::information(this, "game over!", "Black win!");
+            else
+                QMessageBox::information(this, "game over!", "White win!");
+            this->mBoard->clearBoard();
+            return ;
+        }
+    }
+}
+
+void MainWindow::OnP2PlaceStone(int x, int y)
+{
+    if (!this->m_bPause)
+    {
+        if (!this->m_manager->m_p2->m_isMyTurn || !this->m_manager->m_p2->m_isComputer)
+            return;
+
+        pair<int, int> p_idx(x, y);
+
+        if (this->mBoard->GetState() != BOARDFULL)
+        {
+            bool bSucceed = false;
+            if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, BLACK);
+                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+            }
+            else if (this->mBoard->GetState() == WHITENEXT)
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, WHITE);
+                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+            }
+            if (bSucceed)
+                this->mBoard->Notify();
+        }
+
+        //if connect five
+        bool isWin = false;
+        if (this->pActionFreeStyleGomoku->isChecked())
+        {
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        }
+        else if (this->pActionStandardGomoku->isChecked())
+        {
+            isWin = this->m_standardGomoku->checkWin(this->mBoard);
+        }
+        else
+        {
+            /* code */
+        }
+
+        if (isWin)
+        {
+            if (this->mBoard->getVRecord().back().second == BLACK)
+                QMessageBox::information(this, "game over!", "Black win!");
+            else
+                QMessageBox::information(this, "game over!", "White win!");
+            this->mBoard->clearBoard();
+            return ;
+        }
+    }
+}
+
+void MainWindow::OnBegin()
+{
+    if (nullptr != this->m_manager)
+        this->m_manager->beginMatch();
 }

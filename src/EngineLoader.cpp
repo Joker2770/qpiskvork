@@ -28,6 +28,7 @@
 
 #include <QDebug>
 
+#include <sstream>
 #include <iostream>
 using namespace std;
 
@@ -36,8 +37,6 @@ EngineLoader::EngineLoader()
     this->mProcess = new QProcess();
     this->mProcess->setReadChannel(QProcess::StandardOutput);
     this->mProgram.clear();
-
-    this->m_sOutStr.clear();
 
     connect(this->mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadData()));
 }
@@ -84,11 +83,100 @@ qint64 EngineLoader::sendCommand(const char* s_cmd)
 
 void EngineLoader::onReadData()
 {
-    this->m_sOutStr.clear();
+    string sOutStr;
+    sOutStr.clear();
     QByteArray baOut = nullptr;
     baOut = this->mProcess->readAllStandardOutput();
     qDebug() << baOut;
-    this->m_sOutStr = baOut.toStdString();
+    sOutStr = baOut.toStdString();
 
-    emit responsed();
+    vector<string> v_strOut = split(sOutStr, "\r\n");
+    vector<string>::iterator iter;
+    for (iter = v_strOut.begin(); iter != v_strOut.end(); ++iter)
+    {
+        this->response_parse(this->response_filter(*iter));
+    }
+}
+
+vector<string> EngineLoader::split(const string &str, const string &pattern)
+{
+    vector<string> res;
+    if(str == "")
+        return res;
+    string strs = str + pattern;
+    size_t pos = strs.find(pattern);
+
+    while(pos != strs.npos)
+    {
+        string temp = strs.substr(0, pos);
+        res.push_back(temp);
+        strs = strs.substr(pos+1, strs.size());
+        pos = strs.find(pattern);
+    }
+
+    return res;
+}
+
+vector<int> EngineLoader::split(const string &str, char sep)
+{
+    vector<int> tokens;
+
+    int i;
+    stringstream ss(str);
+    while (ss >> i) {
+        tokens.push_back(i);
+        if (ss.peek() == sep) {
+            ss.ignore();
+        }
+    }
+
+    return tokens;
+}
+
+string EngineLoader::format_string(string& res) {
+    //delete 0x0d,0x0a
+    res.erase(remove(res.begin(), res.end(), '\r'), res.end());
+    res.erase(remove(res.begin(), res.end(), '\n'), res.end());
+    return res;
+}
+
+const string EngineLoader::response_filter(const string &str_res)
+{
+    string s_get, s_tmp;
+    s_get.clear();
+    s_tmp.clear();
+    s_tmp = str_res;
+    if (s_tmp.empty())
+        return "";
+    if (s_tmp.find_first_of("OK") == 0)
+        s_get = this->format_string(s_tmp);
+    else if (s_tmp.find_first_of("ERROR ") == 0)
+        s_get = this->format_string(s_tmp);
+    else if (s_tmp.find_first_of("UNKNOWN ") == 0)
+        s_get = this->format_string(s_tmp);
+    else if (s_tmp.find_first_of("MESSAGE ") == 0)
+        s_get = this->format_string(s_tmp);
+    else if (s_tmp.find_first_of("DEBUG ") == 0)
+        s_get = this->format_string(s_tmp);
+    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && this->split(s_tmp, ',').size() == 2)
+        s_get = this->format_string(s_tmp);
+    return s_get;
+}
+
+void EngineLoader::response_parse(const string &str)
+{
+    string s_tmp = str;
+    if (s_tmp.empty())
+        return;
+    if (s_tmp.find_first_of("OK") == 0)
+        emit responsed_ok();
+    else if (s_tmp.find_first_of("ERROR ") == 0)
+        emit responsed_error();
+    else if (s_tmp.find_first_of("UNKNOWN ") == 0)
+        emit responsed_unknown();
+    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && this->split(s_tmp, ',').size() == 2)
+    {
+        vector<int> vPos = this->split(s_tmp, ',');
+        emit responsed_pos(vPos[0], vPos[1]);
+    }
 }

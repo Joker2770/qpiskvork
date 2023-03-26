@@ -28,7 +28,6 @@
 #include "commands.h"
 
 #include <string>
-#include <sstream>
 #include <iostream>
 using namespace std;
 
@@ -40,29 +39,6 @@ Commander::Commander()
 Commander::~Commander()
 {
 
-}
-
-vector<int> Commander::split(const string &str, char sep)
-{
-    vector<int> tokens;
-
-    int i;
-    stringstream ss(str);
-    while (ss >> i) {
-        tokens.push_back(i);
-        if (ss.peek() == sep) {
-            ss.ignore();
-        }
-    }
-
-    return tokens;
-}
-
-string Commander::format_string(string& res) {
-    //delete 0x0d,0x0a
-    res.erase(remove(res.begin(), res.end(), '\r'), res.end());
-    res.erase(remove(res.begin(), res.end(), '\n'), res.end());
-    return res;
 }
 
 const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
@@ -151,28 +127,4 @@ const string Commander::about_2_send()
     //sAbout.append("\r\n");
 
     return sAbout;
-}
-
-const string Commander::response_filter(const string &str_res)
-{
-    string s_get, s_tmp;
-    s_tmp = str_res;
-    if (!(s_tmp.empty()) && s_tmp.find_first_of("OK") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (!(s_tmp.empty()) && s_tmp.find_first_of("ERROR ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (!(s_tmp.empty()) && s_tmp.find_first_of("UNKNOWN ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (!(s_tmp.empty()) && s_tmp.find_first_of("MESSAGE ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (!(s_tmp.empty()) && s_tmp.find_first_of("DEBUG ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (!(s_tmp.empty()) && s_tmp.find_first_of(',') < 3 && s_tmp.find_first_of(',') > 0 && this->split(s_tmp, ',').size() == 2)
-        s_get = this->format_string(s_tmp);
-    return s_get;
-}
-
-void Commander::response_parse(const string &str)
-{
-
 }

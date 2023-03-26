@@ -45,10 +45,17 @@ public:
     void startProgram();
     qint64 sendCommand(const char* sCmd);
 
-    string m_sOutStr;
+    vector<string> split(const string &str, const string &pattern);
+    vector<int> split(const string &str, char sep);
+    string format_string(string &str);
+    const string response_filter(const string &sResp);
+    void response_parse(const string &sResp);
 
 signals:
-    void responsed();
+    void responsed_ok();
+    void responsed_error();
+    void responsed_unknown();
+    void responsed_pos(int x, int y);
 
 private slots:
     void onReadData();

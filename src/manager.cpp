@@ -78,7 +78,13 @@ Manager::~Manager()
 void Manager::Update(int i_state)
 {
     this->m_state = i_state;
-    if (BOARDSTATUS::BOARDEMPTY == this->m_state || BOARDSTATUS::BLACKNEXT == this->m_state)
+    if (BOARDSTATUS::BOARDEMPTY == this->m_state)
+    {
+        this->m_p1->m_isMyTurn = true;
+        this->m_p2->m_isMyTurn = false;
+        qDebug() << "P1 turn";
+    }
+    else if (BOARDSTATUS::BLACKNEXT == this->m_state)
     {
         this->m_p1->m_isMyTurn = true;
         this->m_p2->m_isMyTurn = false;
@@ -195,6 +201,39 @@ bool Manager::startMatch(int i_size)
     }
 
     return (bStart_1 && bStart_2);
+}
+
+void Manager::beginMatch()
+{
+    qint64 i_write = 0;
+
+    if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->begin_2_send().c_str());
+        if (i_write <= 0) qDebug() << "Failed to send begin to engine_1!";
+    }
+}
+
+void Manager::turn_2_p1(int iX, int iY)
+{
+    qint64 i_write = 0;
+
+    if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
+    }
+}
+
+void Manager::turn_2_p2(int iX, int iY)
+{
+    qint64 i_write = 0;
+
+    if (this->m_p2->m_isComputer && nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
+    }
 }
 
 void Manager::endMatch()

@@ -49,6 +49,9 @@ public:
     bool AttachEngines();
     bool DetachEngines();
     bool startMatch(int i_size);
+    void beginMatch();
+    void turn_2_p1(int i_x, int i_y);
+    void turn_2_p2(int i_x, int i_y);
     void endMatch();
 
 public:
@@ -57,12 +60,12 @@ public:
 
     Commander *m_cmd;
 
+    EngineLoader *m_engine_1;
+    EngineLoader *m_engine_2;
+
 private:
     Subject *m_pSubject;
     int m_state;
-
-    EngineLoader *m_engine_1;
-    EngineLoader *m_engine_2;
 };
 
 #endif
