@@ -29,6 +29,7 @@
 
 #include "commands.h"
 
+#include <vector>
 #include <iostream>
 using namespace std;
 
@@ -45,6 +46,7 @@ public:
     const string end_2_send(void);
     const string about_2_send(void);
 
+    vector<int> split(const string &str, char sep);
     string format_string(string &str);
     const string response_filter(const string &sResp);
     void response_parse(const string &sResp);
