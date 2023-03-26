@@ -294,7 +294,6 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             {
                 this->mBoard->placeStone(p_idx, WHITE);
             }
-            this->mBoard->Notify();
         }
 
         //if connect five
