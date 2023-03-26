@@ -118,7 +118,6 @@ bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
         else if (color == BLACK)
             this->m_iState = WHITENEXT;
 
-        this->Notify();
         return true;
     }
     else

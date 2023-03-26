@@ -286,14 +286,17 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         if (this->mBoard->GetState() != BOARDFULL)
         {
+            bool bSucceed = false;
             if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
-                this->mBoard->placeStone(p_idx, BLACK);
+                bSucceed = this->mBoard->placeStone(p_idx, BLACK);
             }
             else if (this->mBoard->GetState() == WHITENEXT)
             {
-                this->mBoard->placeStone(p_idx, WHITE);
+                bSucceed = this->mBoard->placeStone(p_idx, WHITE);
             }
+            if (bSucceed)
+                this->mBoard->Notify();
         }
 
         //if connect five
@@ -374,6 +377,7 @@ void MainWindow::OnActionClearBoard()
     if (this->mState != GAME_STATE::PLAYING)
     {
         this->mBoard->clearBoard();
+        this->mBoard->Notify();
     }
 }
 
@@ -384,6 +388,8 @@ void MainWindow::OnActionTakeBack()
         bool b_succ = this->mBoard->takeBackStone();
         if (!b_succ)
             QMessageBox::information(this, "Error!", "Failied to take back!");
+        else
+            this->mBoard->Notify();
     }
 }
 
