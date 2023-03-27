@@ -378,21 +378,19 @@ void MainWindow::OnActionStart()
         return;
     }
 
-    bool bSendInfo_1 = false;
-    bool bSendInfo_2 = false;
     if (bStart)
     {
-        bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
-        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
-        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
-        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-        bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+        this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+        this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+        this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+        this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+        this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
 
-        bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
-        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
-        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
-        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-        bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+        this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+        this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+        this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+        this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+        this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
     }
     else
     {
@@ -401,7 +399,7 @@ void MainWindow::OnActionStart()
         return;
     }
 
-    if (nullptr != this->m_manager->m_engine_1 && bSendInfo_1)
+    if (nullptr != this->m_manager->m_engine_1)
         connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnBegin()));
 
     if (nullptr != this->m_manager->m_engine_1)
@@ -462,21 +460,19 @@ void MainWindow::OnActionContinue()
                 return;
             }
 
-            bool bSendInfo_1 = false;
-            bool bSendInfo_2 = false;
             if (bStart)
             {
-                bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
 
-                bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+                this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+                this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
             }
             else
             {
@@ -577,21 +573,19 @@ void MainWindow::OnActionTakeBack()
                 return;
             }
 
-            bool bSendInfo_1 = false;
-            bool bSendInfo_2 = false;
             if (bStart)
             {
-                bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
 
-                bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+                this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+                this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
             }
             else
             {

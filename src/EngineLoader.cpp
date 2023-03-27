@@ -91,7 +91,19 @@ void EngineLoader::onReadData()
     qDebug() << baOut;
     sOutStr = baOut.toStdString();
 
-    vector<string> v_strOut = split(sOutStr, "\r\n");
+    vector<string> v_strOut;
+    if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') != string::npos )
+    {
+        v_strOut = split(sOutStr, "\r\n");
+    }
+    else if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') == string::npos )
+    {
+        v_strOut = split(sOutStr, "\r");
+    }
+    else if (sOutStr.find('\r') == string::npos && sOutStr.find('\n') != string::npos )
+    {
+        v_strOut = split(sOutStr, "\n");
+    }
     vector<string>::iterator iter;
     for (iter = v_strOut.begin(); iter != v_strOut.end(); ++iter)
     {
