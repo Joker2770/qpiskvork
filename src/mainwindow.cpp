@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
 
     this->m_bPause = true;
+    this->m_bBoard = false;
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
@@ -259,13 +260,33 @@ void MainWindow::DrawItems()
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
 {
-    if (!this->m_bPause)
-    {
+    //if (!this->m_bPause)
+    //{
         //painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
 
         QPoint ptCenter((pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT);
         painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
+    //}
+}
+
+vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
+{
+    vector<pair<pair<int,int>, int>> vRecExpendTmp;
+    vRecExpendTmp.clear();
+    vector<pair<int, int>> vRecZoom = vRecord;
+    vector<pair<int, int>>::iterator iter;
+    for (iter = vRecZoom.begin(); iter != vRecZoom.end(); ++iter)
+    {
+        pair<int, int> pTmpPos;
+        pair<pair<int, int>, int> vElement;
+
+        pTmpPos = this->mBoard->coord2idx(iter->first);
+        vElement.first = pTmpPos;
+        vElement.second = iter->second;
+        vRecExpendTmp.push_back(vElement);
     }
+
+    return vRecExpendTmp;
 }
 
 void MainWindow::mousePressEvent(QMouseEvent * e)
@@ -300,11 +321,31 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 this->mBoard->Notify();
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
-                    this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                    if (this->m_bBoard)
+                    {
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        this->mBoard->Notify();
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = false;
+                    }
+                    else
+                    {
+                        this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                    }
                 }
                 else if (this->m_manager->m_p2->m_isMyTurn)
                 {
-                    this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                    if (this->m_bBoard)
+                    {
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        this->mBoard->Notify();
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = false;
+                    }
+                    else
+                    {
+                        this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                    }
                 }
             }
             else
@@ -515,6 +556,7 @@ void MainWindow::OnActionContinue()
             }
         }
 
+        this->m_bBoard = true;
         this->m_bPause = false;
         this->mState = GAME_STATE::PLAYING;
     }
@@ -545,100 +587,15 @@ void MainWindow::OnActionTakeBack()
 {
     if (this->mState != GAME_STATE::PLAYING)
     {
-        if (nullptr != this->m_manager)
+        bool b_succ = this->mBoard->takeBackStone();
+        if (!b_succ)
         {
-            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
-
-            bool bAttach = false;
-            bAttach = this->m_manager->AttachEngines();
-            qDebug() << "AttachFlag: " << bAttach;
-
-            bool bStart = false;
-            if (bAttach)
-            {
-                bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
-                qDebug() << "StartFlag: " << bStart;
-            }
-            else
-            {
-                this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
-                return;
-            }
-
-            if (bStart)
-            {
-                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
-                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
-                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
-                this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-                this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
-
-                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
-                this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
-                this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
-                this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-                this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
-            }
-            else
-            {
-                this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to start game!");
-                return;
-            }
-
-            bool b_succ = this->mBoard->takeBackStone();
-            if (!b_succ)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, "Error!", "Failied to take back!");
-                return;
-            }
-            else
-                this->mBoard->Notify();
-
-            vector<pair<pair<int,int>, int>> vRecExpendTmp;
-            vector<pair<int, int>> vRecZoom = this->mBoard->getVRecord();
-            vector<pair<int, int>>::iterator iter;
-            for (iter = vRecZoom.begin(); iter != vRecZoom.end(); ++iter)
-            {
-                pair<int, int> pTmpPos;
-                pair<pair<int, int>, int> vElement;
-
-                pTmpPos = this->mBoard->coord2idx(iter->first);
-                vElement.first = pTmpPos;
-                vElement.second = iter->second;
-                vRecExpendTmp.push_back(vElement);
-            }
-
-            this->m_manager->sendBoard(vRecExpendTmp);
-
-            if (nullptr != this->m_manager->m_engine_1)
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
-            if (nullptr != this->m_manager->m_engine_2)
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
-
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-            }
+            this->OnActionEnd();
+            QMessageBox::information(this, "Error!", "Failied to take back!");
+            return;
         }
-
-        this->m_bPause = false;
-        this->mState = GAME_STATE::PLAYING;
+        else
+            this->mBoard->Notify();
     }
 }
 
@@ -707,7 +664,17 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             if (bSucceed)
             {
                 this->mBoard->Notify();
-                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                if (this->m_bBoard)
+                {
+                    vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                    this->mBoard->Notify();
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = false;
+                }
+                else
+                {
+                    this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                }
             }
             else
             {
@@ -775,7 +742,17 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             if (bSucceed)
             {
                 this->mBoard->Notify();
-                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                if (this->m_bBoard)
+                {
+                    vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                    this->mBoard->Notify();
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = false;
+                }
+                else
+                {
+                    this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                }
             }
             else
             {

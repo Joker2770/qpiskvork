@@ -103,10 +103,13 @@ private:
 
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
+    vector<pair<pair<int, int>, int>> record_expend(vector<pair<int, int>> vRecord);
+
 private:
     GAME_STATE mState;
     Board *mBoard;
     bool m_bPause;
+    bool m_bBoard;
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;

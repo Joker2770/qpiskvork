@@ -297,13 +297,13 @@ void Manager::sendBoard(vector<pair<pair<int, int>, int>> vRecord)
 {
     qint64 i_write = 0;
 
-    if (nullptr != this->m_engine_1)
+    if (nullptr != this->m_engine_1 && this->m_p1->m_isMyTurn)
     {
         i_write = this->m_engine_1->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p1->m_color).c_str());
         if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
     }
 
-    if (nullptr != this->m_engine_2)
+    if (nullptr != this->m_engine_2 && this->m_p2->m_isMyTurn)
     {
         i_write = this->m_engine_2->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p2->m_color).c_str());
         if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
