@@ -80,21 +80,48 @@ void Manager::Update(int i_state)
     this->m_state = i_state;
     if (BOARDSTATUS::BOARDEMPTY == this->m_state)
     {
-        this->m_p1->m_isMyTurn = true;
-        this->m_p2->m_isMyTurn = false;
-        qDebug() << "P1 turn";
+        if (this->m_p1->m_color == STONECOLOR::BLACK)
+        {
+            this->m_p1->m_isMyTurn = true;
+            this->m_p2->m_isMyTurn = false;
+            qDebug() << "P1 turn";
+        }
+        else
+        {
+            this->m_p1->m_isMyTurn = false;
+            this->m_p2->m_isMyTurn = true;
+            qDebug() << "P2 turn";
+        }
     }
     else if (BOARDSTATUS::BLACKNEXT == this->m_state)
     {
-        this->m_p1->m_isMyTurn = true;
-        this->m_p2->m_isMyTurn = false;
-        qDebug() << "P1 turn";
+        if (this->m_p1->m_color == STONECOLOR::BLACK)
+        {
+            this->m_p1->m_isMyTurn = true;
+            this->m_p2->m_isMyTurn = false;
+            qDebug() << "P1 turn";
+        }
+        else
+        {
+            this->m_p1->m_isMyTurn = false;
+            this->m_p2->m_isMyTurn = true;
+            qDebug() << "P2 turn";
+        }
     }
     else if (BOARDSTATUS::WHITENEXT == this->m_state)
     {
-        this->m_p1->m_isMyTurn = false;
-        this->m_p2->m_isMyTurn = true;
-        qDebug() << "P2 turn";
+        if (this->m_p2->m_color == STONECOLOR::WHITE)
+        {
+            this->m_p1->m_isMyTurn = false;
+            this->m_p2->m_isMyTurn = true;
+            qDebug() << "P2 turn";
+        }
+        else
+        {
+            this->m_p1->m_isMyTurn = true;
+            this->m_p2->m_isMyTurn = false;
+            qDebug() << "P1 turn";
+        }
     }
 }
 
@@ -248,7 +275,7 @@ void Manager::turn_2_p1(int iX, int iY)
 {
     qint64 i_write = 0;
 
-    if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
+    if (this->m_p1->m_isMyTurn && this->m_p1->m_isComputer && nullptr != this->m_engine_1)
     {
         i_write = this->m_engine_1->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
         if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
@@ -259,10 +286,27 @@ void Manager::turn_2_p2(int iX, int iY)
 {
     qint64 i_write = 0;
 
-    if (this->m_p2->m_isComputer && nullptr != this->m_engine_2)
+    if (this->m_p2->m_isMyTurn && this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
         i_write = this->m_engine_2->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
         if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_2!";
+    }
+}
+
+void Manager::sendBoard(vector<pair<pair<int, int>, int>> vRecord)
+{
+    qint64 i_write = 0;
+
+    if (nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p1->m_color).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
+    }
+
+    if (nullptr != this->m_engine_2)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p2->m_color).c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
     }
 }
 

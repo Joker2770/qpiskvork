@@ -113,6 +113,27 @@ const string Commander::move_2_send(int x, int y)
     return turn_move;
 }
 
+const string Commander::board_2_send(vector<pair<pair<int, int>, int>> vRecord, int own_color)
+{
+    string sBoard = BOARD;
+    sBoard.append("\n");
+    vector<pair<pair<int, int>, int>>::iterator iter;
+    for (iter = vRecord.begin(); iter != vRecord.end(); ++iter)
+    {
+        if (own_color == iter->second)
+        {
+            sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",1");
+        }
+        else
+        {
+            sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",2");
+        }
+        sBoard.append("\n");
+    }
+    sBoard.append("DONE");
+    return sBoard;
+}
+
 const string Commander::end_2_send()
 {
     string sEnd = END;

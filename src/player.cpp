@@ -34,6 +34,7 @@ Player::Player()
     this->m_isComputer = false;
     this->m_isMyTurn = true;
     this->m_sPath.clear();
+    this->m_color = STONECOLOR::BLACK;
 }
 
 Player::~Player()

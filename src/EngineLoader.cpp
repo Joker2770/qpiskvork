@@ -67,6 +67,7 @@ void EngineLoader::startProgram()
 
 qint64 EngineLoader::sendCommand(const char* s_cmd)
 {
+    qDebug() << s_cmd;
     qint64 i_w = 0;
     if (this->mProcess->isWritable())
     {

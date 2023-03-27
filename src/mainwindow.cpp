@@ -290,15 +290,25 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
                 bSucceed = this->mBoard->placeStone(p_idx, BLACK);
-                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
             }
             else if (this->mBoard->GetState() == WHITENEXT)
             {
                 bSucceed = this->mBoard->placeStone(p_idx, WHITE);
-                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
             }
             if (bSucceed)
+            {
                 this->mBoard->Notify();
+                if (this->m_manager->m_p1->m_isMyTurn)
+                {
+                    this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                }
+                else if (this->m_manager->m_p2->m_isMyTurn)
+                {
+                    this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                }
+            }
+            else
+                return;
         }
 
         //if connect five
@@ -335,6 +345,8 @@ void MainWindow::OnActionStart()
 {
     this->mBoard->clearBoard();
     this->m_bPause = false;
+    this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+    this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
     this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
     this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
     this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
@@ -359,6 +371,12 @@ void MainWindow::OnActionStart()
         bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
         qDebug() << "StartFlag: " << bStart;
     }
+    else
+    {
+        this->m_manager->DetachEngines();
+        QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+        return;
+    }
 
     bool bSendInfo_1 = false;
     bool bSendInfo_2 = false;
@@ -375,6 +393,12 @@ void MainWindow::OnActionStart()
         bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
         bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
         bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+    }
+    else
+    {
+        this->m_manager->DetachEngines();
+        QMessageBox::information(this, "Error!", "Failied to start game!");
+        return;
     }
 
     if (nullptr != this->m_manager->m_engine_1 && bSendInfo_1)
@@ -396,14 +420,108 @@ void MainWindow::OnActionStart()
 
 void MainWindow::OnActionPause()
 {
+    if (nullptr != this->m_manager)
+    {
+        this->m_manager->endMatch();
+        bool bDetach = this->m_manager->DetachEngines();
+        qDebug() << "DetachFlag: " << bDetach;
+    }
     this->m_bPause = true;
     this->mState = GAME_STATE::PAUSING;
 }
 
 void MainWindow::OnActionContinue()
 {
-    this->m_bPause = false;
-    this->mState = GAME_STATE::PLAYING;
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        if (nullptr != this->m_manager)
+        {
+            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+            qDebug() << this->m_manager->m_p1->m_sPath;
+            qDebug() << this->m_manager->m_p2->m_sPath;
+
+            bool bAttach = false;
+            bAttach = this->m_manager->AttachEngines();
+            qDebug() << "AttachFlag: " << bAttach;
+
+            bool bStart = false;
+            if (bAttach)
+            {
+                bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+                qDebug() << "StartFlag: " << bStart;
+            }
+            else
+            {
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                return;
+            }
+
+            bool bSendInfo_1 = false;
+            bool bSendInfo_2 = false;
+            if (bStart)
+            {
+                bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+
+                bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+            }
+            else
+            {
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to start game!");
+                return;
+            }
+
+            vector<pair<pair<int,int>, int>> vRecExpendTmp;
+            vector<pair<int, int>> vRecZoom = this->mBoard->getVRecord();
+            vector<pair<int, int>>::iterator iter;
+            for (iter = vRecZoom.begin(); iter != vRecZoom.end(); ++iter)
+            {
+                pair<int, int> pTmpPos;
+                pair<pair<int, int>, int> vElement;
+
+                pTmpPos = this->mBoard->coord2idx(iter->first);
+                vElement.first = pTmpPos;
+                vElement.second = iter->second;
+                vRecExpendTmp.push_back(vElement);
+            }
+
+            this->mBoard->Notify();
+            this->m_manager->sendBoard(vRecExpendTmp);
+
+            if (nullptr != this->m_manager->m_engine_1)
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
+            if (nullptr != this->m_manager->m_engine_2)
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
+
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+            }
+        }
+
+        this->m_bPause = false;
+        this->mState = GAME_STATE::PLAYING;
+    }
 }
 
 void MainWindow::OnActionEnd()
@@ -431,11 +549,102 @@ void MainWindow::OnActionTakeBack()
 {
     if (this->mState != GAME_STATE::PLAYING)
     {
-        bool b_succ = this->mBoard->takeBackStone();
-        if (!b_succ)
-            QMessageBox::information(this, "Error!", "Failied to take back!");
-        else
-            this->mBoard->Notify();
+        if (nullptr != this->m_manager)
+        {
+            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+            qDebug() << this->m_manager->m_p1->m_sPath;
+            qDebug() << this->m_manager->m_p2->m_sPath;
+
+            bool bAttach = false;
+            bAttach = this->m_manager->AttachEngines();
+            qDebug() << "AttachFlag: " << bAttach;
+
+            bool bStart = false;
+            if (bAttach)
+            {
+                bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+                qDebug() << "StartFlag: " << bStart;
+            }
+            else
+            {
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                return;
+            }
+
+            bool bSendInfo_1 = false;
+            bool bSendInfo_2 = false;
+            if (bStart)
+            {
+                bSendInfo_1 = this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, "700000");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, "30000");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                bSendInfo_1 &= this->m_manager->infoMatch_p1(INFO_KEY::RULE, "0");
+
+                bSendInfo_2 = this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, "700000");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, "30000");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+                bSendInfo_2 &= this->m_manager->infoMatch_p2(INFO_KEY::RULE, "0");
+            }
+            else
+            {
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to start game!");
+                return;
+            }
+
+            bool b_succ = this->mBoard->takeBackStone();
+            if (!b_succ)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Error!", "Failied to take back!");
+                return;
+            }
+            else
+                this->mBoard->Notify();
+
+            vector<pair<pair<int,int>, int>> vRecExpendTmp;
+            vector<pair<int, int>> vRecZoom = this->mBoard->getVRecord();
+            vector<pair<int, int>>::iterator iter;
+            for (iter = vRecZoom.begin(); iter != vRecZoom.end(); ++iter)
+            {
+                pair<int, int> pTmpPos;
+                pair<pair<int, int>, int> vElement;
+
+                pTmpPos = this->mBoard->coord2idx(iter->first);
+                vElement.first = pTmpPos;
+                vElement.second = iter->second;
+                vRecExpendTmp.push_back(vElement);
+            }
+
+            this->m_manager->sendBoard(vRecExpendTmp);
+
+            if (nullptr != this->m_manager->m_engine_1)
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
+            if (nullptr != this->m_manager->m_engine_2)
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
+
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
+            }
+        }
+
+        this->m_bPause = false;
+        this->mState = GAME_STATE::PLAYING;
     }
 }
 
@@ -489,16 +698,28 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             bool bSucceed = false;
             if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
-                bSucceed = this->mBoard->placeStone(p_idx, BLACK);
-                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                if (this->m_manager->m_p1->m_color == STONECOLOR::BLACK)
+                {
+                    bSucceed = this->mBoard->placeStone(p_idx, BLACK);
+                }
             }
             else if (this->mBoard->GetState() == WHITENEXT)
             {
-                bSucceed = this->mBoard->placeStone(p_idx, WHITE);
-                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                if (this->m_manager->m_p1->m_color == STONECOLOR::WHITE)
+                {
+                    bSucceed = this->mBoard->placeStone(p_idx, WHITE);
+                }
             }
             if (bSucceed)
+            {
                 this->mBoard->Notify();
+                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
+            }
         }
 
         //if connect five
@@ -545,16 +766,28 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             bool bSucceed = false;
             if ((this->mBoard->GetState() == BOARDEMPTY) || (this->mBoard->GetState() == BLACKNEXT))
             {
-                bSucceed = this->mBoard->placeStone(p_idx, BLACK);
-                this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
+                if (this->m_manager->m_p2->m_color == STONECOLOR::BLACK)
+                {
+                    bSucceed = this->mBoard->placeStone(p_idx, BLACK);
+                }
             }
             else if (this->mBoard->GetState() == WHITENEXT)
             {
-                bSucceed = this->mBoard->placeStone(p_idx, WHITE);
-                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+                if (this->m_manager->m_p2->m_color == STONECOLOR::WHITE)
+                {
+                    bSucceed = this->mBoard->placeStone(p_idx, WHITE);
+                }
             }
             if (bSucceed)
+            {
                 this->mBoard->Notify();
+                this->m_manager->turn_2_p1(p_idx.first, p_idx.second);
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
+            }
         }
 
         //if connect five
