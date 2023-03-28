@@ -297,7 +297,13 @@ void MainWindow::DrawTimeLeft()
     this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
     else this->m_time_left_p2 = 0;
     if (this->m_time_left_p1 == 0 || this->m_time_left_p2 == 0)
+    {
+        if (this->m_time_left_p1 == 0)
+            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+        else
+            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
         this->OnActionEnd();
+    }
     painter.drawText(20, 30, 200, 80, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     painter.drawText(500, 30, 200, 80, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
@@ -929,11 +935,6 @@ void MainWindow::OnBegin()
     {
         this->m_manager->beginMatch();
     }
-}
-
-void MainWindow::OnBoard()
-{
-
 }
 
 void MainWindow::OnResponseError()
