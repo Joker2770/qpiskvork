@@ -7,7 +7,7 @@
 
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 */
 
 #include<iostream>
-#include <time.h>
+#include <ctime>
 #include "timer.h"
 using namespace std;
 
@@ -48,7 +48,7 @@ void Timer::start()
     mPaused = false;
 
     //Get the current clock time
-    mStartTicks = clock();
+    mStartTicks = (uint32_t)(1000 * clock() / (double)CLOCKS_PER_SEC);
     mPausedTicks = 0;
 }
 
@@ -74,7 +74,7 @@ void Timer::pause()
         mPaused = true;
 
         //Calculate the paused ticks
-        mPausedTicks = clock() - mStartTicks;
+        mPausedTicks = (uint32_t)(1000 * (clock() - mStartTicks) / (double)CLOCKS_PER_SEC);
         mStartTicks = 0;
     }
 }
@@ -88,7 +88,7 @@ void Timer::unpause()
         mPaused = false;
 
         //Reset the starting ticks
-        mStartTicks = clock() - mPausedTicks;
+        mStartTicks = (uint32_t)(1000 * (clock() - mPausedTicks) / (double)CLOCKS_PER_SEC);
 
         //Reset the paused ticks
         mPausedTicks = 0;
@@ -112,7 +112,7 @@ uint32_t Timer::getTicks()
         else
         {
             //Return the current time minus the start time
-            time = clock() - mStartTicks;
+            time = (uint32_t)(1000 * (clock() - mStartTicks) / (double)CLOCKS_PER_SEC);
         }
     }
 

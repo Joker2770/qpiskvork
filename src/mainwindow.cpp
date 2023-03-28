@@ -81,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
 
-    this->m_bPause = true;
     this->m_bBoard = false;
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
@@ -296,27 +295,16 @@ void MainWindow::DrawTimeLeft()
     if (this->m_timeout_match > this->m_T2->getTicks())
     this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
     else this->m_time_left_p2 = 0;
-    if (this->m_time_left_p1 == 0 || this->m_time_left_p2 == 0)
-    {
-        if (this->m_time_left_p1 == 0)
-            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
-        else
-            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
-        this->OnActionEnd();
-    }
-    painter.drawText(20, 30, 200, 80, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+    painter.drawText(50, 30, 200, 80, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     painter.drawText(500, 30, 200, 80, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
 {
-    //if (!this->m_bPause)
-    //{
         //painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
 
         QPoint ptCenter((pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT);
         painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
-    //}
 }
 
 vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
@@ -341,7 +329,7 @@ vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>
 
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    if (!this->m_bPause)
+    if (this->mState == GAME_STATE::PLAYING)
     {
         if ((this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer))
             return;
@@ -377,7 +365,11 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                     if (this->m_timeout_match > this->m_T1->getTicks())
                         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
                     else
+                    {
                         this->m_time_left_p1 = 0;
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        this->OnActionEnd();
+                    }
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
                     if (this->m_bBoard)
                     {
@@ -399,7 +391,11 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                     if (this->m_timeout_match > this->m_T2->getTicks())
                         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
                     else
+                    {
                         this->m_time_left_p2 = 0;
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionEnd();
+                    }
                     this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
                     if (this->m_bBoard)
                     {
@@ -449,7 +445,6 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::OnActionStart()
 {
     this->mBoard->clearBoard();
-    this->m_bPause = false;
     this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
     this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
     this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
@@ -555,7 +550,6 @@ void MainWindow::OnActionPause()
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }
-    this->m_bPause = true;
     this->mState = GAME_STATE::PAUSING;
 }
 
@@ -670,7 +664,6 @@ void MainWindow::OnActionContinue()
         }
 
         this->m_bBoard = true;
-        this->m_bPause = false;
         this->mState = GAME_STATE::PLAYING;
     }
 }
@@ -755,7 +748,7 @@ void MainWindow::OnActionVer()
 
 void MainWindow::OnP1PlaceStone(int x, int y)
 {
-    if (!this->m_bPause)
+    if (this->mState == GAME_STATE::PLAYING)
     {
         if (!this->m_manager->m_p1->m_isMyTurn || !this->m_manager->m_p1->m_isComputer)
             return;
@@ -790,7 +783,11 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                     if (this->m_timeout_match > this->m_T2->getTicks())
                         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
                     else
+                    {
                         this->m_time_left_p2 = 0;
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionEnd();
+                    }
                     this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
 
                     if (this->m_bBoard)
@@ -843,7 +840,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
 void MainWindow::OnP2PlaceStone(int x, int y)
 {
-    if (!this->m_bPause)
+    if (this->mState == GAME_STATE::PLAYING)
     {
         if (!this->m_manager->m_p2->m_isMyTurn || !this->m_manager->m_p2->m_isComputer)
             return;
@@ -878,7 +875,11 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                     if (this->m_timeout_match > this->m_T1->getTicks())
                         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
                     else
+                    {
                         this->m_time_left_p1 = 0;
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        this->OnActionEnd();
+                    }
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
 
                     if (this->m_bBoard)

@@ -108,7 +108,6 @@ private:
 private:
     GAME_STATE mState;
     Board *mBoard;
-    bool m_bPause;
     bool m_bBoard;
 
     FreeStyleGomoku *m_freeStyleGomoku;
