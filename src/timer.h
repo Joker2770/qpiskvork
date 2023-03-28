@@ -7,7 +7,7 @@
 
 /**
     qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
-    Copyright (C) 2022  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,6 +55,9 @@ class Timer
 
         //The ticks stored when the timer was paused
         uint32_t mPausedTicks;
+
+        //divisor
+        double ms_divisor;
 
         //The timer status
         bool mPaused;

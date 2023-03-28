@@ -34,6 +34,7 @@ Timer::Timer()
     //Initialize the variables
     mStartTicks = 0;
     mPausedTicks = 0;
+    ms_divisor = 1000 / (double)CLOCKS_PER_SEC;
 
     mPaused = true;
     mStarted = false;
@@ -48,7 +49,7 @@ void Timer::start()
     mPaused = false;
 
     //Get the current clock time
-    mStartTicks = (uint32_t)(clock() * (1000 / (double)CLOCKS_PER_SEC));
+    mStartTicks = (uint32_t)(clock() * this->ms_divisor);
     mPausedTicks = 0;
 }
 
@@ -74,7 +75,7 @@ void Timer::pause()
         mPaused = true;
 
         //Calculate the paused ticks
-        mPausedTicks = (uint32_t)((clock() - mStartTicks) * (1000 / (double)CLOCKS_PER_SEC));
+        mPausedTicks = (uint32_t)((clock() - mStartTicks) * this->ms_divisor);
         mStartTicks = 0;
     }
 }
@@ -88,7 +89,7 @@ void Timer::unpause()
         mPaused = false;
 
         //Reset the starting ticks
-        mStartTicks = (uint32_t)((clock() - mPausedTicks) * (1000 / (double)CLOCKS_PER_SEC));
+        mStartTicks = (uint32_t)((clock() - mPausedTicks) * this->ms_divisor);
 
         //Reset the paused ticks
         mPausedTicks = 0;
@@ -112,7 +113,7 @@ uint32_t Timer::getTicks()
         else
         {
             //Return the current time minus the start time
-            time = (uint32_t)((clock() - mStartTicks) * (1000 / (double)CLOCKS_PER_SEC));
+            time = (uint32_t)((clock() - mStartTicks) * this->ms_divisor);
         }
     }
 
