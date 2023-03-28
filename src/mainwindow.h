@@ -73,7 +73,6 @@ public:
     QAction *pActionStandardGomoku;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
-    QInputDialog *pDialogBoardSize;
     QActionGroup *pRuleActionGroup;
 
 public slots:

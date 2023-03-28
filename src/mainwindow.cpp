@@ -47,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
-    this->pDialogBoardSize = new QInputDialog(this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
@@ -79,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     // pair<int, int> pBSize(15, 15);
     // this->mBoard->setBSize(pBSize);
 
-    resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+    this->setFixedSize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
 
     this->m_bBoard = false;
 
@@ -87,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_standardGomoku = new StandardGomoku();
 
     this->m_manager = new Manager(this->mBoard);
+
+    this->mState = GAME_STATE::IDLE;
 
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
@@ -217,11 +218,6 @@ MainWindow::~MainWindow()
     {
         delete this->pMenuBar;
         this->pMenuBar = nullptr;
-    }
-    if (nullptr != this->pDialogBoardSize)
-    {
-        delete this->pDialogBoardSize;
-        this->pDialogBoardSize = nullptr;
     }
     if (nullptr != this->pRuleActionGroup)
     {
@@ -533,6 +529,13 @@ void MainWindow::OnActionStart()
 
 void MainWindow::OnActionPause()
 {
+    if (nullptr != this->m_manager)
+    {
+        this->m_manager->endMatch();
+        bool bDetach = this->m_manager->DetachEngines();
+        qDebug() << "DetachFlag: " << bDetach;
+    }
+
     if (nullptr != this->m_T1)
     {
         if (this->m_T1->isStarted())
@@ -544,12 +547,6 @@ void MainWindow::OnActionPause()
             this->m_T2->pause();
     }
 
-    if (nullptr != this->m_manager)
-    {
-        this->m_manager->endMatch();
-        bool bDetach = this->m_manager->DetachEngines();
-        qDebug() << "DetachFlag: " << bDetach;
-    }
     this->mState = GAME_STATE::PAUSING;
 }
 
@@ -670,17 +667,17 @@ void MainWindow::OnActionContinue()
 
 void MainWindow::OnActionEnd()
 {
-    if (nullptr != this->m_T1)
-        this->m_T1->stop();
-    if (nullptr != this->m_T2)
-        this->m_T2->stop();
-
     if (nullptr != this->m_manager)
     {
         this->m_manager->endMatch();
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }
+
+    if (nullptr != this->m_T1)
+        this->m_T1->stop();
+    if (nullptr != this->m_T2)
+        this->m_T2->stop();
 
     this->mState = GAME_STATE::IDLE;
 }
@@ -714,19 +711,15 @@ void MainWindow::OnActionBoardSize()
 {
     if (this->mState == GAME_STATE::IDLE)
     {
-        bool getInfo = false;
-        QString down = pDialogBoardSize->getText(this, "Board Size", "Please input board size:", QLineEdit::Normal, "15", &getInfo,
-                                                 Qt::WindowFlags(), Qt::ImhNone);
-        if (getInfo)
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, "Board Size", "Please input board size:", 15, 8, 25,
+                                            1, &ok);
+        if (ok)
         {
-            bool ok = false;
-            int iTmp = down.toInt(&ok);
+            int iTmp = i_get;
             pair<int, int> pTmp(iTmp, iTmp);
-            if (ok)
-            {
-                if (this->mBoard->setBSize(pTmp))
-                    resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
-            }
+            if (this->mBoard->setBSize(pTmp))
+                resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
         }
     }
 }
