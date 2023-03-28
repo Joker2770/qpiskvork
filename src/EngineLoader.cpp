@@ -42,9 +42,10 @@ EngineLoader::EngineLoader()
 }
 EngineLoader::~EngineLoader()
 {
-    this->mProcess->close();
     if (nullptr != this->mProcess)
     {
+        if (this->mProcess->isOpen())
+            this->mProcess->close();
         delete this->mProcess;
         this->mProcess = nullptr;
     }
