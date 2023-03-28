@@ -35,7 +35,7 @@ Timer::Timer()
     mStartTicks = 0;
     mPausedTicks = 0;
 
-    mPaused = false;
+    mPaused = true;
     mStarted = false;
 }
 

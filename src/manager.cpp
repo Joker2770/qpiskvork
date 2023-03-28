@@ -250,7 +250,11 @@ bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
     {
         i_write = this->m_engine_1->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
         if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
-        else bSend = true;
+        else
+        {
+            qDebug() << "(info to p1)";
+            bSend = true;
+        }
     }
 
     return bSend;
@@ -264,8 +268,12 @@ bool Manager::infoMatch_p2(INFO_KEY key, const char* szValue)
     if (this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
         i_write = this->m_engine_2->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
-        if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
-        else bSend = true;
+        if (i_write <= 0) qDebug() << "Failed to send info to engine_2!";
+        else
+        {
+            qDebug() << "(info to p2)";
+            bSend = true;
+        }
     }
 
     return bSend;

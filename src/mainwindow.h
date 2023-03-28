@@ -37,6 +37,7 @@
 #include "StandardGomoku.h"
 #include "manager.h"
 #include "PlayerSettingDialog.h"
+#include "timer.h"
 
 #define RECT_WIDTH		50
 #define RECT_HEIGHT		50
@@ -100,7 +101,7 @@ private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;
     void DrawChessboard();
     void DrawItems();
-
+    void DrawTimeLeft();
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
     vector<pair<pair<int, int>, int>> record_expend(vector<pair<int, int>> vRecord);
@@ -115,5 +116,11 @@ private:
     StandardGomoku *m_standardGomoku;
 
     Manager *m_manager;
+
+    Timer *m_T1, *m_T2;
+    unsigned int m_timeout_match;
+    unsigned int m_timeout_turn;
+    unsigned int m_time_left_p1;
+    unsigned int m_time_left_p2;
 };
 #endif // MAINWINDOW_H
