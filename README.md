@@ -22,6 +22,7 @@ Simply build with QtCreator by double-click on `qpiskvork.pro` first of all.
 Simply build with the steps as fallow:
 
 ```shell
+cd qpiskvork
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release

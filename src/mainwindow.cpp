@@ -304,7 +304,7 @@ void MainWindow::DrawItems()
 void MainWindow::DrawTimeLeft()
 {
     QFont font;
-   font.setPixelSize(30);
+   font.setPixelSize(25);
    font.setUnderline(true);
    font.setItalic(true);
    font.setBold(true);
@@ -319,8 +319,8 @@ void MainWindow::DrawTimeLeft()
     if (this->m_timeout_match > this->m_T2->getTicks())
     this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
     else this->m_time_left_p2 = 0;
-    painter.drawText(50, 30, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    painter.drawText(this->geometry().width() - 250, 30, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+    painter.drawText(50, 20, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+    painter.drawText(this->geometry().width() - 250, 20, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
@@ -484,14 +484,22 @@ void MainWindow::OnActionStart()
     bAttach = this->m_manager->AttachEngines();
     qDebug() << "AttachFlag: " << bAttach;
 
-    if (nullptr != this->m_manager->m_engine_1)
-        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
-    if (nullptr != this->m_manager->m_engine_2)
-        connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
-
     bool bStart = false;
     if (bAttach)
     {
+        if (nullptr != this->m_manager->m_engine_1)
+        {
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        }
+        if (nullptr != this->m_manager->m_engine_2)
+        {
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        }
+
         bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
         qDebug() << "StartFlag: " << bStart;
     }
@@ -535,22 +543,10 @@ void MainWindow::OnActionStart()
         this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, "2147483647");
         this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, "2147483647");
     }
+
     if (this->m_manager->m_p1->m_isMyTurn)
         this->m_T1->start();
-
-    if (nullptr != this->m_manager->m_engine_1)
-        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnBegin()));
-
-    if (nullptr != this->m_manager->m_engine_1)
-    {
-        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-    }
-    if (nullptr != this->m_manager->m_engine_2)
-    {
-        connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-        connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-    }
+    this->m_manager->beginMatch();
 
     this->mState = GAME_STATE::PLAYING;
 }
@@ -600,6 +596,19 @@ void MainWindow::OnActionContinue()
             bool bStart = false;
             if (bAttach)
             {
+                if (nullptr != this->m_manager->m_engine_1)
+                {
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                }
+                if (nullptr != this->m_manager->m_engine_2)
+                {
+                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                }
+
                 bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
                 qDebug() << "StartFlag: " << bStart;
             }
@@ -670,22 +679,6 @@ void MainWindow::OnActionContinue()
                 this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
             }
             this->m_manager->sendBoard(vRecExpendTmp);
-
-            if (nullptr != this->m_manager->m_engine_1)
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP1PlaceStone(int,int)));
-            if (nullptr != this->m_manager->m_engine_2)
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int,int)), this, SLOT(OnP2PlaceStone(int,int)));
-
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnResponseError()));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnResponseUnknown()));
-            }
         }
 
         this->m_bBoard = true;
@@ -993,22 +986,26 @@ void MainWindow::OnP2PlaceStone(int x, int y)
     }
 }
 
-void MainWindow::OnBegin()
-{
-    if (nullptr != this->m_manager)
-    {
-        this->m_manager->beginMatch();
-    }
-}
-
-void MainWindow::OnResponseError()
+void MainWindow::OnP1ResponseError()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Error!");
+    QMessageBox::information(this, "game over!", "Player 1 responsed ERROR!");
 }
 
-void MainWindow::OnResponseUnknown()
+void MainWindow::OnP1ResponseUnknown()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Unknown!");
+    QMessageBox::information(this, "game over!", "Player 1 responsed UNKNOWN!");
+}
+
+void MainWindow::OnP2ResponseError()
+{
+    this->OnActionEnd();
+    QMessageBox::information(this, "game over!", "Player 2 responsed ERROR!");
+}
+
+void MainWindow::OnP2ResponseUnknown()
+{
+    this->OnActionEnd();
+    QMessageBox::information(this, "game over!", "Player 2 responsed UNKNOWN!");
 }

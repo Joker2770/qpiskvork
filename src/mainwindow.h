@@ -90,11 +90,12 @@ public slots:
     void OnActionMaxMemory();
     void OnActionPlayerSetting();
     void OnActionVer();
-    void OnBegin();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
-    void OnResponseError();
-    void OnResponseUnknown();
+    void OnP1ResponseError();
+    void OnP1ResponseUnknown();
+    void OnP2ResponseError();
+    void OnP2ResponseUnknown();
 
 protected:
     void paintEvent(QPaintEvent *);
