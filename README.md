@@ -9,8 +9,22 @@ This program aims to become a gomoku manager with the [protocol](https://plastov
 
 ## dependencies
 dependencies of compiling.
-* Qt5+
+* Qt5+ (REQUIRED COMPONENTS Core Gui Widgets)
 * qmake or cmake
+
+## build
+- with qtcreator
+Simply build with QtCreator by double-click on `qpiskvork.pro` first of all.
+
+- with cmake toolchain
+Simply build with the steps as fallow:
+
+```shell
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+```
 
 ## references
 
