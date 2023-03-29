@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
+    this->pActionFeedback = new QAction("Feedback", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuAbout->addAction(this->pActionVer);
+    this->pMenuAbout->addAction(this->pActionFeedback);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -118,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
+    connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
 }
 
 MainWindow::~MainWindow()
@@ -216,6 +219,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionPlayerSetting;
         this->pActionPlayerSetting = nullptr;
+    }
+    if (nullptr != this->pActionFeedback)
+    {
+        delete this->pActionFeedback;
+        this->pActionFeedback = nullptr;
     }
     if (nullptr != this->pActionVer)
     {
@@ -319,8 +327,8 @@ void MainWindow::DrawTimeLeft()
     if (this->m_timeout_match > this->m_T2->getTicks())
     this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
     else this->m_time_left_p2 = 0;
-    painter.drawText(50, 20, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    painter.drawText(this->geometry().width() - 250, 20, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+    painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+    painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
@@ -797,9 +805,21 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.0.01";
-    const QString strAll = strVerNum + "\n" + "build at " + __TIMESTAMP__;
+    const QString strVerNum = "Ver Num: 0.0.01\n";
+    QString strBuildTime = "Build at ";
+    strBuildTime.append(__TIMESTAMP__);
+    strBuildTime.append("\n");
+    const QString strAll = strVerNum + strBuildTime;
     QMessageBox::about(this, "Version", strAll);
+}
+
+void MainWindow::OnActionFeedback()
+{
+    const QString strAll = R"(
+        <a href='https://github.com/Joker2770/qpiskvork.git'>https://github.com/Joker2770/qpiskvork.git</a><br>
+        <a href='https://gitee.com/Joker2770/qpiskvork.git'>https://gitee.com/Joker2770/qpiskvork.git</a>
+        )";
+    QMessageBox::about(this, "Feedback", strAll);
 }
 
 void MainWindow::OnP1PlaceStone(int x, int y)

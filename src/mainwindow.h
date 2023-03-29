@@ -75,6 +75,7 @@ public:
     QAction *pActionStandardGomoku;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
+    QAction *pActionFeedback;
     QActionGroup *pRuleActionGroup;
 
 public slots:
@@ -90,6 +91,7 @@ public slots:
     void OnActionMaxMemory();
     void OnActionPlayerSetting();
     void OnActionVer();
+    void OnActionFeedback();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
     void OnP1ResponseError();
