@@ -14,9 +14,11 @@ dependencies of compiling.
 
 ## build
 - with qtcreator
+
 Simply build with QtCreator by double-click on `qpiskvork.pro` first of all.
 
 - with cmake toolchain
+
 Simply build with the steps as fallow:
 
 ```shell
