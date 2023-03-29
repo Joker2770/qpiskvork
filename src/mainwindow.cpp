@@ -19,6 +19,8 @@
 
 #include <QMessageBox>
 #include <QDebug>
+#include <QInputDialog>
+
 #include "mainwindow.h"
 #include "EngineLoader.h"
 
@@ -37,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuPlayer = new QMenu("Player", this);
     this->pMenuAbout = new QMenu("About", this);
     this->pActionBoardSize = new QAction("Board Size", this);
+    this->pActionTimeoutMatch = new QAction("Match Timeout", this);
+    this->pActionTimeoutTurn = new QAction("Turn Timeout", this);
+    this->pActionMaxMemory = new QAction("Max Memory", this);
     this->pActionStart = new QAction("Start", this);
     this->pActionPause = new QAction("Pause", this);
     this->pActionContinue = new QAction("Continue", this);
@@ -48,6 +53,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
+    this->pMenuSetting->addAction(this->pActionTimeoutMatch);
+    this->pMenuSetting->addAction(this->pActionTimeoutTurn);
+    this->pMenuSetting->addAction(this->pActionMaxMemory);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
     this->pMenuGame->addAction(this->pActionContinue);
@@ -78,7 +86,8 @@ MainWindow::MainWindow(QWidget *parent)
     // pair<int, int> pBSize(15, 15);
     // this->mBoard->setBSize(pBSize);
 
-    this->setFixedSize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+    this->resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+    this->setWindowFlags(this->windowFlags()&~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
 
@@ -93,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_T2 = new Timer();
     this->m_timeout_match = 15*60*1000;
     this->m_timeout_turn = 30*1000;
+    this->m_max_memory = 83886080;
     this->m_time_left_p1 = 15*60*1000;
     this->m_time_left_p2 = 15*60*1000;
 
@@ -103,6 +113,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionClear, SIGNAL(triggered()), this, SLOT(OnActionClearBoard()));
     connect(this->pActionTakeBack, SIGNAL(triggered()), this, SLOT(OnActionTakeBack()));
     connect(this->pActionBoardSize, SIGNAL(triggered()), this, SLOT(OnActionBoardSize()));
+    connect(this->pActionTimeoutMatch, SIGNAL(triggered()), this, SLOT(OnActionTimeoutMatch()));
+    connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
+    connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
 }
@@ -173,6 +186,21 @@ MainWindow::~MainWindow()
     {
         delete this->pActionBoardSize;
         this->pActionBoardSize = nullptr;
+    }
+    if (nullptr != this->pActionTimeoutMatch)
+    {
+        delete this->pActionTimeoutMatch;
+        this->pActionTimeoutMatch = nullptr;
+    }
+    if (nullptr != this->pActionTimeoutTurn)
+    {
+        delete this->pActionTimeoutTurn;
+        this->pActionTimeoutTurn = nullptr;
+    }
+    if (nullptr != this->pActionMaxMemory)
+    {
+        delete this->pActionMaxMemory;
+        this->pActionMaxMemory = nullptr;
     }
     if (nullptr != this->pActionFreeStyleGomoku)
     {
@@ -291,8 +319,8 @@ void MainWindow::DrawTimeLeft()
     if (this->m_timeout_match > this->m_T2->getTicks())
     this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
     else this->m_time_left_p2 = 0;
-    painter.drawText(50, 30, 200, 80, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    painter.drawText(500, 30, 200, 80, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+    painter.drawText(50, 30, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+    painter.drawText(this->geometry().width() - 250, 30, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
 
 void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
@@ -478,13 +506,13 @@ void MainWindow::OnActionStart()
     {
         this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
         this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-        this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+        this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
         this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
         this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
 
         this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
         this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+        this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
         this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
         this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
     }
@@ -586,13 +614,13 @@ void MainWindow::OnActionContinue()
             {
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
                 this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
                 this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
 
                 this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
                 this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-                this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, "83886080");
+                this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
                 this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
                 this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
             }
@@ -713,13 +741,55 @@ void MainWindow::OnActionBoardSize()
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, "Board Size", "Please input board size:", 15, 8, 25,
-                                            1, &ok);
+                                            1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
             int iTmp = i_get;
             pair<int, int> pTmp(iTmp, iTmp);
             if (this->mBoard->setBSize(pTmp))
                 resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+        }
+    }
+}
+
+void MainWindow::OnActionTimeoutMatch()
+{
+    if (this->mState == GAME_STATE::IDLE)
+    {
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, "Match Timeout", "Please input Match-Timeout(ms):", 900000, 0, 86400000,
+                                            1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
+        {
+            if (i_get >= 0) this->m_timeout_match = (unsigned int)i_get;
+        }
+    }
+}
+
+void MainWindow::OnActionTimeoutTurn()
+{
+    if (this->mState == GAME_STATE::IDLE)
+    {
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, "Turn Timeout", "Please input Turn-Timeout(ms):", 30000, 5000, 300000,
+                                            1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
+        {
+            if (i_get >= 0) this->m_timeout_turn = (unsigned int)i_get;
+        }
+    }
+}
+
+void MainWindow::OnActionMaxMemory()
+{
+    if (this->mState == GAME_STATE::IDLE)
+    {
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, "Max Memory", "Please input Max-Memory(byte):", 1024*1024, 1024, 83886080,
+                                            1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
+        {
+            if (i_get >= 0) this->m_max_memory = (unsigned int)i_get;
         }
     }
 }

@@ -27,7 +27,6 @@
 #include <QPaintEvent>
 #include <QPoint>
 #include <QMap>
-#include <QInputDialog>
 #include <QActionGroup>
 #include <QDialog>
 #include <QSharedPointer>
@@ -39,8 +38,8 @@
 #include "PlayerSettingDialog.h"
 #include "timer.h"
 
-#define RECT_WIDTH		50
-#define RECT_HEIGHT		50
+#define RECT_WIDTH		40
+#define RECT_HEIGHT		40
 
 typedef enum game_state
 {
@@ -63,6 +62,9 @@ public:
     QMenu *pMenuPlayer;
     QMenu *pMenuAbout;
     QAction *pActionBoardSize;
+    QAction *pActionTimeoutMatch;
+    QAction *pActionTimeoutTurn;
+    QAction *pActionMaxMemory;
     QAction *pActionStart;
     QAction *pActionPause;
     QAction *pActionContinue;
@@ -83,6 +85,9 @@ public slots:
     void OnActionClearBoard();
     void OnActionTakeBack();
     void OnActionBoardSize();
+    void OnActionTimeoutMatch();
+    void OnActionTimeoutTurn();
+    void OnActionMaxMemory();
     void OnActionPlayerSetting();
     void OnActionVer();
     void OnBegin();
@@ -117,6 +122,7 @@ private:
     Timer *m_T1, *m_T2;
     unsigned int m_timeout_match;
     unsigned int m_timeout_turn;
+    unsigned int m_max_memory;
     unsigned int m_time_left_p1;
     unsigned int m_time_left_p2;
 };
