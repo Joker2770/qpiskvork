@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_T2 = new Timer();
     this->m_timeout_match = 15*60*1000;
     this->m_timeout_turn = 30*1000;
-    this->m_max_memory = 83886080;
+    this->m_max_memory = 1024*1024*1024;
     this->m_time_left_p1 = 15*60*1000;
     this->m_time_left_p2 = 15*60*1000;
 
@@ -835,7 +835,7 @@ void MainWindow::OnActionMaxMemory()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Max Memory", "Please input Max-Memory(byte):", 1024*1024, 1024, 83886080,
+        int i_get = QInputDialog::getInt(this, "Max Memory", "Please input Max-Memory(byte):", 1024*1024*1024, 0, (int)((unsigned int)-1>>1),
                                             1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
