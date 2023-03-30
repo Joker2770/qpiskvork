@@ -107,6 +107,7 @@ private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;
     void DrawChessboard();
     void DrawItems();
+    void DrawMark();
     void DrawTimeLeft();
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 

@@ -269,6 +269,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawTimeLeft();
     DrawChessboard();
     DrawItems();
+    DrawMark();
 
     update();
 }
@@ -284,6 +285,29 @@ void MainWindow::DrawChessboard()
     {
         for (int j = 1; j < this->mBoard->getBSize().second; ++j)
             painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
+    }
+}
+
+void MainWindow::DrawChessAtPoint(QPainter &painter, QPoint &pt)
+{
+    // painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
+
+    QPoint ptCenter((pt.x() + 0.5) * RECT_WIDTH, (pt.y() + 0.5) * RECT_HEIGHT);
+    painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+}
+
+void MainWindow::DrawMark()
+{
+    if (this->mBoard->getVRecord().size() > 0)
+    {
+        QPainter painter(this);
+        QPoint pMark;
+        painter.setBrush(Qt::red);
+        pMark.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().back().first).first);
+        pMark.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().back().first).second + 1);
+
+        QPoint ptCenter((pMark.x() + 0.5) * RECT_WIDTH, (pMark.y() + 0.5) * RECT_HEIGHT);
+        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
 }
 
@@ -334,14 +358,6 @@ void MainWindow::DrawTimeLeft()
 
     painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
-}
-
-void MainWindow::DrawChessAtPoint(QPainter& painter,QPoint& pt)
-{
-        //painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
-
-        QPoint ptCenter((pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT);
-        painter.drawEllipse(ptCenter,RECT_WIDTH / 2,RECT_HEIGHT / 2);
 }
 
 vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
