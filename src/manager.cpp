@@ -234,10 +234,20 @@ void Manager::beginMatch()
 {
     qint64 i_write = 0;
 
-    if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
+    if (this->m_p1->m_isMyTurn && this->m_p1->m_isComputer && nullptr != this->m_engine_1)
     {
         i_write = this->m_engine_1->sendCommand(this->m_cmd->begin_2_send().c_str());
-        if (i_write <= 0) qDebug() << "Failed to send begin to engine_1!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send begin to engine_1!";
+    }
+    else if (this->m_p2->m_isMyTurn && this->m_p2->m_isComputer && nullptr != this->m_engine_2)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->begin_2_send().c_str());
+        if (i_write <= 0)
+            qDebug() << "Failed to send begin to engine_2!";
+    }
+    else
+    {
     }
 }
 

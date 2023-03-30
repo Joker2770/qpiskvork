@@ -336,7 +336,7 @@ void MainWindow::DrawItems()
 void MainWindow::DrawTimeLeft()
 {
     QFont font;
-   font.setPixelSize(25);
+   font.setPixelSize(15);
    font.setUnderline(true);
    font.setItalic(true);
    font.setBold(true);
@@ -484,11 +484,12 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         if (isWin)
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
                 QMessageBox::information(this, "game over!", "White win!");
-            this->mBoard->clearBoard();
+            //this->mBoard->clearBoard();
             return ;
         }
     }
@@ -574,6 +575,8 @@ void MainWindow::OnActionStart()
 
     if (this->m_manager->m_p1->m_isMyTurn)
         this->m_T1->start();
+
+    this->mBoard->Notify();
     this->m_manager->beginMatch();
 
     this->mState = GAME_STATE::PLAYING;
@@ -602,7 +605,7 @@ void MainWindow::OnActionPause()
 
 void MainWindow::OnActionContinue()
 {
-    if (this->mState != GAME_STATE::PLAYING)
+    if (this->mState == GAME_STATE::PAUSING || this->mState == IDLE)
     {
         if (nullptr != this->m_manager)
         {
@@ -720,11 +723,15 @@ void MainWindow::OnActionEnd()
     }
 
     if (nullptr != this->m_T1)
-        this->m_T1->stop();
+    {
+        this->m_T1->pause();
+    }
     if (nullptr != this->m_T2)
-        this->m_T2->stop();
+    {
+        this->m_T2->pause();
+    }
 
-    this->mState = GAME_STATE::IDLE;
+    this->mState = GAME_STATE::PAUSING;
 }
 
 void MainWindow::OnActionClearBoard()
@@ -733,6 +740,11 @@ void MainWindow::OnActionClearBoard()
     {
         this->mBoard->clearBoard();
         this->mBoard->Notify();
+
+        if (nullptr != this->m_T1)
+            this->m_T1->stop();
+        if (nullptr != this->m_T2)
+            this->m_T2->stop();
     }
 }
 
@@ -748,7 +760,11 @@ void MainWindow::OnActionTakeBack()
             return;
         }
         else
+        {
             this->mBoard->Notify();
+            if (this->mState == GAME_STATE::OVER)
+                this->mState = GAME_STATE::PAUSING;
+        }
     }
 }
 
@@ -922,11 +938,12 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         if (isWin)
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
                 QMessageBox::information(this, "game over!", "White win!");
-            this->mBoard->clearBoard();
+            //this->mBoard->clearBoard();
             return ;
         }
     }
@@ -1016,11 +1033,12 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         if (isWin)
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
             if (this->mBoard->getVRecord().back().second == BLACK)
                 QMessageBox::information(this, "game over!", "Black win!");
             else
                 QMessageBox::information(this, "game over!", "White win!");
-            this->mBoard->clearBoard();
+            //this->mBoard->clearBoard();
             return ;
         }
     }

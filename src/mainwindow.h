@@ -45,7 +45,8 @@ typedef enum game_state
 {
     IDLE,
     PLAYING,
-    PAUSING
+    PAUSING,
+    OVER
 } GAME_STATE;
 
 class MainWindow : public QMainWindow
