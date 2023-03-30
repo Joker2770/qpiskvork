@@ -498,6 +498,12 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::OnActionStart()
 {
     this->mBoard->clearBoard();
+
+    if (nullptr != this->m_T1)
+        this->m_T1->stop();
+    if (nullptr != this->m_T2)
+        this->m_T2->stop();
+
     this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
     this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
     this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
@@ -745,6 +751,8 @@ void MainWindow::OnActionClearBoard()
             this->m_T1->stop();
         if (nullptr != this->m_T2)
             this->m_T2->stop();
+
+        this->mState = GAME_STATE::IDLE;
     }
 }
 
@@ -770,7 +778,7 @@ void MainWindow::OnActionTakeBack()
 
 void MainWindow::OnActionBoardSize()
 {
-    if (this->mState == GAME_STATE::IDLE)
+    if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, "Board Size", "Please input board size:", 15, 8, 25,
@@ -781,13 +789,22 @@ void MainWindow::OnActionBoardSize()
             pair<int, int> pTmp(iTmp, iTmp);
             if (this->mBoard->setBSize(pTmp))
                 resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+
+            this->mBoard->Notify();
+
+            if (nullptr != this->m_T1)
+                this->m_T1->stop();
+            if (nullptr != this->m_T2)
+                this->m_T2->stop();
+
+            this->mState = GAME_STATE::IDLE;
         }
     }
 }
 
 void MainWindow::OnActionTimeoutMatch()
 {
-    if (this->mState == GAME_STATE::IDLE)
+    if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, "Match Timeout", "Please input Match-Timeout(ms):", 900000, 0, 86400000,
@@ -801,7 +818,7 @@ void MainWindow::OnActionTimeoutMatch()
 
 void MainWindow::OnActionTimeoutTurn()
 {
-    if (this->mState == GAME_STATE::IDLE)
+    if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, "Turn Timeout", "Please input Turn-Timeout(ms):", 30000, 5000, 300000,
@@ -815,7 +832,7 @@ void MainWindow::OnActionTimeoutTurn()
 
 void MainWindow::OnActionMaxMemory()
 {
-    if (this->mState == GAME_STATE::IDLE)
+    if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, "Max Memory", "Please input Max-Memory(byte):", 1024*1024, 1024, 83886080,
