@@ -321,12 +321,17 @@ void MainWindow::DrawTimeLeft()
     painter.setFont(font);
     painter.setPen(QPen(QColor(Qt::black),2));
 
-    if (this->m_timeout_match > this->m_T1->getTicks())
-    this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
-    else this->m_time_left_p1 = 0;
-    if (this->m_timeout_match > this->m_T2->getTicks())
-    this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
-    else this->m_time_left_p2 = 0;
+    long long ui_ticks_t1 = this->m_T1->getElapsed();
+    long long ui_ticks_t2 = this->m_T2->getElapsed();
+    if (this->m_timeout_match > ui_ticks_t1)
+        this->m_time_left_p1 = this->m_timeout_match - ui_ticks_t1;
+    else
+        this->m_time_left_p1 = 0;
+    if (this->m_timeout_match > ui_ticks_t2)
+        this->m_time_left_p2 = this->m_timeout_match - ui_ticks_t2;
+    else
+        this->m_time_left_p2 = 0;
+
     painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
 }
@@ -389,24 +394,24 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             if (bSucceed)
             {
                 this->mBoard->Notify();
+
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
-                    if (this->m_T2->isStarted()) this->m_T2->pause();
-                    if (!this->m_T1->isStarted()) this->m_T1->start();
-                    else if (this->m_T1->isPaused()) this->m_T1->unpause();
-                    if (this->m_timeout_match > this->m_T1->getTicks())
-                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
+                    this->m_T2->pause();
+                    this->m_T1->resume();
+                    if (this->m_timeout_match > this->m_T1->getElapsed())
+                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
                     else
                     {
                         this->m_time_left_p1 = 0;
                         QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         this->OnActionEnd();
+                        return;
                     }
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
-                        this->mBoard->Notify();
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -417,22 +422,21 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 }
                 else if (this->m_manager->m_p2->m_isMyTurn)
                 {
-                    if (this->m_T1->isStarted()) this->m_T1->pause();
-                    if (!this->m_T2->isStarted()) this->m_T2->start();
-                    else if (this->m_T2->isPaused()) this->m_T2->unpause();
-                    if (this->m_timeout_match > this->m_T2->getTicks())
-                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
+                    this->m_T1->pause();
+                    this->m_T2->resume();
+                    if (this->m_timeout_match > this->m_T2->getElapsed())
+                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
                     else
                     {
                         this->m_time_left_p2 = 0;
                         QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         this->OnActionEnd();
+                        return;
                     }
                     this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
-                        this->mBoard->Notify();
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -570,13 +574,11 @@ void MainWindow::OnActionPause()
 
     if (nullptr != this->m_T1)
     {
-        if (this->m_T1->isStarted())
-            this->m_T1->pause();
+        this->m_T1->pause();
     }
     if (nullptr != this->m_T2)
     {
-        if (this->m_T2->isStarted())
-            this->m_T2->pause();
+        this->m_T2->pause();
     }
 
     this->mState = GAME_STATE::PAUSING;
@@ -666,22 +668,20 @@ void MainWindow::OnActionContinue()
 
             if (this->m_manager->m_p1->m_isMyTurn)
             {
-                if (this->m_T2->isStarted()) this->m_T2->pause();
-                if (!this->m_T1->isStarted()) this->m_T1->start();
-                else if (this->m_T1->isPaused()) this->m_T1->unpause();
-                if (this->m_timeout_match > this->m_T1->getTicks())
-                    this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
+                this->m_T2->pause();
+                this->m_T1->resume();
+                if (this->m_timeout_match > this->m_T1->getElapsed())
+                    this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
                 else
                     this->m_time_left_p1 = 0;
                 this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
             }
             else
             {
-                if (this->m_T1->isStarted()) this->m_T1->pause();
-                if (!this->m_T2->isStarted()) this->m_T2->start();
-                else if (this->m_T2->isPaused()) this->m_T2->unpause();
-                if (this->m_timeout_match > this->m_T2->getTicks())
-                    this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
+                this->m_T1->pause();
+                this->m_T2->resume();
+                if (this->m_timeout_match > this->m_T2->getElapsed())
+                    this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
                 else
                     this->m_time_left_p2 = 0;
                 this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -850,26 +850,27 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
+                this->m_T1->pause();
+
                 this->mBoard->Notify();
+
                 if (this->m_manager->m_p2->m_isMyTurn)
                 {
-                    if (this->m_T1->isStarted()) this->m_T1->pause();
-                    if (!this->m_T2->isStarted()) this->m_T2->start();
-                    else if (this->m_T2->isPaused()) this->m_T2->unpause();
-                    if (this->m_timeout_match > this->m_T2->getTicks())
-                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getTicks();
+                    this->m_T2->resume();
+                    if (this->m_timeout_match > this->m_T2->getElapsed())
+                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
                     else
                     {
                         this->m_time_left_p2 = 0;
                         QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         this->OnActionEnd();
+                        return;
                     }
                     this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
 
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
-                        this->mBoard->Notify();
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -883,6 +884,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
+                return;
             }
         }
 
@@ -942,26 +944,27 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
+                this->m_T2->pause();
+
                 this->mBoard->Notify();
+
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
-                    if (this->m_T2->isStarted()) this->m_T2->pause();
-                    if (!this->m_T1->isStarted()) this->m_T1->start();
-                    else if (this->m_T1->isPaused()) this->m_T1->unpause();
-                    if (this->m_timeout_match > this->m_T1->getTicks())
-                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getTicks();
+                    this->m_T1->resume();
+                    if (this->m_timeout_match > this->m_T1->getElapsed())
+                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
                     else
                     {
                         this->m_time_left_p1 = 0;
                         QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         this->OnActionEnd();
+                        return;
                     }
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
 
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
-                        this->mBoard->Notify();
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -975,6 +978,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
+                return;
             }
         }
 

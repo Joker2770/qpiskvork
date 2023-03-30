@@ -27,6 +27,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include<chrono>
 #include<iostream>
 using namespace std;
 
@@ -35,33 +36,21 @@ class Timer
     public:
         //Initializes variables
         Timer();
+        ~Timer();
 
         //The various clock actions
         void start();
         void stop();
         void pause();
-        void unpause();
+        void resume();
 
         //Gets the timer's time
-        uint32_t getTicks();
-
-        //Checks the status of the timer
-        bool isStarted();
-        bool isPaused();
+        long long getElapsed();
 
     private:
-        //The clock time when the timer started
-        uint32_t mStartTicks;
-
-        //The ticks stored when the timer was paused
-        uint32_t mPausedTicks;
-
-        //divisor
-        double ms_divisor;
-
-        //The timer status
-        bool mPaused;
-        bool mStarted;
+        bool isRunning;
+        long long elapsed;
+        chrono::time_point<chrono::system_clock> startTime, stopTime;
 };
 
 #endif

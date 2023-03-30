@@ -122,11 +122,12 @@ private:
 
     Manager *m_manager;
 
-    Timer *m_T1, *m_T2;
-    unsigned int m_timeout_match;
-    unsigned int m_timeout_turn;
-    unsigned int m_max_memory;
-    unsigned int m_time_left_p1;
-    unsigned int m_time_left_p2;
+    Timer *m_T1;
+    Timer *m_T2;
+    long long m_timeout_match;
+    long long m_timeout_turn;
+    long long m_max_memory;
+    long long m_time_left_p1;
+    long long m_time_left_p2;
 };
 #endif // MAINWINDOW_H

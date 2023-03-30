@@ -24,110 +24,64 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include<iostream>
-#include <ctime>
-#include "timer.h"
-using namespace std;
+#include "Timer.h"
 
 Timer::Timer()
 {
     //Initialize the variables
-    mStartTicks = 0;
-    mPausedTicks = 0;
-    ms_divisor = 1000 / (double)CLOCKS_PER_SEC;
+    isRunning = false;
+    elapsed = 0;
+}
 
-    mPaused = true;
-    mStarted = false;
+Timer::~Timer()
+{
+    isRunning = false;
+    elapsed = 0;
 }
 
 void Timer::start()
 {
-    //Start the timer
-    mStarted = true;
-
-    //Unpause the timer
-    mPaused = false;
-
-    //Get the current clock time
-    mStartTicks = (uint32_t)(clock() * this->ms_divisor);
-    mPausedTicks = 0;
+    if (!isRunning)
+    {
+        startTime = chrono::system_clock::now();
+        isRunning = true;
+    }
 }
 
 void Timer::stop()
 {
-    //Stop the timer
-    mStarted = false;
-
-    //Unpause the timer
-    mPaused = false;
-
-    //Clear tick variables
-    mStartTicks = 0;
-    mPausedTicks = 0;
+    pause();
+    elapsed = 0;
 }
 
 void Timer::pause()
 {
-    //If the timer is running and isn't already paused
-    if( mStarted && !mPaused )
+    if (isRunning)
     {
-        //Pause the timer
-        mPaused = true;
-
-        //Calculate the paused ticks
-        mPausedTicks = (uint32_t)((clock() - mStartTicks) * this->ms_divisor);
-        mStartTicks = 0;
+        stopTime = chrono::system_clock::now();
+        elapsed += chrono::duration_cast<chrono::milliseconds>(stopTime - startTime).count();
+        isRunning = false;
     }
 }
 
-void Timer::unpause()
+void Timer::resume()
 {
-    //If the timer is running and paused
-    if( mStarted && mPaused )
+    if(!isRunning)
     {
-        //Unpause the timer
-        mPaused = false;
-
-        //Reset the starting ticks
-        mStartTicks = (uint32_t)((clock() - mPausedTicks) * this->ms_divisor);
-
-        //Reset the paused ticks
-        mPausedTicks = 0;
+        startTime = chrono::system_clock::now();
+        isRunning = true;
     }
 }
 
-uint32_t Timer::getTicks()
+long long Timer::getElapsed()
 {
-    //The actual timer time
-    uint32_t time = 0;
-
-    //If the timer is running
-    if( mStarted )
+    if (isRunning)
     {
-        //If the timer is paused
-        if( mPaused )
-        {
-            //Return the number of ticks when the timer was paused
-            time = mPausedTicks;
-        }
-        else
-        {
-            //Return the current time minus the start time
-            time = (uint32_t)((clock() - mStartTicks) * this->ms_divisor);
-        }
+        chrono::time_point<chrono::system_clock> now = chrono::system_clock::now();
+        return elapsed + chrono::duration_cast<chrono::milliseconds>(now - startTime).count();
     }
-
-    return time;
-}
-
-bool Timer::isStarted()
-{
-    //Timer is running and paused or unpaused
-    return mStarted;
-}
-
-bool Timer::isPaused()
-{
-    //Timer is running and paused
-    return mPaused && mStarted;
+    else
+    {
+        return elapsed;
+    }
 }
