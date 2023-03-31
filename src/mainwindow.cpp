@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
+    this->pActionLicense = new QAction("License", this);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -66,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
+    this->pMenuAbout->addAction(this->pActionLicense);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -121,6 +123,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
+    connect(this->pActionLicense, SIGNAL(triggered()), this, SLOT(OnActionLicense()));
 }
 
 MainWindow::~MainWindow()
@@ -219,6 +222,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionPlayerSetting;
         this->pActionPlayerSetting = nullptr;
+    }
+    if (nullptr != this->pActionLicense)
+    {
+        delete this->pActionLicense;
+        this->pActionLicense = nullptr;
     }
     if (nullptr != this->pActionFeedback)
     {
@@ -869,6 +877,17 @@ void MainWindow::OnActionFeedback()
         <a href='https://gitee.com/Joker2770/qpiskvork.git'>https://gitee.com/Joker2770/qpiskvork.git</a>
         )";
     QMessageBox::about(this, "Feedback", strAll);
+}
+
+void MainWindow::OnActionLicense()
+{
+    QString strAll = nullptr;
+    strAll.append("qpiskvork is another gomoku manager for adapting to Windows and Linux systems.\n");
+    strAll.append("Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>\n\n");
+    strAll.append("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\n");
+    strAll.append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n");
+    strAll.append("You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n");
+    QMessageBox::about(this, "License", strAll);
 }
 
 void MainWindow::OnP1PlaceStone(int x, int y)

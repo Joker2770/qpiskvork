@@ -77,6 +77,7 @@ public:
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
+    QAction *pActionLicense;
     QActionGroup *pRuleActionGroup;
 
 public slots:
@@ -93,6 +94,7 @@ public slots:
     void OnActionPlayerSetting();
     void OnActionVer();
     void OnActionFeedback();
+    void OnActionLicense();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
     void OnP1ResponseError();
