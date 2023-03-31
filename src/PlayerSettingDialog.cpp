@@ -46,6 +46,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->p1_hbl_2 = new QHBoxLayout();
     this->p2_hbl_1 = new QHBoxLayout();
     this->p2_hbl_2 = new QHBoxLayout();
+    this->hbl_btn = new QHBoxLayout();
     this->p1_rb_1 = new QRadioButton();
     this->p1_rb_2 = new QRadioButton();
     this->p2_rb_1 = new QRadioButton();
@@ -54,6 +55,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->le_p2 = new QLineEdit();
     this->btn_p1 = new QPushButton();
     this->btn_p2 = new QPushButton();
+    this->btn_exchange = new QPushButton();
 
     this->gl->setSpacing(5);
     this->gl_p1->setSpacing(5);
@@ -72,6 +74,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->p2_rb_1->setChecked(true);
     this->btn_p1->setText("open");
     this->btn_p2->setText("open");
+    this->btn_exchange->setText("exchange");
     this->p1_hbl_1->addWidget(p1_rb_1);
     this->p1_hbl_1->addWidget(p1_rb_2);
     this->p1_hbl_2->addWidget(le_p1);
@@ -80,6 +83,8 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->p2_hbl_1->addWidget(p2_rb_2);
     this->p2_hbl_2->addWidget(le_p2);
     this->p2_hbl_2->addWidget(btn_p2);
+    this->hbl_btn->addWidget(this->btn_exchange);
+    this->hbl_btn->addWidget(this->btn_box);
     this->gl_p1->addLayout(this->p1_hbl_1, 0, 0);
     this->gl_p1->addLayout(this->p1_hbl_2, 1, 0);
     this->gl_p2->addLayout(this->p2_hbl_1, 0, 0);
@@ -88,7 +93,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->gb_p2->setLayout(gl_p2);
     this->gl->addWidget(this->gb_p1, 0, 0);
     this->gl->addWidget(this->gb_p2, 1, 0);
-    this->gl->addWidget(this->btn_box, 2, 0);
+    this->gl->addLayout(this->hbl_btn, 2, 0);
 
     this->le_p1->setMaxLength(256);
     this->le_p2->setMaxLength(256);
@@ -103,16 +108,22 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->m_is_p1_human = true;
     this->m_is_p2_human = true;
 
-    connect(btn_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    connect(btn_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(this->btn_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(this->btn_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(this->btn_box, SIGNAL(accepted()), this, SLOT(OnDialogPlayerSettingAccept()));
     connect(this->btn_box, SIGNAL(rejected()), this, SLOT(OnDialogPlayerSettingReject()));
     connect(this->btn_p1, SIGNAL(clicked()), this, SLOT(On_p1_btnOpen_clicked()));
     connect(this->btn_p2, SIGNAL(clicked()), this, SLOT(On_p2_btnOpen_clicked()));
+    connect(this->btn_exchange, SIGNAL(clicked()), this, SLOT(On_exchange_clicked()));
 }
 
 PlayerSettingDialog::~PlayerSettingDialog()
 {
+    if (nullptr != this->btn_exchange)
+    {
+        delete this->btn_exchange;
+        this->btn_exchange = nullptr;
+    }
     if (nullptr != this->btn_p1)
     {
         delete this->btn_p1;
@@ -173,6 +184,11 @@ PlayerSettingDialog::~PlayerSettingDialog()
         delete this->p2_hbl_2;
         this->p2_hbl_2 = nullptr;
     }
+    if (nullptr != this->hbl_btn)
+    {
+        delete this->hbl_btn;
+        this->hbl_btn = nullptr;
+    }
     if (nullptr != this->btn_box)
     {
         delete this->btn_box;
@@ -223,6 +239,27 @@ void PlayerSettingDialog::On_p2_btnOpen_clicked()
     QString aFileName=QFileDialog::getOpenFileName(this, dlgTitle, curPath, nullptr);
     if (!aFileName.isEmpty())
         this->le_p2->setText(aFileName);
+}
+
+void PlayerSettingDialog::On_exchange_clicked()
+{
+    bool b_tmp_p1_rb_1 = this->p1_rb_1->isChecked();
+    bool b_tmp_p2_rb_1 = this->p2_rb_1->isChecked();
+    QString s_tmp_p1 = this->le_p1->text();
+    QString s_tmp_p2 = this->le_p2->text();
+
+    if (b_tmp_p1_rb_1)
+        this->p2_rb_1->setChecked(true);
+    else
+        this->p2_rb_2->setChecked(true);
+
+    if (b_tmp_p2_rb_1)
+        this->p1_rb_1->setChecked(true);
+    else
+        this->p1_rb_2->setChecked(true);
+
+    this->le_p1->setText(s_tmp_p2);
+    this->le_p2->setText(s_tmp_p1);
 }
 
 void PlayerSettingDialog::OnDialogPlayerSettingAccept()
