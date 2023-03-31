@@ -527,135 +527,141 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
 void MainWindow::OnActionStart()
 {
-    this->mBoard->clearBoard();
-
-    if (nullptr != this->m_T1)
-        this->m_T1->stop();
-    if (nullptr != this->m_T2)
-        this->m_T2->stop();
-
-    this->m_time_left_p1 = this->m_timeout_match;
-    this->m_time_left_p2 = this->m_timeout_match;
-
-    this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-    this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-    this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-    this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-    this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-    this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-    qDebug() << this->m_manager->m_p1->m_sPath;
-    qDebug() << this->m_manager->m_p2->m_sPath;
-    this->m_manager->m_p1->m_isMyTurn = true;
-    this->m_manager->m_p2->m_isMyTurn = false;
-
-    bool bAttach = false;
-    bAttach = this->m_manager->AttachEngines();
-    qDebug() << "AttachFlag: " << bAttach;
-
-    bool bStart = false;
-    if (bAttach)
+    if (GAME_STATE::PLAYING != this->mState)
     {
-        if (nullptr != this->m_manager->m_engine_1)
+        this->mBoard->clearBoard();
+
+        if (nullptr != this->m_T1)
+            this->m_T1->stop();
+        if (nullptr != this->m_T2)
+            this->m_T2->stop();
+
+        this->m_time_left_p1 = this->m_timeout_match;
+        this->m_time_left_p2 = this->m_timeout_match;
+
+        this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+        this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+        this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+        this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+        this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+        this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+        qDebug() << this->m_manager->m_p1->m_sPath;
+        qDebug() << this->m_manager->m_p2->m_sPath;
+        this->m_manager->m_p1->m_isMyTurn = true;
+        this->m_manager->m_p2->m_isMyTurn = false;
+
+        bool bAttach = false;
+        bAttach = this->m_manager->AttachEngines();
+        qDebug() << "AttachFlag: " << bAttach;
+
+        bool bStart = false;
+        if (bAttach)
         {
-            connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-            connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-            connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            }
+
+            bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+            qDebug() << "StartFlag: " << bStart;
         }
-        if (nullptr != this->m_manager->m_engine_2)
+        else
         {
-            connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-            connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-            connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            this->m_manager->DetachEngines();
+            QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+            return;
         }
 
-        bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
-        qDebug() << "StartFlag: " << bStart;
-    }
-    else
-    {
-        this->m_manager->DetachEngines();
-        QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
-        return;
-    }
-
-    if (bStart)
-    {
-        this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
-        this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-        this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
-        this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-        this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
-
-        this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-        this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
-    }
-    else
-    {
-        if (nullptr != this->m_manager->m_engine_1)
+        if (bStart)
         {
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+            this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+            this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+            this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+            this->m_manager->infoMatch_p1(INFO_KEY::RULE, "1");
+
+            this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+            this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+            this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+            this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+            this->m_manager->infoMatch_p2(INFO_KEY::RULE, "1");
         }
-        if (nullptr != this->m_manager->m_engine_2)
+        else
         {
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            }
+            this->m_manager->DetachEngines();
+            QMessageBox::information(this, "Error!", "Failied to start game!");
+            return;
         }
-        this->m_manager->DetachEngines();
-        QMessageBox::information(this, "Error!", "Failied to start game!");
-        return;
+
+        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+
+        if (this->m_manager->m_p1->m_isMyTurn)
+            this->m_T1->start();
+        else
+            this->m_T2->start();
+
+        this->mBoard->Notify();
+        this->m_manager->beginMatch();
+
+        this->mState = GAME_STATE::PLAYING;
     }
-
-    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-
-    if (this->m_manager->m_p1->m_isMyTurn)
-        this->m_T1->start();
-    else
-        this->m_T2->start();
-
-    this->mBoard->Notify();
-    this->m_manager->beginMatch();
-
-    this->mState = GAME_STATE::PLAYING;
 }
 
 void MainWindow::OnActionPause()
 {
-    if (nullptr != this->m_manager)
+    if (GAME_STATE::PLAYING == this->mState)
     {
-        this->m_manager->endMatch();
-        if (nullptr != this->m_manager->m_engine_1)
+        if (nullptr != this->m_manager)
         {
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            this->m_manager->endMatch();
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            }
+            bool bDetach = this->m_manager->DetachEngines();
+            qDebug() << "DetachFlag: " << bDetach;
         }
-        if (nullptr != this->m_manager->m_engine_2)
+
+        if (nullptr != this->m_T1)
         {
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            this->m_T1->pause();
         }
-        bool bDetach = this->m_manager->DetachEngines();
-        qDebug() << "DetachFlag: " << bDetach;
-    }
+        if (nullptr != this->m_T2)
+        {
+            this->m_T2->pause();
+        }
 
-    if (nullptr != this->m_T1)
-    {
-        this->m_T1->pause();
+        this->mState = GAME_STATE::PAUSING;
     }
-    if (nullptr != this->m_T2)
-    {
-        this->m_T2->pause();
-    }
-
-    this->mState = GAME_STATE::PAUSING;
 }
 
 void MainWindow::OnActionContinue()
@@ -698,18 +704,6 @@ void MainWindow::OnActionContinue()
             }
             else
             {
-                if (nullptr != this->m_manager->m_engine_1)
-                {
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                }
-                if (nullptr != this->m_manager->m_engine_2)
-                {
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-                }
                 this->m_manager->DetachEngines();
                 QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
                 return;
@@ -731,6 +725,18 @@ void MainWindow::OnActionContinue()
             }
             else
             {
+                if (nullptr != this->m_manager->m_engine_1)
+                {
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                }
+                if (nullptr != this->m_manager->m_engine_2)
+                {
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                }
                 this->m_manager->DetachEngines();
                 QMessageBox::information(this, "Error!", "Failied to start game!");
                 return;
