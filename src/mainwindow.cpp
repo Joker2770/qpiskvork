@@ -344,28 +344,50 @@ void MainWindow::DrawItems()
 void MainWindow::DrawTimeLeft()
 {
     QFont font;
-   font.setPixelSize(15);
-   font.setUnderline(true);
-   font.setItalic(true);
-   font.setBold(true);
+    font.setPixelSize(15);
+    font.setUnderline(true);
+    font.setItalic(true);
+    font.setBold(true);
 
     QPainter painter(this);
     painter.setFont(font);
-    painter.setPen(QPen(QColor(Qt::black),2));
+    painter.setPen(QPen(QColor(Qt::black), 2));
 
-    long long ui_ticks_t1 = this->m_T1->getElapsed();
-    long long ui_ticks_t2 = this->m_T2->getElapsed();
-    if (this->m_timeout_match > ui_ticks_t1)
-        this->m_time_left_p1 = this->m_timeout_match - ui_ticks_t1;
+    if (0 == this->m_time_left_p1)
+    {
+    }
+    else if (this->m_timeout_match > this->m_T1->getElapsed())
+    {
+        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+    }
     else
+    {
         this->m_time_left_p1 = 0;
-    if (this->m_timeout_match > ui_ticks_t2)
-        this->m_time_left_p2 = this->m_timeout_match - ui_ticks_t2;
-    else
-        this->m_time_left_p2 = 0;
+        this->OnActionEnd();
+    }
 
-    painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+    if (0 == this->m_time_left_p2)
+    {
+    }
+    else if (this->m_timeout_match > this->m_T2->getElapsed())
+    {
+        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+    }
+    else
+    {
+        this->m_time_left_p2 = 0;
+        this->OnActionEnd();
+    }
+
+    if (0 != this->m_time_left_p1)
+        painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+    else
+        painter.drawText(50, 25, 200, 50, Qt::AlignLeft, "TIMEOUT");
+
+    if (0 != this->m_time_left_p2)
+        painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+    else
+        painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
@@ -423,16 +445,16 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 {
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_timeout_match > this->m_T1->getElapsed())
-                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
                     else
                     {
-                        this->m_time_left_p1 = 0;
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         return;
                     }
-                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
@@ -448,16 +470,16 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 {
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_timeout_match > this->m_T2->getElapsed())
-                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
                     else
                     {
-                        this->m_time_left_p2 = 0;
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         return;
                     }
-                    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
                     if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
@@ -511,6 +533,9 @@ void MainWindow::OnActionStart()
         this->m_T1->stop();
     if (nullptr != this->m_T2)
         this->m_T2->stop();
+
+    this->m_time_left_p1 = this->m_timeout_match;
+    this->m_time_left_p2 = this->m_timeout_match;
 
     this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
     this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
@@ -569,26 +594,30 @@ void MainWindow::OnActionStart()
     }
     else
     {
+        if (nullptr != this->m_manager->m_engine_1)
+        {
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        }
+        if (nullptr != this->m_manager->m_engine_2)
+        {
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        }
         this->m_manager->DetachEngines();
         QMessageBox::information(this, "Error!", "Failied to start game!");
         return;
     }
 
-    if (this->m_timeout_match != 0)
-    {
-        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-    }
-    else
-    {
-        this->m_time_left_p1 = 2147483647;
-        this->m_time_left_p2 = 2147483647;
-        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, "2147483647");
-        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, "2147483647");
-    }
+    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
 
     if (this->m_manager->m_p1->m_isMyTurn)
         this->m_T1->start();
+    else
+        this->m_T2->start();
 
     this->mBoard->Notify();
     this->m_manager->beginMatch();
@@ -601,6 +630,18 @@ void MainWindow::OnActionPause()
     if (nullptr != this->m_manager)
     {
         this->m_manager->endMatch();
+        if (nullptr != this->m_manager->m_engine_1)
+        {
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        }
+        if (nullptr != this->m_manager->m_engine_2)
+        {
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        }
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }
@@ -657,6 +698,18 @@ void MainWindow::OnActionContinue()
             }
             else
             {
+                if (nullptr != this->m_manager->m_engine_1)
+                {
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                }
+                if (nullptr != this->m_manager->m_engine_2)
+                {
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                }
                 this->m_manager->DetachEngines();
                 QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
                 return;
@@ -703,21 +756,31 @@ void MainWindow::OnActionContinue()
             {
                 this->m_T2->pause();
                 this->m_T1->resume();
-                if (this->m_timeout_match > this->m_T1->getElapsed())
-                    this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+                if (this->m_time_left_p1 > 0)
+                {
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                }
                 else
-                    this->m_time_left_p1 = 0;
-                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                    return;
+                }
             }
             else
             {
                 this->m_T1->pause();
                 this->m_T2->resume();
-                if (this->m_timeout_match > this->m_T2->getElapsed())
-                    this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+                if (this->m_time_left_p2 > 0)
+                {
+                    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                }
                 else
-                    this->m_time_left_p2 = 0;
-                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                    return;
+                }
             }
             this->m_manager->sendBoard(vRecExpendTmp);
         }
@@ -732,6 +795,18 @@ void MainWindow::OnActionEnd()
     if (nullptr != this->m_manager)
     {
         this->m_manager->endMatch();
+        if (nullptr != this->m_manager->m_engine_1)
+        {
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        }
+        if (nullptr != this->m_manager->m_engine_2)
+        {
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        }
         bool bDetach = this->m_manager->DetachEngines();
         qDebug() << "DetachFlag: " << bDetach;
     }
@@ -819,7 +894,23 @@ void MainWindow::OnActionTimeoutMatch()
                                             1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
-            if (i_get >= 0) this->m_timeout_match = (unsigned int)i_get;
+            if (i_get > 0)
+            {
+                this->m_timeout_match = (unsigned int)i_get;
+                this->m_time_left_p1 = (unsigned int)i_get;
+                this->m_time_left_p2 = (unsigned int)i_get;
+            }
+            else if (i_get == 0)
+            {
+                this->m_timeout_match = 2147483647;
+                this->m_time_left_p1 = 2147483647;
+                this->m_time_left_p2 = 2147483647;
+            }
+
+            if (nullptr != this->m_T1)
+                this->m_T1->stop();
+            if (nullptr != this->m_T2)
+                this->m_T2->stop();
         }
     }
 }
@@ -918,23 +1009,22 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->m_T1->pause();
-
                 this->mBoard->Notify();
 
                 if (this->m_manager->m_p2->m_isMyTurn)
                 {
+                    this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_timeout_match > this->m_T2->getElapsed())
-                        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
                     else
                     {
-                        this->m_time_left_p2 = 0;
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         return;
                     }
-                    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
 
                     if (this->m_bBoard)
                     {
@@ -1013,23 +1103,22 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->m_T2->pause();
-
                 this->mBoard->Notify();
 
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
+                    this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_timeout_match > this->m_T1->getElapsed())
-                        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
                     else
                     {
-                        this->m_time_left_p1 = 0;
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         return;
                     }
-                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
 
                     if (this->m_bBoard)
                     {
@@ -1103,3 +1192,4 @@ void MainWindow::OnP2ResponseUnknown()
     this->OnActionEnd();
     QMessageBox::information(this, "game over!", "Player 2 responsed UNKNOWN!");
 }
+
