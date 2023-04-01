@@ -49,6 +49,13 @@ typedef enum game_state
     OVER
 } GAME_STATE;
 
+typedef enum game_rule
+{
+    FREESTYLEGOMOKU,
+    STANDARDGOMOKU,
+    RENJU
+} GAME_RULE;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -91,6 +98,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void On_ClickedRuleActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionVer();
     void OnActionFeedback();
@@ -118,6 +126,7 @@ private:
 
 private:
     GAME_STATE mState;
+    GAME_RULE mRule;
     Board *mBoard;
     bool m_bBoard;
 

@@ -101,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_manager = new Manager(this->mBoard);
 
     this->mState = GAME_STATE::IDLE;
+    this->mRule = GAME_RULE::FREESTYLEGOMOKU;
 
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
@@ -120,6 +121,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionTimeoutMatch, SIGNAL(triggered()), this, SLOT(OnActionTimeoutMatch()));
     connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
+    connect(this->pRuleActionGroup,SIGNAL(triggered(QAction *)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
@@ -499,17 +501,18 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         //if connect five
         bool isWin = false;
-        if (this->pActionFreeStyleGomoku->isChecked())
+        switch (this->mRule)
         {
+        case GAME_RULE::FREESTYLEGOMOKU:
             isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        }
-        else if (this->pActionStandardGomoku->isChecked())
-        {
+            break;
+        case GAME_RULE::STANDARDGOMOKU:
+            qDebug() << "stand";
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
-        }
-        else
-        {
-            /* code */
+            break;
+        default:
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+            break;
         }
 
         if (isWin)
@@ -953,6 +956,28 @@ void MainWindow::OnActionMaxMemory()
     }
 }
 
+void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
+{
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        if (pAction->text().compare(this->pActionFreeStyleGomoku->text())==0)
+        {
+            qDebug() << "Choose Free-Style gomoku!";
+            this->mRule = GAME_RULE::FREESTYLEGOMOKU;
+        }
+        else if (pAction->text().compare(this->pActionStandardGomoku->text())==0)
+        {
+            qDebug() << "Choose standard gomoku!";
+            this->mRule = GAME_RULE::STANDARDGOMOKU;
+        }
+        else
+        {
+            qDebug() << "Choose renju!";
+            this->mRule = GAME_RULE::FREESTYLEGOMOKU;
+        }
+    }
+}
+
 void MainWindow::OnActionPlayerSetting()
 {
     if (this->mState != GAME_STATE::PLAYING)
@@ -1058,17 +1083,17 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
         //if connect five
         bool isWin = false;
-        if (this->pActionFreeStyleGomoku->isChecked())
+        switch (this->mRule)
         {
+        case GAME_RULE::FREESTYLEGOMOKU:
             isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        }
-        else if (this->pActionStandardGomoku->isChecked())
-        {
+            break;
+        case GAME_RULE::STANDARDGOMOKU:
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
-        }
-        else
-        {
-            /* code */
+            break;
+        default:
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+            break;
         }
 
         if (isWin)
@@ -1152,17 +1177,17 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 
         //if connect five
         bool isWin = false;
-        if (this->pActionFreeStyleGomoku->isChecked())
+        switch (this->mRule)
         {
+        case GAME_RULE::FREESTYLEGOMOKU:
             isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        }
-        else if (this->pActionStandardGomoku->isChecked())
-        {
+            break;
+        case GAME_RULE::STANDARDGOMOKU:
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
-        }
-        else
-        {
-            /* code */
+            break;
+        default:
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+            break;
         }
 
         if (isWin)
