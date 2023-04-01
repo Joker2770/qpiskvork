@@ -311,8 +311,9 @@ void MainWindow::DrawMark()
         QPainter painter(this);
         QPoint pMark;
         painter.setBrush(Qt::red);
-        pMark.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().back().first).first);
-        pMark.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().back().first).second + 1);
+        pair<int, int> last_move_pos = this->mBoard->coord2idx(this->mBoard->getVRecord().back().first);
+        pMark.setX(last_move_pos.first);
+        pMark.setY(last_move_pos.second + 1);
 
         QPoint ptCenter((pMark.x() + 0.5) * RECT_WIDTH, (pMark.y() + 0.5) * RECT_HEIGHT);
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
@@ -798,35 +799,38 @@ void MainWindow::OnActionContinue()
 
 void MainWindow::OnActionEnd()
 {
-    if (nullptr != this->m_manager)
+    if (GAME_STATE::PLAYING == this->mState)
     {
-        this->m_manager->endMatch();
-        if (nullptr != this->m_manager->m_engine_1)
+        if (nullptr != this->m_manager)
         {
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            this->m_manager->endMatch();
+            if (nullptr != this->m_manager->m_engine_1)
+            {
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            }
+            bool bDetach = this->m_manager->DetachEngines();
+            qDebug() << "DetachFlag: " << bDetach;
         }
-        if (nullptr != this->m_manager->m_engine_2)
+
+        if (nullptr != this->m_T1)
         {
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            this->m_T1->pause();
         }
-        bool bDetach = this->m_manager->DetachEngines();
-        qDebug() << "DetachFlag: " << bDetach;
-    }
+        if (nullptr != this->m_T2)
+        {
+            this->m_T2->pause();
+        }
 
-    if (nullptr != this->m_T1)
-    {
-        this->m_T1->pause();
+        this->mState = GAME_STATE::PAUSING;
     }
-    if (nullptr != this->m_T2)
-    {
-        this->m_T2->pause();
-    }
-
-    this->mState = GAME_STATE::PAUSING;
 }
 
 void MainWindow::OnActionClearBoard()
@@ -959,7 +963,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.0.01\n";
+    const QString strVerNum = "Ver Num: 0.1.06\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
