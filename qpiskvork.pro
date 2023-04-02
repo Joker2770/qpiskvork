@@ -20,6 +20,7 @@ SOURCES += \
     src/FreeStyleGomoku.cpp \
     src/PlayerSettingDialog.cpp \
     src/StandardGomoku.cpp \
+    src/renju.cpp \
     src/board.cpp \
     src/commander.cpp \
     src/main.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     src/FreeStyleGomoku.h \
     src/PlayerSettingDialog.h \
     src/StandardGomoku.h \
+    src/renju.h \
     src/board.h \
     src/commander.h \
     src/commands.h \

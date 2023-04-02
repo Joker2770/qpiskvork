@@ -34,7 +34,7 @@ using namespace std;
 class StandardGomoku final : public rules
 {
 public:
-    bool checkWin(Board *board);
+    bool checkWin(Board *board) override;
 private:
     int countNearStone(Board *board, const pair<int, int>& p_drt);
 };

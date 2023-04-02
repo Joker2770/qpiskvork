@@ -34,6 +34,7 @@
 #include "board.h"
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
+#include "renju.h"
 #include "manager.h"
 #include "PlayerSettingDialog.h"
 #include "timer.h"
@@ -81,6 +82,7 @@ public:
     QAction *pActionTakeBack;
     QAction *pActionFreeStyleGomoku;
     QAction *pActionStandardGomoku;
+    QAction *pActionRenju;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
@@ -132,6 +134,7 @@ private:
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
+    Renju *m_renju;
 
     Manager *m_manager;
 

@@ -104,6 +104,27 @@ vector<pair<int, int>> &Board::getVRecord()
     return this->vRecord;
 }
 
+int Board::getIdxStoneColor(const pair<int, int> idx)
+{
+    int i_color = -1;
+    if (!this->isPosOutOfBoard(idx))
+    {
+        i_color = 0;
+        vector<pair<int, int>>::iterator iter;
+        for (iter = this->vRecord.begin(); iter != this->vRecord.end(); ++iter)
+        {
+            // found
+            if (this->idx2Coord(idx) == iter->first)
+            {
+                i_color = iter->second;
+                break;
+            }
+        }
+    }
+
+    return i_color;
+}
+
 bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
 {
     if (this->isPosEmpty(idx) && !this->isPosOutOfBoard(idx))

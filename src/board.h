@@ -65,6 +65,7 @@ public:
     pair<int, int> getBSize();
     int getMaxRecordSize();
     vector<pair<int, int>> &getVRecord();
+    int getIdxStoneColor(const pair<int, int> idx);
     bool placeStone(const pair<int, int> idx, STONECOLOR color);
     bool takeBackStone();
     void clearBoard();

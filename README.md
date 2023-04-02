@@ -2,10 +2,10 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/81b307ac0e004c58adeef0c80f620310)](https://app.codacy.com/gh/Joker2770/qpiskvork?utm_source=github.com&utm_medium=referral&utm_content=Joker2770/qpiskvork&utm_campaign=Badge_Grade_Settings)
 
-Another gomoku manager adapting to Windows and Linux systems.
+Another gomoku or renju manager adapting to Windows and Linux systems.
 
 ## summary
-This program aims to become a gomoku manager with the [protocol](https://plastovicka.github.io/protocl2en.htm).
+This program aims to become a gomoku or manager with the [protocol](https://plastovicka.github.io/protocl2en.htm).
 
 ## dependencies
 dependencies of compiling.

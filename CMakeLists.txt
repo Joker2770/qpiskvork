@@ -17,6 +17,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 set(PROJECT_SOURCES
 	src/FreeStyleGomoku.cpp
 	src/StandardGomoku.cpp
+	src/renju.cpp
 	src/board.cpp
 	src/main.cpp
 	src/mainwindow.cpp
@@ -28,6 +29,7 @@ set(PROJECT_SOURCES
 	src/PlayerSettingDialog.cpp
 	src/FreeStyleGomoku.h
 	src/StandardGomoku.h
+	src/renju.h
 	src/board.h
 	src/commands.h
 	src/mainwindow.h
