@@ -6,7 +6,7 @@
  ************************************************************************/
 
 /**
-    qpiskvork is another gomoku manager for adapting to Windows and Linux systems.
+    qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.
     Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify

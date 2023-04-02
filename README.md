@@ -5,7 +5,7 @@
 Another gomoku or renju manager adapting to Windows and Linux systems.
 
 ## summary
-This program aims to become a gomoku or manager with the [protocol](https://plastovicka.github.io/protocl2en.htm).
+This program aims to become a gomoku or renju manager with the [protocol](https://plastovicka.github.io/protocl2en.htm).
 
 ## dependencies
 dependencies of compiling.
