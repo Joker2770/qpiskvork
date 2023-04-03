@@ -64,6 +64,7 @@ else()
     else()
         add_executable(qpiskvork
             ${PROJECT_SOURCES}
+            res.qrc
         )
     endif()
 endif()

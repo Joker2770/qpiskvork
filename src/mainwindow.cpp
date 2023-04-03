@@ -89,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(this->pMenuBar);
 #endif
 
+    this->setWindowIcon(QIcon(":/icon/icon.jpg"));
+
     this->mBoard = new Board();
     // pair<int, int> pBSize(15, 15);
     // this->mBoard->setBSize(pBSize);
