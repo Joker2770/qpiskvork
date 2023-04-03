@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qpiskvork VERSION 0.1 LANGUAGES CXX)
+project(qpiskvork VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -64,6 +64,7 @@ else()
     else()
         add_executable(qpiskvork
             ${PROJECT_SOURCES}
+            res.qrc
         )
     endif()
 endif()

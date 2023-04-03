@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>skins/HGarden2.bmp</file>
+        <file>icon/icon.jpg</file>
     </qresource>
 </RCC>

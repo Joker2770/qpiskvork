@@ -89,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(this->pMenuBar);
 #endif
 
+    this->setWindowIcon(QIcon(":/icon/icon.jpg"));
+
     this->mBoard = new Board();
     // pair<int, int> pBSize(15, 15);
     // this->mBoard->setBSize(pBSize);
@@ -524,29 +526,6 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
             break;
         case GAME_RULE::RENJU:
-            if (!this->m_renju->isIllegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK!";
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, "game over!", info);
-                return;
-            }
             isWin = this->m_renju->checkWin(this->mBoard);
             break;
         default:
@@ -564,7 +543,31 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             else
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
-            return ;
+        }
+        else if (this->mRule == GAME_RULE::RENJU)
+        {
+            if (!this->m_renju->isLegal(this->mBoard))
+            {
+                this->OnActionEnd();
+                this->mState = GAME_STATE::OVER;
+                this->pRuleActionGroup->setEnabled(true);
+                QString info = "Illegal move from BLACK! ";
+                switch (this->m_renju->getRenjuState())
+                {
+                case PATTERN::OVERLINE:
+                    info.append("OVERLINE");
+                    break;
+                case PATTERN::DOUBLE_FOUR:
+                    info.append("DOUBLE_FOUR");
+                    break;
+                case PATTERN::DOUBLE_THREE:
+                    info.append("DOUBLE_THREE");
+                    break;
+                default:
+                    break;
+                }
+                QMessageBox::information(this, "game over!", info);
+            }
         }
     }
 }
@@ -1055,7 +1058,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.01\n";
+    const QString strVerNum = "Ver Num: 0.2.04\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1159,29 +1162,6 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
             break;
         case GAME_RULE::RENJU:
-            if (!this->m_renju->isIllegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK!";
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, "game over!", info);
-                return;
-            }
             isWin = this->m_renju->checkWin(this->mBoard);
             break;
         default:
@@ -1199,7 +1179,31 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             else
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
-            return ;
+        }
+        else if (this->mRule == GAME_RULE::RENJU)
+        {
+            if (!this->m_renju->isLegal(this->mBoard))
+            {
+                this->OnActionEnd();
+                this->mState = GAME_STATE::OVER;
+                this->pRuleActionGroup->setEnabled(true);
+                QString info = "Illegal move from BLACK! ";
+                switch (this->m_renju->getRenjuState())
+                {
+                case PATTERN::OVERLINE:
+                    info.append("OVERLINE");
+                    break;
+                case PATTERN::DOUBLE_FOUR:
+                    info.append("DOUBLE_FOUR");
+                    break;
+                case PATTERN::DOUBLE_THREE:
+                    info.append("DOUBLE_THREE");
+                    break;
+                default:
+                    break;
+                }
+                QMessageBox::information(this, "game over!", info);
+            }
         }
     }
 }
@@ -1280,29 +1284,6 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             isWin = this->m_standardGomoku->checkWin(this->mBoard);
             break;
         case GAME_RULE::RENJU:
-            if (!this->m_renju->isIllegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK!";
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, "game over!", info);
-                return;
-            }
             isWin = this->m_renju->checkWin(this->mBoard);
             break;
         default:
@@ -1320,7 +1301,31 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             else
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
-            return ;
+        }
+        else if (this->mRule == GAME_RULE::RENJU)
+        {
+            if (!this->m_renju->isLegal(this->mBoard))
+            {
+                this->OnActionEnd();
+                this->mState = GAME_STATE::OVER;
+                this->pRuleActionGroup->setEnabled(true);
+                QString info = "Illegal move from BLACK! ";
+                switch (this->m_renju->getRenjuState())
+                {
+                case PATTERN::OVERLINE:
+                    info.append("OVERLINE");
+                    break;
+                case PATTERN::DOUBLE_FOUR:
+                    info.append("DOUBLE_FOUR");
+                    break;
+                case PATTERN::DOUBLE_THREE:
+                    info.append("DOUBLE_THREE");
+                    break;
+                default:
+                    break;
+                }
+                QMessageBox::information(this, "game over!", info);
+            }
         }
     }
 }

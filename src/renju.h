@@ -52,7 +52,7 @@ const int A4_SHAPS[][5] = {
     {1, 1, 0, 1, 1},
     {1, 1, 1, 0, 1},
     {1, 1, 1, 1, 0}};
-// A3 is that add one stone could be A4
+// A3 is that add one stone could be A4, especially '2011102', '|01110|', '|011102' and '201110|' are Dead-Three. (| - boarder)
 const int A3_SHAPS[][6] = {
     {0, 1, 1, 1, 0, 0},
     {0, 0, 1, 1, 1, 0},
@@ -62,8 +62,9 @@ const int A3_SHAPS[][6] = {
 class Renju final : public rules
 {
 public:
-    bool isIllegal(Board *board);
     bool checkWin(Board *board) override;
+    //after checkWin
+    bool isLegal(Board *board);
     int getRenjuState();
 private:
     bool isOverLine(Board *board);
