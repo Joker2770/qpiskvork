@@ -64,7 +64,7 @@ class Renju final : public rules
 public:
     bool checkWin(Board *board) override;
     //after checkWin
-    bool isIllegal(Board *board);
+    bool isLegal(Board *board);
     int getRenjuState();
 private:
     bool isOverLine(Board *board);

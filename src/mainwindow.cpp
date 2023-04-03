@@ -546,7 +546,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         }
         else if (this->mRule == GAME_RULE::RENJU)
         {
-            if (!this->m_renju->isIllegal(this->mBoard))
+            if (!this->m_renju->isLegal(this->mBoard))
             {
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
@@ -1058,7 +1058,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.01\n";
+    const QString strVerNum = "Ver Num: 0.2.04\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1182,7 +1182,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         }
         else if (this->mRule == GAME_RULE::RENJU)
         {
-            if (!this->m_renju->isIllegal(this->mBoard))
+            if (!this->m_renju->isLegal(this->mBoard))
             {
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
@@ -1304,7 +1304,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         }
         else if (this->mRule == GAME_RULE::RENJU)
         {
-            if (!this->m_renju->isIllegal(this->mBoard))
+            if (!this->m_renju->isLegal(this->mBoard))
             {
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;

@@ -511,7 +511,7 @@ bool Renju::isThree(Board *board)
     return false;
 }
 
-bool Renju::isIllegal(Board *board)
+bool Renju::isLegal(Board *board)
 {
     if (board->getVRecord().back().second == STONECOLOR::BLACK)
     {
