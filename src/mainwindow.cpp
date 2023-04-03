@@ -1055,7 +1055,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.1.06\n";
+    const QString strVerNum = "Ver Num: 0.2.01\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1075,7 +1075,7 @@ void MainWindow::OnActionFeedback()
 void MainWindow::OnActionLicense()
 {
     QString strAll = nullptr;
-    strAll.append("qpiskvork is another gomoku manager for adapting to Windows and Linux systems.\n");
+    strAll.append("qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.\n");
     strAll.append("Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>\n\n");
     strAll.append("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\n");
     strAll.append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n");

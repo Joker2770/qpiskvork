@@ -466,13 +466,18 @@ bool Renju::checkWin(Board *board)
     if (board->getVRecord().back().second == STONECOLOR::BLACK)
     {
         if (i_up + i_down == 4 || i_left + i_right == 4 || i_leftup + i_rightdown == 4 || i_leftdown + i_rightup == 4)
+        {
+            this->m_renju_state = PATTERN::FIVE_IN_A_ROW;
             return true;
+        }
     }
     else
     {
-
         if (i_up + i_down >= 4 || i_left + i_right >= 4 || i_leftup + i_rightdown >= 4 || i_leftdown + i_rightup >= 4)
+        {
+            this->m_renju_state = PATTERN::FIVE_IN_A_ROW;
             return true;
+        }
     }
 
     return false;
