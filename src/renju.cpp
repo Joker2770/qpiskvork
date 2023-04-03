@@ -195,6 +195,11 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
 
                             if ((i_flag & 0x03) == 0x03)
                                 return 2;
+                            else if (((i_flag & 0x01) == 0x01) || ((i_flag & 0x02) == 0x02))
+                                i_count = 1;
+                            else
+                            {
+                            }
 
                             break;
                         }
@@ -206,8 +211,11 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
                                 i_flag |= 0x08;
 
                             if ((i_flag & (0x04 | 0x08)) == (0x04 | 0x08))
-                            {
                                 return 2;
+                            else if (((i_flag & 0x04) == 0x04) || ((i_flag & 0x08) == 0x08))
+                                i_count = 1;
+                            else
+                            {
                             }
 
                             break;
@@ -340,8 +348,45 @@ bool Renju::isFourThree(Board *board)
     int i_leftup_3 = countA3(board, p_drt_leftup);
     int i_leftdown_3 = countA3(board, p_drt_leftdown);
 
-    if ((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4 == 1) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 == 1))
-        return true;
+    if (((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4) == 1) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 >= 1))
+    {
+        if (i_up_4 == 1)
+        {
+            if (i_left_3 + i_leftup_3 + i_leftdown_3 == 0) // only four
+                return false;
+            else if (i_left_3 + i_leftup_3 + i_leftdown_3 > 1) // 433*
+                return false;
+            else if (i_left_3 + i_leftup_3 + i_leftdown_3 == 1)
+                return true;
+        }
+        else if (i_left_4 == 1)
+        {
+            if (i_up_3 + i_leftup_3 + i_leftdown_3 == 0) // only four
+                return false;
+            else if (i_up_3 + i_leftup_3 + i_leftdown_3 > 1) // 433*
+                return false;
+            else if (i_up_3 + i_leftup_3 + i_leftdown_3 == 1)
+                return true;
+        }
+        else if (i_leftup_4 == 1)
+        {
+            if (i_up_3 + i_left_3 + i_leftdown_3 == 0) // only four
+                return false;
+            else if (i_up_3 + i_left_3 + i_leftdown_3 > 1) // 433*
+                return false;
+            else if (i_up_3 + i_left_3 + i_leftdown_3 == 1)
+                return true;
+        }
+        else if (i_leftdown_4 == 1)
+        {
+            if (i_left_3 + i_leftup_3 + i_up_3 == 0) // only four
+                return false;
+            else if (i_left_3 + i_leftup_3 + i_up_3 > 1) //433*
+                return false;
+            else if (i_left_3 + i_leftup_3 + i_up_3 == 1)
+                return true;
+        }
+    }
 
     return false;
 }
@@ -358,8 +403,92 @@ bool Renju::isFour(Board *board)
     int i_leftup_3 = countA3(board, p_drt_leftup);
     int i_leftdown_3 = countA3(board, p_drt_leftdown);
 
-    if ((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4 == 1) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 == 0))
-        return true;
+    if (((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4) == 1) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 < 2))
+    {
+        if (i_up_4 == 1)
+        {
+            if (i_left_3 + i_leftup_3 + i_leftdown_3 == 0)
+                return true;
+        }
+        else if (i_left_4 == 1)
+        {
+            if (i_up_3 + i_leftup_3 + i_leftdown_3 == 0)
+                return true;
+        }
+        else if (i_leftup_4 == 1)
+        {
+            if (i_up_3 + i_left_3 + i_leftdown_3 == 0)
+                return true;
+        }
+        else if (i_leftdown_4 == 1)
+        {
+            if (i_up_3 + i_left_3 + i_leftup_3 == 0)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool Renju::isDoubleThree(Board *board)
+{
+    pair<int, int> p_drt_up(0, -1), p_drt_left(-1, 0), p_drt_leftup(-1, -1), p_drt_leftdown(-1, 1);
+    int i_up_4 = countA4(board, p_drt_up);
+    int i_left_4 = countA4(board, p_drt_left);
+    int i_leftup_4 = countA4(board, p_drt_leftup);
+    int i_leftdown_4 = countA4(board, p_drt_leftdown);
+    int i_up_3 = countA3(board, p_drt_up);
+    int i_left_3 = countA3(board, p_drt_left);
+    int i_leftup_3 = countA3(board, p_drt_leftup);
+    int i_leftdown_3 = countA3(board, p_drt_leftdown);
+
+    if ((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4 < 2) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 >= 2))
+    {
+        if (i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4 == 0)
+        {
+            if (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 >= 2)
+                return true;
+        }
+        else
+        {
+            if (i_up_4 == 1)
+            {
+                if (i_left_3 + i_leftup_3 + i_leftdown_3 >= 2) // 433*
+                    return true;
+                else if (i_left_3 + i_leftup_3 + i_leftdown_3 == 1) // 43
+                    return false;
+                else // only 4
+                    return false;
+            }
+            else if (i_left_4 == 1)
+            {
+                if (i_up_3 + i_leftup_3 + i_leftdown_3 >= 2) // 433*
+                    return true;
+                else if (i_up_3 + i_leftup_3 + i_leftdown_3 == 1) // 43
+                    return false;
+                else // only 4
+                    return false;
+            }
+            else if (i_leftup_4 == 1)
+            {
+                if (i_up_3 + i_left_3 + i_leftdown_3 >= 2) // 433*
+                    return true;
+                else if (i_up_3 + i_left_3 + i_leftdown_3 == 1) // 43
+                    return false;
+                else // only 4
+                    return false;
+            }
+            else if (i_leftdown_4 == 1)
+            {
+                if (i_up_3 + i_leftup_3 + i_left_3 >= 2) // 433*
+                    return true;
+                else if (i_up_3 + i_leftup_3 + i_left_3 == 1) // 43
+                    return false;
+                else // only 4
+                    return false;
+            }
+        }
+    }
 
     return false;
 }
@@ -377,20 +506,6 @@ bool Renju::isThree(Board *board)
     int i_leftdown_3 = countA3(board, p_drt_leftdown);
 
     if ((i_up_4 + i_left_4 + i_leftup_4 + i_leftdown_4 == 0) && (i_up_3 + i_left_3 + i_leftup_3 + i_leftdown_3 == 1))
-        return true;
-
-    return false;
-}
-
-bool Renju::isDoubleThree(Board *board)
-{
-    pair<int, int> p_drt_up(0, -1), p_drt_left(-1, 0), p_drt_leftup(-1, -1), p_drt_leftdown(-1, 1);
-    int i_up = countA3(board, p_drt_up);
-    int i_left = countA3(board, p_drt_left);
-    int i_leftup = countA3(board, p_drt_leftup);
-    int i_leftdown = countA3(board, p_drt_leftdown);
-
-    if (i_up + i_left + i_leftup + i_leftdown >= 2)
         return true;
 
     return false;

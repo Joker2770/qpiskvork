@@ -62,8 +62,9 @@ const int A3_SHAPS[][6] = {
 class Renju final : public rules
 {
 public:
-    bool isIllegal(Board *board);
     bool checkWin(Board *board) override;
+    //after checkWin
+    bool isIllegal(Board *board);
     int getRenjuState();
 private:
     bool isOverLine(Board *board);
