@@ -31,7 +31,7 @@ using namespace std;
 Board::Board() : i_width(15), i_height(15), iMaxRecordSize(15 * 15)
 {
     this->vRecord.clear();
-    this->m_iState = BOARDEMPTY;
+    this->m_iState = BOARDSTATUS::BOARDEMPTY;
 }
 
 Board::~Board()
@@ -133,11 +133,11 @@ bool Board::placeStone(const pair<int, int> idx, STONECOLOR color)
         this->vRecord.push_back(p_coord);
 
         if (this->vRecord.size() >= this->iMaxRecordSize)
-            this->m_iState = BOARDFULL;
-        else if (color == WHITE)
-            this->m_iState = BLACKNEXT;
-        else if (color == BLACK)
-            this->m_iState = WHITENEXT;
+            this->m_iState = BOARDSTATUS::BOARDFULL;
+        else if (color == STONECOLOR::WHITE)
+            this->m_iState = BOARDSTATUS::BLACKNEXT;
+        else if (color == STONECOLOR::BLACK)
+            this->m_iState = BOARDSTATUS::WHITENEXT;
 
         return true;
     }
@@ -153,8 +153,15 @@ bool Board::takeBackStone()
     int i_size_2 = this->vRecord.size();
     if (i_size_1 > i_size_2)
     {
-        if (this->vRecord.back().second == WHITE) this->m_iState = BLACKNEXT;
-        else if (this->vRecord.back().second == BLACK) this->m_iState = WHITENEXT;
+        if (0 == this->vRecord.size())
+            this->m_iState = BOARDSTATUS::BOARDEMPTY;
+        else
+        {
+            if (this->vRecord.back().second == STONECOLOR::WHITE)
+                this->m_iState = BOARDSTATUS::BLACKNEXT;
+            else if (this->vRecord.back().second == STONECOLOR::BLACK)
+                this->m_iState = BOARDSTATUS::WHITENEXT;
+        }
         return true;
     }
     else
@@ -168,7 +175,7 @@ void Board::clearBoard()
     {
         iter = this->vRecord.erase(iter);
     }
-    this->m_iState = BOARDEMPTY;
+    this->m_iState = BOARDSTATUS::BOARDEMPTY;
 }
 
 void Board::Attach(Observer *pObserver)
