@@ -107,9 +107,11 @@ public slots:
     void OnActionLicense();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
+    void OnP1ResponseName(const QString &name);
     void OnP1ResponseOk();
     void OnP1ResponseError();
     void OnP1ResponseUnknown();
+    void OnP2ResponseName(const QString &name);
     void OnP2ResponseOk();
     void OnP2ResponseError();
     void OnP2ResponseUnknown();
@@ -125,6 +127,7 @@ private:
     void DrawMark();
     void DrawTimeLeft();
     void DrawPlayerState();
+    void DrawPlayerName();
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
     vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
@@ -136,6 +139,8 @@ private:
     bool m_bBoard;
     bool m_bOK_P1;
     bool m_bOK_P2;
+    QString m_p1_name;
+    QString m_p2_name;
 
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;

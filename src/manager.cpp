@@ -328,6 +328,23 @@ void Manager::sendBoard(vector<pair<pair<int, int>, int>> vRecord)
     }
 }
 
+void Manager::sendAbout()
+{
+    qint64 i_write = 0;
+
+    if (nullptr != this->m_engine_1)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->about_2_send().c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
+    }
+
+    if (nullptr != this->m_engine_2)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->about_2_send().c_str());
+        if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
+    }
+}
+
 void Manager::endMatch()
 {
     qint64 i_write = 0;

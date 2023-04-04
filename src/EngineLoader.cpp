@@ -193,4 +193,20 @@ void EngineLoader::response_parse(const string &str)
         vector<int> vPos = this->split(s_tmp, ',');
         emit responsed_pos(vPos[0], vPos[1]);
     }
+    else if (s_tmp.find("name") != string::npos)
+    {
+        vector<string> vInfo = this->split(s_tmp, ",");
+        for (vector<string>::iterator iter = vInfo.begin(); iter != vInfo.end(); ++iter)
+        {
+            if (iter->find("name") != string::npos && iter->find("=") != string::npos)
+            {
+                vector<string> vKV = this->split(*iter, "=");
+                string vName = vKV.at(1);
+                size_t start = vName.find_first_of("\"") != string::npos ? (vName.find_first_of("\"") + 1) : 0;
+                size_t end = vName.find_last_of("\"") != string::npos ? vName.find_last_of("\"") - 2 : vName.size();
+                vName = vName.substr(start, end);
+                emit(responsed_name(QString::fromStdString(vName)));
+            }
+        }
+    }
 }

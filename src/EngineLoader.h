@@ -55,6 +55,7 @@ signals:
     void responsed_ok();
     void responsed_error();
     void responsed_unknown();
+    void responsed_name(const QString &name);
     void responsed_pos(int x, int y);
 
 private slots:
