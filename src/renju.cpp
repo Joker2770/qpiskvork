@@ -146,45 +146,40 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
                        && ((A4_SHAPS[i][3]) == (vColor[j+3]))
                         && ((A4_SHAPS[i][4]) == (vColor[j+4])))
                     {
-                        if ((i == 1 || i == 3)) //'1011101', '111010111'
+                        if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, '111010111' at mid, '11110111', '11101111'
                         {
                             if (i == 1)
                                 i_flag |= 0x01;
                             else if (i == 3)
                                 i_flag |= 0x02;
 
-                            if ((i_flag & 0x03) == 0x03)
-                                return 2;
-                            else if (((i_flag & 0x01) == 0x01) || ((i_flag & 0x02) == 0x02))
-                                i_count = 1;
-                            else
-                            {
-                            }
-
                             break;
                         }
-                        else if (i == 2)    //'11011011'
+                        else if (i == 2)    //'11011011' at left4 and right4, '11110111', '11101111'
                         {
                             if ((i_flag & 0x04) != 0x04)
                                 i_flag |= 0x04;
                             else if ((i_flag & 0x08) != 0x08)
                                 i_flag |= 0x08;
 
-                            if ((i_flag & (0x04 | 0x08)) == (0x04 | 0x08))
-                                return 2;
-                            else if (((i_flag & 0x04) == 0x04) || ((i_flag & 0x08) == 0x08))
-                                i_count = 1;
-                            else
-                            {
-                            }
-
                             break;
                         }
-                        else
+                        else //'11110011', '11001111', '10110111', '11101101'
                             i_count = 1;
                     }
                 }
             }
+
+            if ((i_flag & 0x07) == 0x07) //'11101111' or '11110111'
+                i_count = 1;
+            else if ((i_flag & 0x03) == 0x03) //'1011101', '10111101'
+                i_count = 2;
+            else if ((i_flag & (0x04 | 0x08)) == (0x04 | 0x08)) //'11011011'
+                i_count = 2;
+            else if (((i_flag & 0x03) == 0x01) || ((i_flag & 0x03) == 0x02))
+                i_count = 1;
+            else if (((i_flag & 0x04) == 0x04) || ((i_flag & 0x08) == 0x08))
+                i_count = 1;
         }
     }
 
