@@ -109,6 +109,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->mState = GAME_STATE::IDLE;
     this->mRule = GAME_RULE::FREESTYLEGOMOKU;
 
+    this->m_bOK_P1 = false;
+    this->m_bOK_P2 = false;
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
     this->m_timeout_match = 15*60*1000;
@@ -293,6 +295,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     Q_UNUSED(e)
 
     DrawTimeLeft();
+    DrawPlayerState();
     DrawChessboard();
     DrawItems();
     DrawMark();
@@ -399,14 +402,68 @@ void MainWindow::DrawTimeLeft()
     }
 
     if (0 != this->m_time_left_p1)
-        painter.drawText(50, 25, 200, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+        painter.drawText(50, 25, 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     else
-        painter.drawText(50, 25, 200, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, 25, 150, 50, Qt::AlignLeft, "TIMEOUT");
 
     if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+        painter.drawText(this->geometry().width() - 200, 25, 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     else
-        painter.drawText(this->geometry().width() - 250, 25, 200, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, 25, 150, 50, Qt::AlignRight, "TIMEOUT");
+}
+
+void MainWindow::DrawPlayerState()
+{
+    QPainter painter(this);
+    QPoint pPos;
+    pair<int, int> pos_1(30, 30);
+    pair<int, int> pos_2(this->geometry().width() - 30, 30);
+
+    if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P1 || !(this->m_manager->m_p1->m_isComputer)))
+    {
+        if (this->m_manager->m_p1->m_isMyTurn)
+            painter.setBrush(Qt::green);
+        else
+            painter.setBrush(Qt::red);
+
+        pPos.setX(pos_1.first);
+        pPos.setY(pos_1.second);
+
+        QPoint ptCenter(pPos.x(), pPos.y());
+        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+    }
+    else
+    {
+        painter.setBrush(Qt::gray);
+        pPos.setX(pos_1.first);
+        pPos.setY(pos_1.second);
+
+        QPoint ptCenter(pPos.x(), pPos.y());
+        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+    }
+
+    if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P2 || !(this->m_manager->m_p2->m_isComputer)))
+    {
+        if (this->m_manager->m_p2->m_isMyTurn)
+            painter.setBrush(Qt::green);
+        else
+            painter.setBrush(Qt::red);
+
+        pPos.setX(pos_2.first);
+        pPos.setY(pos_2.second);
+
+        QPoint ptCenter(pPos.x(), pPos.y());
+        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+    }
+    else
+    {
+        painter.setBrush(Qt::gray);
+        pPos.setX(pos_2.first);
+        pPos.setY(pos_2.second);
+
+        QPoint ptCenter(pPos.x(), pPos.y());
+        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+    }
 }
 
 vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
@@ -607,12 +664,14 @@ void MainWindow::OnActionStart()
             if (nullptr != this->m_manager->m_engine_1)
             {
                 connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
                 connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
             }
@@ -655,12 +714,14 @@ void MainWindow::OnActionStart()
             if (nullptr != this->m_manager->m_engine_1)
             {
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
             }
@@ -695,12 +756,14 @@ void MainWindow::OnActionPause()
             if (nullptr != this->m_manager->m_engine_1)
             {
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
             }
@@ -717,6 +780,8 @@ void MainWindow::OnActionPause()
             this->m_T2->pause();
         }
 
+        this->m_bOK_P1 = false;
+        this->m_bOK_P2 = false;
         this->mState = GAME_STATE::PAUSING;
     }
 }
@@ -746,12 +811,14 @@ void MainWindow::OnActionContinue()
                 if (nullptr != this->m_manager->m_engine_1)
                 {
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
                 }
                 if (nullptr != this->m_manager->m_engine_2)
                 {
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
                 }
@@ -794,12 +861,14 @@ void MainWindow::OnActionContinue()
                 if (nullptr != this->m_manager->m_engine_1)
                 {
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
                 }
                 if (nullptr != this->m_manager->m_engine_2)
                 {
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
                 }
@@ -873,12 +942,14 @@ void MainWindow::OnActionEnd()
             if (nullptr != this->m_manager->m_engine_1)
             {
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
             }
@@ -895,6 +966,8 @@ void MainWindow::OnActionEnd()
             this->m_T2->pause();
         }
 
+        this->m_bOK_P1 = false;
+        this->m_bOK_P2 = false;
         this->mState = GAME_STATE::PAUSING;
     }
 }
@@ -1330,6 +1403,11 @@ void MainWindow::OnP2PlaceStone(int x, int y)
     }
 }
 
+void MainWindow::OnP1ResponseOk()
+{
+    this->m_bOK_P1 = true;
+}
+
 void MainWindow::OnP1ResponseError()
 {
     this->OnActionEnd();
@@ -1340,6 +1418,11 @@ void MainWindow::OnP1ResponseUnknown()
 {
     this->OnActionEnd();
     QMessageBox::information(this, "game over!", "Player 1 responsed UNKNOWN!");
+}
+
+void MainWindow::OnP2ResponseOk()
+{
+    this->m_bOK_P2 = true;
 }
 
 void MainWindow::OnP2ResponseError()
