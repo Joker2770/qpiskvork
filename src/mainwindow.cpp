@@ -406,22 +406,22 @@ void MainWindow::DrawTimeLeft()
     }
 
     if (0 != this->m_time_left_p1)
-        painter.drawText(50, 25, 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     else
-        painter.drawText(50, 25, 150, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, "TIMEOUT");
 
     if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 200, 25, 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     else
-        painter.drawText(this->geometry().width() - 200, 25, 150, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 void MainWindow::DrawPlayerState()
 {
     QPainter painter(this);
     QPoint pPos;
-    pair<int, int> pos_1(30, 30);
-    pair<int, int> pos_2(this->geometry().width() - 30, 30);
+    pair<int, int> pos_1(30, 35);
+    pair<int, int> pos_2(this->geometry().width() - 30, 35);
 
     if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P1 || !(this->m_manager->m_p1->m_isComputer)))
     {
@@ -1194,7 +1194,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.09\n";
+    const QString strVerNum = "Ver Num: 0.2.10\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
