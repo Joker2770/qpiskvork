@@ -32,46 +32,6 @@
 #include<iostream>
 using namespace std;
 
-// int Renju::countStoneInFour(Board *board, const pair<int, int>& p_drt)
-// {
-//     int i_count = 0;
-//     if (board->GetState() == BOARDSTATUS::BOARDEMPTY)    return 0;
-//     pair<int, int> p_last_move = board->getVRecord().back();
-//     pair<int, int> p_idx = board->coord2idx(p_last_move.first);
-//     pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
-//     int i_empty = 0;
-//     while (!board->isPosOutOfBoard(p_drt_idx))
-//     {
-//         if (!board->isPosEmpty(p_drt_idx))
-//         {
-//             for (size_t i = 0; i < board->getVRecord().size(); ++i)
-//             {
-//                 if (board->getVRecord().at(i).first == board->idx2Coord(p_drt_idx))
-//                 {
-//                     if (board->getVRecord().at(i).second == p_last_move.second)
-//                     {
-//                         i_count++;
-//                         break;
-//                     }
-//                     else
-//                         return i_count;
-//                 }
-//             }
-//         }
-//         else
-//         {
-//             i_empty++;
-//             if (i_empty >= 2)
-//                 return i_count;
-//         }
-//         p_drt_idx.first += p_drt.first;
-//         p_drt_idx.second += p_drt.second;
-//         if (abs(p_idx.first - p_drt_idx.first) > 4 || abs(p_idx.second - p_drt_idx.second) > 4)
-//             break;
-//     }
-//     return i_count;
-// }
-
 int Renju::countNearStone(Board *board, const pair<int, int>& p_drt)
 {
     int i_count = 0;

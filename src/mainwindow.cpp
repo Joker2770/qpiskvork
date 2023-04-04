@@ -1179,12 +1179,22 @@ void MainWindow::OnActionPlayerSetting()
     if (this->mState != GAME_STATE::PLAYING)
     {
         this->m_player_setting->exec();
+
+        if (nullptr != this->m_manager)
+        {
+            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+            qDebug() << this->m_manager->m_p1->m_sPath;
+            qDebug() << this->m_manager->m_p2->m_sPath;
+        }
     }
 }
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.04\n";
+    const QString strVerNum = "Ver Num: 0.2.09\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");

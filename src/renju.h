@@ -80,7 +80,6 @@ private:
     bool isThree(Board *board);
     int countA4(Board *board, const pair<int, int>& p_drt);
     int countA3(Board *board, const pair<int, int>& p_drt);
-    //int countStoneInFour(Board *board, const pair<int, int>& p_drt);
     int countNearStone(Board *board, const pair<int, int>& p_drt);
 
     int m_renju_state;
