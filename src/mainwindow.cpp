@@ -466,7 +466,7 @@ void MainWindow::DrawPlayerState()
     }
 }
 
-vector<pair<pair<int,int>, int>> MainWindow::record_expend(vector<pair<int, int>> vRecord)
+vector<pair<pair<int,int>, int>> MainWindow::record_expend(const vector<pair<int, int>> vRecord)
 {
     vector<pair<pair<int,int>, int>> vRecExpendTmp;
     vRecExpendTmp.clear();

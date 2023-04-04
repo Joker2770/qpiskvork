@@ -127,7 +127,7 @@ private:
     void DrawPlayerState();
     void DrawChessAtPoint(QPainter& painter,QPoint& pt);
 
-    vector<pair<pair<int, int>, int>> record_expend(vector<pair<int, int>> vRecord);
+    vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
 
 private:
     GAME_STATE mState;
