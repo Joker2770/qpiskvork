@@ -40,8 +40,8 @@
 #include "PlayerSettingDialog.h"
 #include "timer.h"
 
-#define RECT_WIDTH		40
-#define RECT_HEIGHT		40
+#define RECT_WIDTH		(36)
+#define RECT_HEIGHT		(36)
 
 typedef enum game_state
 {

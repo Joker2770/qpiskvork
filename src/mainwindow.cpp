@@ -124,9 +124,7 @@ MainWindow::MainWindow(QWidget *parent)
     QPixmap pm;
     pm.load(":/skins/HGarden2.bmp");
     for (size_t i = 0; i < 5; i++)
-    {
-        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT));
-    }
+        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
@@ -365,6 +363,9 @@ void MainWindow::DrawMark()
         QPainter painter(this);
         QPoint pMark;
         painter.setBrush(Qt::red);
+        painter.setRenderHints(QPainter::Antialiasing, true);
+        painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
         pair<int, int> last_move_pos = this->mBoard->coord2idx(this->mBoard->getVRecord().back().first);
         pMark.setX(last_move_pos.first + 1);
         pMark.setY(last_move_pos.second + 2);
@@ -389,6 +390,8 @@ void MainWindow::DrawItems()
 {
     QPainter painter(this);
     painter.setPen(QPen(QColor(Qt::transparent)));
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
 
     for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
     {
@@ -455,22 +458,25 @@ void MainWindow::DrawTimeLeft()
     }
 
     if (0 != this->m_time_left_p1)
-        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     else
-        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
 
     if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     else
-        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 void MainWindow::DrawPlayerState()
 {
     QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
     QPoint pPos;
-    pair<int, int> pos_1(30, 35);
-    pair<int, int> pos_2(this->geometry().width() - 30, 35);
+    pair<int, int> pos_1((int)(RECT_WIDTH * 0.8), RECT_HEIGHT);
+    pair<int, int> pos_2(this->geometry().width() - (int)(RECT_WIDTH * 0.8), RECT_HEIGHT);
 
     if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P1 || !(this->m_manager->m_p1->m_isComputer)))
     {
@@ -560,10 +566,10 @@ void MainWindow::DrawIndication()
         painter.setPen(QPen(QColor(Qt::black), 2));
 
         for (size_t i = 0; i < this->mBoard->getBSize().first; i++)
-            painter.drawText((i + 1) * RECT_WIDTH + 5, 60, 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+            painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
 
         for (size_t i = 0; i < this->mBoard->getBSize().second; i++)
-            painter.drawText(15, (i + 2) * RECT_HEIGHT + 10, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+            painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
     }
 }
 
@@ -1263,7 +1269,7 @@ void MainWindow::OnActionSkin()
                 if (!pm.isNull())
                 {
                     for (size_t i = 0; i < 5; i++)
-                        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT));
+                        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
                     this->m_bSkin = true;
                 }
@@ -1311,15 +1317,15 @@ void MainWindow::OnActionPlayerSetting()
             this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
             this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
             this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
+            qDebug() << "p1: " << this->m_manager->m_p1->m_sPath;
+            qDebug() << "p2: " << this->m_manager->m_p2->m_sPath;
         }
     }
 }
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.10\n";
+    const QString strVerNum = "Ver Num: 0.3.04\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
