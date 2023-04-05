@@ -30,6 +30,7 @@
 #include <QActionGroup>
 #include <QDialog>
 #include <QSharedPointer>
+#include <QPixmap>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -74,6 +75,7 @@ public:
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
+    QAction *pActionSkin;
     QAction *pActionStart;
     QAction *pActionPause;
     QAction *pActionContinue;
@@ -100,6 +102,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionVer();
@@ -128,7 +131,7 @@ private:
     void DrawTimeLeft();
     void DrawPlayerState();
     void DrawPlayerName();
-    void DrawChessAtPoint(QPainter& painter,QPoint& pt);
+    void DrawIndication();
 
     vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
 
@@ -140,6 +143,7 @@ private:
     Renju *m_renju;
     Timer *m_T1;
     Timer *m_T2;
+    vector<QPixmap> m_images;
     QString m_p1_name;
     QString m_p2_name;
     long long m_timeout_match;
@@ -150,6 +154,7 @@ private:
     GAME_STATE mState;
     GAME_RULE mRule;
     bool m_bBoard;
+    bool m_bSkin;
     bool m_bOK_P1;
     bool m_bOK_P2;
 };
