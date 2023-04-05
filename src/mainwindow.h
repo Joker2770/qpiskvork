@@ -30,6 +30,7 @@
 #include <QActionGroup>
 #include <QDialog>
 #include <QSharedPointer>
+#include <QPixmap>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -39,8 +40,8 @@
 #include "PlayerSettingDialog.h"
 #include "timer.h"
 
-#define RECT_WIDTH		40
-#define RECT_HEIGHT		40
+#define RECT_WIDTH		(36)
+#define RECT_HEIGHT		(36)
 
 typedef enum game_state
 {
@@ -74,6 +75,7 @@ public:
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
+    QAction *pActionSkin;
     QAction *pActionStart;
     QAction *pActionPause;
     QAction *pActionContinue;
@@ -100,6 +102,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionVer();
@@ -128,32 +131,31 @@ private:
     void DrawTimeLeft();
     void DrawPlayerState();
     void DrawPlayerName();
-    void DrawChessAtPoint(QPainter& painter,QPoint& pt);
+    void DrawIndication();
 
     vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
 
 private:
-    GAME_STATE mState;
-    GAME_RULE mRule;
     Board *mBoard;
-    bool m_bBoard;
-    bool m_bOK_P1;
-    bool m_bOK_P2;
-    QString m_p1_name;
-    QString m_p2_name;
-
+    Manager *m_manager;
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
     Renju *m_renju;
-
-    Manager *m_manager;
-
     Timer *m_T1;
     Timer *m_T2;
+    vector<QPixmap> m_images;
+    QString m_p1_name;
+    QString m_p2_name;
     long long m_timeout_match;
     long long m_timeout_turn;
     long long m_max_memory;
     long long m_time_left_p1;
     long long m_time_left_p2;
+    GAME_STATE mState;
+    GAME_RULE mRule;
+    bool m_bBoard;
+    bool m_bSkin;
+    bool m_bOK_P1;
+    bool m_bOK_P2;
 };
 #endif // MAINWINDOW_H

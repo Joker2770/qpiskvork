@@ -2,5 +2,16 @@
     <qresource prefix="/">
         <file>skins/HGarden2.bmp</file>
         <file>icon/icon.jpg</file>
+        <file>skins/bold.bmp</file>
+        <file>skins/fontanGomo.bmp</file>
+        <file>skins/gems.bmp</file>
+        <file>skins/gomoku.bmp</file>
+        <file>skins/HGarden.bmp</file>
+        <file>skins/light.bmp</file>
+        <file>skins/pisq.bmp</file>
+        <file>skins/rain.bmp</file>
+        <file>skins/star.bmp</file>
+        <file>skins/wood.bmp</file>
+        <file>skins/yellow.bmp</file>
     </qresource>
 </RCC>

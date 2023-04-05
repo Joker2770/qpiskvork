@@ -86,12 +86,14 @@ public:
 private:
     // first - coord, second - color.
     vector<pair<int, int>> vRecord;
+    vector<Observer *> m_vObserver;
+
+    unsigned int iMaxRecordSize;
 
     // int BSize;
     int i_width;
     int i_height;
-    unsigned int iMaxRecordSize;
-    std::vector<Observer *> m_vObserver;
+
     int m_iState;
 };
 

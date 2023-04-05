@@ -74,7 +74,8 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->p2_rb_1->setChecked(true);
     this->btn_p1->setText("open");
     this->btn_p2->setText("open");
-    this->btn_exchange->setText("exchange");
+    this->btn_exchange->setText("exchange(Ctrl+X)");
+    this->btn_exchange->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
     this->p1_hbl_1->addWidget(p1_rb_1);
     this->p1_hbl_1->addWidget(p1_rb_2);
     this->p1_hbl_2->addWidget(le_p1);

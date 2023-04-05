@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTimeoutMatch = new QAction("Match Timeout", this);
     this->pActionTimeoutTurn = new QAction("Turn Timeout", this);
     this->pActionMaxMemory = new QAction("Max Memory", this);
+    this->pActionSkin = new QAction("Skin", this);
     this->pActionStart = new QAction("Start", this);
     this->pActionPause = new QAction("Pause", this);
     this->pActionContinue = new QAction("Continue", this);
@@ -55,10 +56,26 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
     this->pActionLicense = new QAction("License", this);
+    this->pActionStart->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+    this->pActionPause->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
+    this->pActionContinue->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_G));
+    this->pActionEnd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+    this->pActionClear->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_C));
+    this->pActionTakeBack->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+    this->pActionBoardSize->setShortcut(QKeySequence(Qt::Key_B));
+    this->pActionTimeoutMatch->setShortcut(QKeySequence(Qt::Key_M));
+    this->pActionTimeoutTurn->setShortcut(QKeySequence(Qt::Key_T));
+    this->pActionMaxMemory->setShortcut(QKeySequence(Qt::Key_O));
+    this->pActionSkin->setShortcut(QKeySequence(Qt::Key_K));
+    this->pActionFreeStyleGomoku->setShortcut(QKeySequence(Qt::Key_F));
+    this->pActionStandardGomoku->setShortcut(QKeySequence(Qt::Key_S));
+    this->pActionRenju->setShortcut(QKeySequence(Qt::Key_R));
+    this->pActionPlayerSetting->setShortcut(QKeySequence(Qt::Key_P));
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
     this->pMenuSetting->addAction(this->pActionMaxMemory);
+    this->pMenuSetting->addAction(this->pActionSkin);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
     this->pMenuGame->addAction(this->pActionContinue);
@@ -98,10 +115,16 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_p1_name.clear();
     this->m_p2_name.clear();
 
-    this->resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+    this->resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
     this->setWindowFlags(this->windowFlags()&~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
+    this->m_bSkin = true;
+
+    QPixmap pm;
+    pm.load(":/skins/HGarden2.bmp");
+    for (size_t i = 0; i < 5; i++)
+        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
@@ -132,6 +155,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionTimeoutMatch, SIGNAL(triggered()), this, SLOT(OnActionTimeoutMatch()));
     connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
+    connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
     connect(this->pRuleActionGroup,SIGNAL(triggered(QAction *)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
@@ -226,6 +250,11 @@ MainWindow::~MainWindow()
         delete this->pActionMaxMemory;
         this->pActionMaxMemory = nullptr;
     }
+    if (nullptr != this->pActionSkin)
+    {
+        delete this->pActionSkin;
+        this->pActionSkin = nullptr;
+    }
     if (nullptr != this->pActionFreeStyleGomoku)
     {
         delete this->pActionFreeStyleGomoku;
@@ -301,6 +330,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawPlayerState();
     DrawPlayerName();
     DrawChessboard();
+    DrawIndication();
     DrawItems();
     DrawMark();
 
@@ -312,21 +342,18 @@ void MainWindow::DrawChessboard()
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(Qt::darkYellow);
-    painter.setPen(QPen(QColor(Qt::black),2));
+    painter.setPen(QPen(QColor(Qt::black), 2));
 
-    for(int i = 0; i < this->mBoard->getBSize().first - 1; ++i)
+    for (int i = 0; i < this->mBoard->getBSize().first; ++i)
     {
-        for (int j = 1; j < this->mBoard->getBSize().second; ++j)
-            painter.drawRect( (i+0.5)*RECT_WIDTH,(j+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
+        for (int j = 0; j < this->mBoard->getBSize().second; ++j)
+        {
+            if (this->m_bSkin && !this->m_images.at(0).isNull())
+                painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));
+            else
+                painter.drawRect((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT);
+        }
     }
-}
-
-void MainWindow::DrawChessAtPoint(QPainter &painter, QPoint &pt)
-{
-    // painter.drawRect( (pt.x()+0.5)*RECT_WIDTH,(pt.y()+0.5)*RECT_HEIGHT,RECT_WIDTH,RECT_HEIGHT);
-
-    QPoint ptCenter((pt.x() + 0.5) * RECT_WIDTH, (pt.y() + 0.5) * RECT_HEIGHT);
-    painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
 }
 
 void MainWindow::DrawMark()
@@ -336,12 +363,26 @@ void MainWindow::DrawMark()
         QPainter painter(this);
         QPoint pMark;
         painter.setBrush(Qt::red);
+        painter.setRenderHints(QPainter::Antialiasing, true);
+        painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
         pair<int, int> last_move_pos = this->mBoard->coord2idx(this->mBoard->getVRecord().back().first);
-        pMark.setX(last_move_pos.first);
-        pMark.setY(last_move_pos.second + 1);
+        pMark.setX(last_move_pos.first + 1);
+        pMark.setY(last_move_pos.second + 2);
 
         QPoint ptCenter((pMark.x() + 0.5) * RECT_WIDTH, (pMark.y() + 0.5) * RECT_HEIGHT);
-        painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+
+        int idx = 3;
+        if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
+            idx = 3;
+        else
+            idx = 4;
+
+
+        if (this->m_bSkin && !this->m_images.at(idx).isNull())
+            painter.drawPixmap(pMark.x() * RECT_WIDTH, pMark.y() * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
+        else
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
 }
 
@@ -349,21 +390,32 @@ void MainWindow::DrawItems()
 {
     QPainter painter(this);
     painter.setPen(QPen(QColor(Qt::transparent)));
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
 
     for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
     {
         QPoint p;
+        p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first + 1);
+        p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 2);
+        QPoint ptCenter((p.x() + 0.5) * RECT_WIDTH, (p.y() + 0.5) * RECT_HEIGHT);
+
+        int idx = 1;
         if (this->mBoard->getVRecord().at(i).second == STONECOLOR::BLACK)
         {
             painter.setBrush(Qt::black);
+            idx = 1;
         }
         else
         {
             painter.setBrush(Qt::white);
+            idx = 2;
         }
-        p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first);
-        p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 1);
-        DrawChessAtPoint(painter, p);
+
+        if (this->m_bSkin && !this->m_images.at(idx).isNull())
+            painter.drawPixmap(p.x() * RECT_WIDTH, p.y() * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
+        else
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
     }
 }
 
@@ -406,22 +458,25 @@ void MainWindow::DrawTimeLeft()
     }
 
     if (0 != this->m_time_left_p1)
-        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     else
-        painter.drawText(50, 30, 150, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
 
     if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     else
-        painter.drawText(this->geometry().width() - 200, 30, 150, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 void MainWindow::DrawPlayerState()
 {
     QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
     QPoint pPos;
-    pair<int, int> pos_1(30, 35);
-    pair<int, int> pos_2(this->geometry().width() - 30, 35);
+    pair<int, int> pos_1((int)(RECT_WIDTH * 0.8), RECT_HEIGHT);
+    pair<int, int> pos_2(this->geometry().width() - (int)(RECT_WIDTH * 0.8), RECT_HEIGHT);
 
     if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P1 || !(this->m_manager->m_p1->m_isComputer)))
     {
@@ -497,6 +552,27 @@ void MainWindow::DrawPlayerName()
         painter.drawText(this->geometry().width() - 200, this->geometry().height() - 30, 150, 50, Qt::AlignRight, "Human");
 }
 
+void MainWindow::DrawIndication()
+{
+    if (nullptr != this->mBoard)
+    {
+        QFont font;
+        font.setPixelSize(10);
+        font.setItalic(true);
+        // font.setBold(true);
+
+        QPainter painter(this);
+        painter.setFont(font);
+        painter.setPen(QPen(QColor(Qt::black), 2));
+
+        for (size_t i = 0; i < this->mBoard->getBSize().first; i++)
+            painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+
+        for (size_t i = 0; i < this->mBoard->getBSize().second; i++)
+            painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+    }
+}
+
 vector<pair<pair<int,int>, int>> MainWindow::record_expend(const vector<pair<int, int>> vRecord)
 {
     vector<pair<pair<int,int>, int>> vRecExpendTmp;
@@ -528,10 +604,10 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         pt.setX( (e->pos().x() ) / RECT_WIDTH);
         pt.setY( (e->pos().y() ) / RECT_HEIGHT);
 
-        if (pt.y() < 1)
+        if (pt.y() < 2 || pt.x() < 1)
             return;
 
-        pair<int, int> p_idx(pt.x(), pt.y() - 1);
+        pair<int, int> p_idx(pt.x() - 1, pt.y() - 2);
 
         if (this->mBoard->GetState() != BOARDSTATUS::BOARDFULL)
         {
@@ -1074,7 +1150,7 @@ void MainWindow::OnActionBoardSize()
             int iTmp = i_get;
             pair<int, int> pTmp(iTmp, iTmp);
             if (this->mBoard->setBSize(pTmp))
-                resize(this->mBoard->getBSize().first * RECT_WIDTH, (this->mBoard->getBSize().second + 1) * RECT_HEIGHT + this->pMenuBar->height());
+                resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
 
             this->mBoard->Notify();
 
@@ -1147,6 +1223,61 @@ void MainWindow::OnActionMaxMemory()
     }
 }
 
+void MainWindow::OnActionSkin()
+{
+    if (this->mState != GAME_STATE::PLAYING)
+    {
+        bool ok = false;
+        QStringList s_items;
+        s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "wood" << "yellow";
+        QString s_get = QInputDialog::getItem(this, "Skin", "Please choose skin:", s_items, 0, false,
+                                            &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
+        {
+            if (QString::compare(s_get, "none") == 0)
+                this->m_bSkin = false;
+            else
+            {
+                QPixmap pm;
+                this->m_images.clear();
+
+                if (QString::compare(s_get, "bold") == 0)
+                    pm.load(":/skins/bold.bmp");
+                else if (QString::compare(s_get, "fontanGomo") == 0)
+                    pm.load(":/skins/fontanGomo.bmp");
+                else if (QString::compare(s_get, "gems") == 0)
+                    pm.load(":/skins/gems.bmp");
+                else if (QString::compare(s_get, "gomoku") == 0)
+                    pm.load(":/skins/gomoku.bmp");
+                else if (QString::compare(s_get, "HGarden") == 0)
+                    pm.load(":/skins/HGarden.bmp");
+                else if (QString::compare(s_get, "HGarden2") == 0)
+                    pm.load(":/skins/HGarden2.bmp");
+                else if (QString::compare(s_get, "light") == 0)
+                    pm.load(":/skins/light.bmp");
+                else if (QString::compare(s_get, "pisq") == 0)
+                    pm.load(":/skins/pisq.bmp");
+                else if (QString::compare(s_get, "rain") == 0)
+                    pm.load(":/skins/rain.bmp");
+                else if (QString::compare(s_get, "star") == 0)
+                    pm.load(":/skins/star.bmp");
+                else if (QString::compare(s_get, "wood") == 0)
+                    pm.load(":/skins/wood.bmp");
+                else if (QString::compare(s_get, "yellow") == 0)
+                    pm.load(":/skins/yellow.bmp");
+
+                if (!pm.isNull())
+                {
+                    for (size_t i = 0; i < 5; i++)
+                        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+                    this->m_bSkin = true;
+                }
+            }
+        }
+    }
+}
+
 void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
 {
     if (this->mState == GAME_STATE::OVER || this->mState == GAME_STATE::IDLE)
@@ -1186,15 +1317,15 @@ void MainWindow::OnActionPlayerSetting()
             this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
             this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
             this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
+            qDebug() << "p1: " << this->m_manager->m_p1->m_sPath;
+            qDebug() << "p2: " << this->m_manager->m_p2->m_sPath;
         }
     }
 }
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.2.10\n";
+    const QString strVerNum = "Ver Num: 0.3.04\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
