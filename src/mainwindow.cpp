@@ -126,6 +126,9 @@ MainWindow::MainWindow(QWidget *parent)
     for (size_t i = 0; i < 5; i++)
         this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
+    if (this->m_images.size() != 5)
+        this->m_bSkin = false;
+
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
     this->m_renju = new Renju();
@@ -1271,7 +1274,10 @@ void MainWindow::OnActionSkin()
                     for (size_t i = 0; i < 5; i++)
                         this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-                    this->m_bSkin = true;
+                    if (this->m_images.size() != 5)
+                        this->m_bSkin = false;
+                    else
+                        this->m_bSkin = true;
                 }
             }
         }

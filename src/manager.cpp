@@ -311,7 +311,7 @@ void Manager::turn_2_p2(int iX, int iY)
     }
 }
 
-void Manager::sendBoard(vector<pair<pair<int, int>, int>> vRecord)
+void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord)
 {
     qint64 i_write = 0;
 
