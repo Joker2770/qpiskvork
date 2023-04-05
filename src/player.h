@@ -40,13 +40,10 @@ public:
     Player();
     ~Player();
 
-    bool m_isComputer;
-    bool m_isMyTurn;
     QString m_sPath;
     STONECOLOR m_color;
-
-private:
-
+    bool m_isComputer;
+    bool m_isMyTurn;
 };
 
 #endif
