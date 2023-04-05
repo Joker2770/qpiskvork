@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionEnd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
     this->pActionClear->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_C));
     this->pActionTakeBack->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-    this->pActionBoardSize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
+    this->pActionBoardSize->setShortcut(QKeySequence(Qt::Key_B));
     this->pActionTimeoutMatch->setShortcut(QKeySequence(Qt::Key_M));
     this->pActionTimeoutTurn->setShortcut(QKeySequence(Qt::Key_T));
     this->pActionMaxMemory->setShortcut(QKeySequence(Qt::Key_O));
