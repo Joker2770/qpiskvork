@@ -36,6 +36,7 @@
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
 #include "renju.h"
+#include "caro.h"
 #include "manager.h"
 #include "PlayerSettingDialog.h"
 #include "timer.h"
@@ -55,7 +56,8 @@ typedef enum game_rule
 {
     FREESTYLEGOMOKU = 0,
     STANDARDGOMOKU = 1,
-    RENJU = 4
+    RENJU = 4,
+    CARO = 8
 } GAME_RULE;
 
 class MainWindow : public QMainWindow
@@ -85,6 +87,7 @@ public:
     QAction *pActionFreeStyleGomoku;
     QAction *pActionStandardGomoku;
     QAction *pActionRenju;
+    QAction *pActionCaro;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
@@ -141,6 +144,7 @@ private:
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
     Renju *m_renju;
+    Caro *m_caro;
     Timer *m_T1;
     Timer *m_T2;
     vector<QPixmap> m_images;

@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
     this->pActionRenju = new QAction("Renju", this);
+    this->pActionCaro = new QAction("Caro", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
@@ -70,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionFreeStyleGomoku->setShortcut(QKeySequence(Qt::Key_F));
     this->pActionStandardGomoku->setShortcut(QKeySequence(Qt::Key_S));
     this->pActionRenju->setShortcut(QKeySequence(Qt::Key_R));
+    this->pActionCaro->setShortcut(QKeySequence(Qt::Key_C));
     this->pActionPlayerSetting->setShortcut(QKeySequence(Qt::Key_P));
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
@@ -97,9 +99,11 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionFreeStyleGomoku->setCheckable(true);
     this->pActionStandardGomoku->setCheckable(true);
     this->pActionRenju->setCheckable(true);
+    this->pActionCaro->setCheckable(true);
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionFreeStyleGomoku));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionStandardGomoku));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionRenju));
+    this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionCaro));
     this->pActionFreeStyleGomoku->setChecked(true);
 
 #ifndef USE_DEFAULT_MENU_BAR
@@ -132,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_freeStyleGomoku = new FreeStyleGomoku();
     this->m_standardGomoku = new StandardGomoku();
     this->m_renju = new Renju();
+    this->m_caro = new Caro();
 
     this->m_manager = new Manager(this->mBoard);
 
@@ -182,6 +187,11 @@ MainWindow::~MainWindow()
     {
         delete this->m_manager;
         this->m_manager = nullptr;
+    }
+    if (nullptr != this->m_caro)
+    {
+        delete this->m_caro;
+        this->m_caro = nullptr;
     }
     if (nullptr != this->m_renju)
     {
@@ -272,6 +282,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionRenju;
         this->pActionRenju = nullptr;
+    }
+    if (nullptr != this->pActionCaro)
+    {
+        delete this->pActionCaro;
+        this->pActionCaro = nullptr;
     }
     if (nullptr != this->pActionPlayerSetting)
     {
@@ -696,6 +711,11 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= 0x04;
+        }
+        else if (0x08 == (this->m_Rule & 0x08))
+        {
+            if (this->m_caro->checkWin(this->mBoard))
+                i_win |= 0x08;
         }
 
         if ((0 != this->m_Rule) && (this->m_Rule & i_win) == this->m_Rule)
@@ -1308,6 +1328,19 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::RENJU));
             }
         }
+        else if (pAction->text().compare(this->pActionCaro->text())==0)
+        {
+            if (this->pActionCaro->isChecked())
+            {
+                qDebug() << "Choose caro!";
+                this->m_Rule |= GAME_RULE::CARO;
+            }
+            else
+            {
+                qDebug() << "Cancel caro!";
+                this->m_Rule &= (~(GAME_RULE::CARO));
+            }
+        }
         else
         {
             qDebug() << "Choose Free-Style gomoku!";
@@ -1445,6 +1478,11 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= 0x04;
         }
+        else if (0x08 == (this->m_Rule & 0x08))
+        {
+            if (this->m_caro->checkWin(this->mBoard))
+                i_win |= 0x08;
+        }
 
         if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
             isWin = true;
@@ -1567,6 +1605,11 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= 0x04;
+        }
+        else if (0x08 == (this->m_Rule & 0x08))
+        {
+            if (this->m_caro->checkWin(this->mBoard))
+                i_win |= 0x08;
         }
 
         if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
