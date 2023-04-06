@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTakeBack = new QAction("Take Back", this);
     this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
     this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
+    this->pActionContinuous = new QAction("Continuous", this);
     this->pActionRenju = new QAction("Renju", this);
     this->pActionCaro = new QAction("Caro", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
@@ -70,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionSkin->setShortcut(QKeySequence(Qt::Key_K));
     this->pActionFreeStyleGomoku->setShortcut(QKeySequence(Qt::Key_F));
     this->pActionStandardGomoku->setShortcut(QKeySequence(Qt::Key_S));
+    this->pActionContinuous->setShortcut(QKeySequence(Qt::Key_N));
     this->pActionRenju->setShortcut(QKeySequence(Qt::Key_R));
     this->pActionCaro->setShortcut(QKeySequence(Qt::Key_C));
     this->pActionPlayerSetting->setShortcut(QKeySequence(Qt::Key_P));
@@ -98,10 +100,12 @@ MainWindow::MainWindow(QWidget *parent)
     this->pRuleActionGroup->setExclusive(false);
     this->pActionFreeStyleGomoku->setCheckable(true);
     this->pActionStandardGomoku->setCheckable(true);
+    this->pActionContinuous->setCheckable(true);
     this->pActionRenju->setCheckable(true);
     this->pActionCaro->setCheckable(true);
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionFreeStyleGomoku));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionStandardGomoku));
+    this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionContinuous));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionRenju));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionCaro));
     this->pActionFreeStyleGomoku->setChecked(true);
@@ -277,6 +281,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionStandardGomoku;
         this->pActionStandardGomoku = nullptr;
+    }
+    if (nullptr != this->pActionContinuous)
+    {
+        delete this->pActionContinuous;
+        this->pActionContinuous = nullptr;
     }
     if (nullptr != this->pActionRenju)
     {
@@ -498,7 +507,7 @@ void MainWindow::DrawPlayerState()
 
     if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P1 || !(this->m_manager->m_p1->m_isComputer)))
     {
-        if (this->m_manager->m_p1->m_isMyTurn)
+        if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS) || this->m_manager->m_p1->m_isMyTurn)
             painter.setBrush(Qt::green);
         else
             painter.setBrush(Qt::red);
@@ -521,7 +530,7 @@ void MainWindow::DrawPlayerState()
 
     if ((GAME_STATE::PLAYING == this->mState) && (this->m_bOK_P2 || !(this->m_manager->m_p2->m_isComputer)))
     {
-        if (this->m_manager->m_p2->m_isMyTurn)
+        if (GAME_RULE::CONTINUOUS != (this->m_Rule & GAME_RULE::CONTINUOUS) && this->m_manager->m_p2->m_isMyTurn)
             painter.setBrush(Qt::green);
         else
             painter.setBrush(Qt::red);
@@ -591,7 +600,7 @@ void MainWindow::DrawIndication()
     }
 }
 
-vector<pair<pair<int,int>, int>> MainWindow::record_expend(const vector<pair<int, int>> vRecord)
+vector<pair<pair<int,int>, int>> MainWindow::record_expand(const vector<pair<int, int>> vRecord, bool bContinuous)
 {
     vector<pair<pair<int,int>, int>> vRecExpendTmp;
     vRecExpendTmp.clear();
@@ -604,7 +613,10 @@ vector<pair<pair<int,int>, int>> MainWindow::record_expend(const vector<pair<int
 
         pTmpPos = this->mBoard->coord2idx(iter->first);
         vElement.first = pTmpPos;
-        vElement.second = iter->second;
+        if (bContinuous)
+            vElement.second = 3;
+        else
+            vElement.second = iter->second;
         vRecExpendTmp.push_back(vElement);
     }
 
@@ -615,7 +627,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 {
     if (this->mState == GAME_STATE::PLAYING)
     {
-        if ((this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer))
+        if ((GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS)) || (this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer))
             return;
 
         QPoint pt;
@@ -658,7 +670,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                     }
                     if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -683,7 +695,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                     }
                     if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -785,159 +797,73 @@ void MainWindow::OnActionStart()
         this->m_manager->m_p1->m_isMyTurn = true;
         this->m_manager->m_p2->m_isMyTurn = false;
 
-        bool bAttach = false;
-        bAttach = this->m_manager->AttachEngines();
-        qDebug() << "AttachFlag: " << bAttach;
-
         bool bStart = false;
-        if (bAttach)
+        bool bAttach = false;
+        //continuous game
+        if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
         {
-            if (nullptr != this->m_manager->m_engine_1)
+            if (!this->m_manager->m_p1->m_isComputer)
             {
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
+                return;
             }
 
-            bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
-            qDebug() << "StartFlag: " << bStart;
-        }
-        else
-        {
-            this->m_manager->DetachEngines();
-            QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
-            return;
-        }
-
-        if (bStart)
-        {
-            this->m_manager->sendAbout();
-
-            this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
-            this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-            this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
-            this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-            this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
-
-            this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
-            this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
-            this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
-            this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-            this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
-        }
-        else
-        {
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-            }
-            this->m_manager->DetachEngines();
-            QMessageBox::information(this, "Error!", "Failied to start game!");
-            return;
-        }
-
-        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-
-        if (this->m_manager->m_p1->m_isMyTurn)
-            this->m_T1->start();
-        else
-            this->m_T2->start();
-
-        this->mBoard->Notify();
-        this->m_manager->beginMatch();
-
-        this->mState = GAME_STATE::PLAYING;
-        this->pRuleActionGroup->setDisabled(true);
-    }
-}
-
-void MainWindow::OnActionPause()
-{
-    if (GAME_STATE::PLAYING == this->mState)
-    {
-        if (nullptr != this->m_manager)
-        {
-            this->m_manager->endMatch();
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-            }
-            bool bDetach = this->m_manager->DetachEngines();
-            qDebug() << "DetachFlag: " << bDetach;
-        }
-
-        if (nullptr != this->m_T1)
-        {
-            this->m_T1->pause();
-        }
-        if (nullptr != this->m_T2)
-        {
-            this->m_T2->pause();
-        }
-
-        this->m_bOK_P1 = false;
-        this->m_bOK_P2 = false;
-        this->m_p1_name.clear();
-        this->m_p2_name.clear();
-        this->mState = GAME_STATE::PAUSING;
-    }
-}
-
-void MainWindow::OnActionContinue()
-{
-    if (this->mState == GAME_STATE::PAUSING || this->mState == IDLE)
-    {
-        if (nullptr != this->m_manager)
-        {
-            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
-
-            bool bAttach = false;
             bAttach = this->m_manager->AttachEngines();
             qDebug() << "AttachFlag: " << bAttach;
+            if (bAttach)
+            {
+                if (nullptr != this->m_manager->m_engine_1)
+                {
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                }
 
-            bool bStart = false;
+                bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+                qDebug() << "StartFlag: " << bStart;
+            }
+            else
+            {
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                return;
+            }
+
+            if (bStart)
+            {
+                this->m_manager->sendAbout();
+
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+                this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+                this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+                this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
+            }
+            else
+            {
+                if (nullptr != this->m_manager->m_engine_1)
+                {
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                }
+
+                this->m_manager->DetachEngines();
+                QMessageBox::information(this, "Error!", "Failied to start game!");
+                return;
+            }
+
+            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            this->m_T1->start();
+        }
+        else // is not continuous game
+        {
+            bAttach = this->m_manager->AttachEngines();
+            qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
                 if (nullptr != this->m_manager->m_engine_1)
@@ -1006,25 +932,148 @@ void MainWindow::OnActionContinue()
                 return;
             }
 
-            vector<pair<pair<int,int>, int>> vRecExpendTmp;
-            vector<pair<int, int>> vRecZoom = this->mBoard->getVRecord();
-            vector<pair<int, int>>::iterator iter;
-            for (iter = vRecZoom.begin(); iter != vRecZoom.end(); ++iter)
-            {
-                pair<int, int> pTmpPos;
-                pair<pair<int, int>, int> vElement;
-
-                pTmpPos = this->mBoard->coord2idx(iter->first);
-                vElement.first = pTmpPos;
-                vElement.second = iter->second;
-                vRecExpendTmp.push_back(vElement);
-            }
-
-            this->mBoard->Notify();
+            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
 
             if (this->m_manager->m_p1->m_isMyTurn)
+                this->m_T1->start();
+            else
+                this->m_T2->start();
+        }
+
+        this->mBoard->Notify();
+        this->m_manager->beginMatch();
+
+        this->mState = GAME_STATE::PLAYING;
+        this->pRuleActionGroup->setDisabled(true);
+    }
+}
+
+void MainWindow::OnActionPause()
+{
+    if (GAME_STATE::PLAYING == this->mState)
+    {
+        if (nullptr != this->m_manager)
+        {
+            this->m_manager->endMatch();
+            if (nullptr != this->m_manager->m_engine_1)
             {
-                this->m_T2->pause();
+                if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                else
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+            }
+            if (nullptr != this->m_manager->m_engine_2)
+            {
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+            }
+            bool bDetach = this->m_manager->DetachEngines();
+            qDebug() << "DetachFlag: " << bDetach;
+        }
+
+        if (nullptr != this->m_T1)
+        {
+            this->m_T1->pause();
+        }
+        if (nullptr != this->m_T2)
+        {
+            this->m_T2->pause();
+        }
+
+        this->m_bOK_P1 = false;
+        this->m_bOK_P2 = false;
+        this->m_p1_name.clear();
+        this->m_p2_name.clear();
+        this->mState = GAME_STATE::PAUSING;
+    }
+}
+
+void MainWindow::OnActionContinue()
+{
+    if (this->mState == GAME_STATE::PAUSING || this->mState == IDLE)
+    {
+        if (nullptr != this->m_manager)
+        {
+            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+            qDebug() << this->m_manager->m_p1->m_sPath;
+            qDebug() << this->m_manager->m_p2->m_sPath;
+
+            bool bAttach = false;
+            bool bStart = false;
+            // continuous game
+            if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+            {
+                if (!this->m_manager->m_p1->m_isComputer)
+                {
+                    QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
+                    return;
+                }
+
+                bAttach = this->m_manager->AttachEngines();
+                qDebug() << "AttachFlag: " << bAttach;
+                if (bAttach)
+                {
+                    if (nullptr != this->m_manager->m_engine_1)
+                    {
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                    }
+
+                    bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+                    qDebug() << "StartFlag: " << bStart;
+                }
+                else
+                {
+                    this->m_manager->DetachEngines();
+                    QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                    return;
+                }
+
+                if (bStart)
+                {
+                    this->m_manager->sendAbout();
+
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                    this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
+
+                }
+                else
+                {
+                    if (nullptr != this->m_manager->m_engine_1)
+                    {
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                    }
+                    this->m_manager->DetachEngines();
+                    QMessageBox::information(this, "Error!", "Failied to start game!");
+                    return;
+                }
+
+                vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord(), true);
+
+                this->mBoard->Notify();
                 this->m_T1->resume();
                 if (this->m_time_left_p1 > 0)
                 {
@@ -1036,26 +1085,119 @@ void MainWindow::OnActionContinue()
                     QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                     return;
                 }
+                this->m_manager->sendBoard(vRecExpendTmp, true);
             }
-            else
+            else    // is not continuous game
             {
-                this->m_T1->pause();
-                this->m_T2->resume();
-                if (this->m_time_left_p2 > 0)
+                bAttach = this->m_manager->AttachEngines();
+                qDebug() << "AttachFlag: " << bAttach;
+                if (bAttach)
                 {
-                    this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    if (nullptr != this->m_manager->m_engine_1)
+                    {
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                    }
+                    if (nullptr != this->m_manager->m_engine_2)
+                    {
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                    }
+
+                    bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
+                    qDebug() << "StartFlag: " << bStart;
                 }
                 else
                 {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                    this->m_manager->DetachEngines();
+                    QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
                     return;
                 }
+
+                if (bStart)
+                {
+                    this->m_manager->sendAbout();
+
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+                    this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
+                    this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
+
+                    this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
+                    this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
+                    this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
+                    this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
+                    this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
+                }
+                else
+                {
+                    if (nullptr != this->m_manager->m_engine_1)
+                    {
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+                    }
+                    if (nullptr != this->m_manager->m_engine_2)
+                    {
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+                    }
+                    this->m_manager->DetachEngines();
+                    QMessageBox::information(this, "Error!", "Failied to start game!");
+                    return;
+                }
+
+                vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+
+                this->mBoard->Notify();
+
+                if (this->m_manager->m_p1->m_isMyTurn)
+                {
+                    this->m_T2->pause();
+                    this->m_T1->resume();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        return;
+                    }
+                }
+                else
+                {
+                    this->m_T1->pause();
+                    this->m_T2->resume();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        return;
+                    }
+                }
+                this->m_manager->sendBoard(vRecExpendTmp);
+                this->m_bBoard = true;
             }
-            this->m_manager->sendBoard(vRecExpendTmp);
         }
 
-        this->m_bBoard = true;
         this->mState = GAME_STATE::PLAYING;
         this->pRuleActionGroup->setDisabled(true);
     }
@@ -1070,7 +1212,10 @@ void MainWindow::OnActionEnd()
             this->m_manager->endMatch();
             if (nullptr != this->m_manager->m_engine_1)
             {
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+                if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+                else
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
@@ -1315,6 +1460,20 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::STANDARDGOMOKU));
             }
         }
+        else if (pAction->text().compare(this->pActionContinuous->text()) == 0)
+        {
+            if (this->pActionContinuous->isChecked())
+            {
+                qDebug() << "Choose continuous!";
+                this->m_Rule |= GAME_RULE::CONTINUOUS;
+                QMessageBox::information(this, "Tips", "It will select engine of player 1 to begin continuous game!\nPlease check the setting of player 1.");
+            }
+            else
+            {
+                qDebug() << "Cancel continuous!";
+                this->m_Rule &= (~(GAME_RULE::CONTINUOUS));
+            }
+        }
         else if (pAction->text().compare(this->pActionRenju->text())==0)
         {
             if (this->pActionRenju->isChecked())
@@ -1445,7 +1604,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
                     if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -1573,7 +1732,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 
                     if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expend(this->mBoard->getVRecord());
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -1587,6 +1746,107 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
+                return;
+            }
+        }
+
+        //if connect five
+        bool isWin = false;
+        int i_win = 0;
+        if (0 == this->m_Rule)
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        else if (0x01 == (this->m_Rule & 0x01))
+        {
+            if (this->m_standardGomoku->checkWin(this->mBoard))
+                i_win |= 0x01;
+        }
+        else if (0x04 == (this->m_Rule & 0x04))
+        {
+            if (this->m_renju->checkWin(this->mBoard))
+                i_win |= 0x04;
+        }
+        else if (0x08 == (this->m_Rule & 0x08))
+        {
+            if (this->m_caro->checkWin(this->mBoard))
+                i_win |= 0x08;
+        }
+
+        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
+            isWin = true;
+
+        if (isWin)
+        {
+            this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
+            if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
+                QMessageBox::information(this, "game over!", "Black win!");
+            else
+                QMessageBox::information(this, "game over!", "White win!");
+            //this->mBoard->clearBoard();
+        }
+        else if (0x04 == (this->m_Rule & 0x04))
+        {
+            if (!this->m_renju->isLegal(this->mBoard))
+            {
+                this->OnActionEnd();
+                this->mState = GAME_STATE::OVER;
+                this->pRuleActionGroup->setEnabled(true);
+                QString info = "Illegal move from BLACK! ";
+                switch (this->m_renju->getRenjuState())
+                {
+                case PATTERN::OVERLINE:
+                    info.append("OVERLINE");
+                    break;
+                case PATTERN::DOUBLE_FOUR:
+                    info.append("DOUBLE_FOUR");
+                    break;
+                case PATTERN::DOUBLE_THREE:
+                    info.append("DOUBLE_THREE");
+                    break;
+                default:
+                    break;
+                }
+                QMessageBox::information(this, "game over!", info);
+            }
+        }
+    }
+}
+
+void MainWindow::OnContinuousPos(int x, int y)
+{
+    if (this->mState == GAME_STATE::PLAYING)
+    {
+        pair<int, int> p_idx(x, y);
+
+        if (this->mBoard->GetState() != BOARDSTATUS::BOARDFULL)
+        {
+            bool bSucceed = false;
+            if ((this->mBoard->GetState() == BOARDSTATUS::BOARDEMPTY) || (this->mBoard->GetState() == BOARDSTATUS::BLACKNEXT))
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, STONECOLOR::BLACK);
+            }
+            else if (this->mBoard->GetState() == BOARDSTATUS::WHITENEXT)
+            {
+                bSucceed = this->mBoard->placeStone(p_idx, STONECOLOR::WHITE);
+            }
+            if (bSucceed)
+            {
+                if (this->m_time_left_p1 > 0)
+                {
+                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                }
+                else
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                    return;
+                }
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
                 return;
             }
         }

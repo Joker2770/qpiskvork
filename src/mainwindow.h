@@ -56,6 +56,7 @@ typedef enum game_rule
 {
     FREESTYLEGOMOKU = 0,
     STANDARDGOMOKU = 1,
+    CONTINUOUS = 2,
     RENJU = 4,
     CARO = 8
 } GAME_RULE;
@@ -86,6 +87,7 @@ public:
     QAction *pActionTakeBack;
     QAction *pActionFreeStyleGomoku;
     QAction *pActionStandardGomoku;
+    QAction *pActionContinuous;
     QAction *pActionRenju;
     QAction *pActionCaro;
     QAction *pActionPlayerSetting;
@@ -113,6 +115,7 @@ public slots:
     void OnActionLicense();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
+    void OnContinuousPos(int x, int y);
     void OnP1ResponseName(const QString &name);
     void OnP1ResponseOk();
     void OnP1ResponseError();
@@ -136,7 +139,7 @@ private:
     void DrawPlayerName();
     void DrawIndication();
 
-    vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
+    vector<pair<pair<int, int>, int>> record_expand(const vector<pair<int, int>> vRecord, bool bContinuous = false);
 
 private:
     Board *mBoard;

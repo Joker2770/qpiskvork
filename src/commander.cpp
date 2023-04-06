@@ -120,13 +120,20 @@ const string Commander::board_2_send(vector<pair<pair<int, int>, int>> vRecord, 
     vector<pair<pair<int, int>, int>>::iterator iter;
     for (iter = vRecord.begin(); iter != vRecord.end(); ++iter)
     {
-        if (own_color == iter->second)
+        if (own_color == 3 || iter->second == 3)
         {
-            sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",1");
+            sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",3");
         }
-        else
+        else if (1 == iter->second || 2 == iter->second)
         {
-            sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",2");
+            if (own_color == iter->second)
+            {
+                sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",1");
+            }
+            else
+            {
+                sBoard.append(to_string(iter->first.first) + "," + to_string(iter->first.second) + ",2");
+            }
         }
         sBoard.append("\n");
     }
