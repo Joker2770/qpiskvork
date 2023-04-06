@@ -54,7 +54,7 @@ int FreeStyleGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
         }
         p_drt_idx.first += p_drt.first;
         p_drt_idx.second += p_drt.second;
-        if (abs(p_idx.first - p_drt_idx.first) > 4 || abs(p_idx.second - p_drt_idx.second) > 4)
+        if (abs(p_idx.first - p_drt_idx.first) > 5 || abs(p_idx.second - p_drt_idx.second) > 5)
             break;
     }
 

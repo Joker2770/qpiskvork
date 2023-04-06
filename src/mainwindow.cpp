@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->pMenuSetting->addSeparator();
     this->pRuleActionGroup = new QActionGroup(this);
-    this->pRuleActionGroup->setExclusive(true);
+    this->pRuleActionGroup->setExclusive(false);
     this->pActionFreeStyleGomoku->setCheckable(true);
     this->pActionStandardGomoku->setCheckable(true);
     this->pActionRenju->setCheckable(true);
@@ -136,7 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_manager = new Manager(this->mBoard);
 
     this->mState = GAME_STATE::IDLE;
-    this->mRule = GAME_RULE::FREESTYLEGOMOKU;
+    this->m_Rule = GAME_RULE::FREESTYLEGOMOKU;
 
     this->m_bOK_P1 = false;
     this->m_bOK_P2 = false;
@@ -684,21 +684,22 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         //if connect five
         bool isWin = false;
-        switch (this->mRule)
+        int i_win = 0;
+        if (0 == this->m_Rule)
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        else if (0x01 == (this->m_Rule & 0x01))
         {
-        case GAME_RULE::FREESTYLEGOMOKU:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::STANDARDGOMOKU:
-            isWin = this->m_standardGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::RENJU:
-            isWin = this->m_renju->checkWin(this->mBoard);
-            break;
-        default:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
+            if (this->m_standardGomoku->checkWin(this->mBoard))
+                i_win |= 0x01;
         }
+        else if (0x04 == (this->m_Rule & 0x04))
+        {
+            if (this->m_renju->checkWin(this->mBoard))
+                i_win |= 0x04;
+        }
+
+        if ((0 != this->m_Rule) && (this->m_Rule & i_win) == this->m_Rule)
+            isWin = true;
 
         if (isWin)
         {
@@ -711,7 +712,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
         }
-        else if (this->mRule == GAME_RULE::RENJU)
+        else if (0x04 == (this->m_Rule & 0x04))
         {
             if (!this->m_renju->isLegal(this->mBoard))
             {
@@ -800,29 +801,19 @@ void MainWindow::OnActionStart()
 
         if (bStart)
         {
-            int i_rule_flag = 0;
-            if (this->mRule == GAME_RULE::STANDARDGOMOKU)
-            {
-                i_rule_flag |= 0x01;
-            }
-            else if (this->mRule == GAME_RULE::RENJU)
-            {
-                i_rule_flag |= 0x04;
-            }
-
             this->m_manager->sendAbout();
 
             this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
             this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
             this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
             this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-            this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(i_rule_flag).c_str());
+            this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
 
             this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
             this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
             this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
             this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-            this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(i_rule_flag).c_str());
+            this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
         }
         else
         {
@@ -958,29 +949,19 @@ void MainWindow::OnActionContinue()
 
             if (bStart)
             {
-                int i_rule_flag = 0;
-                if (this->mRule == GAME_RULE::STANDARDGOMOKU)
-                {
-                    i_rule_flag |= 0x01;
-                }
-                else if (this->mRule == GAME_RULE::RENJU)
-                {
-                    i_rule_flag |= 0x04;
-                }
-
                 this->m_manager->sendAbout();
 
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
                 this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
                 this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
-                this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(i_rule_flag).c_str());
+                this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
 
                 this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
                 this->m_manager->infoMatch_p2(INFO_KEY::TIMEOUT_TURN, to_string(this->m_timeout_turn).c_str());
                 this->m_manager->infoMatch_p2(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
                 this->m_manager->infoMatch_p2(INFO_KEY::GAME_TYPE, "0");
-                this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(i_rule_flag).c_str());
+                this->m_manager->infoMatch_p2(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
             }
             else
             {
@@ -1290,24 +1271,49 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
     {
         if (pAction->text().compare(this->pActionFreeStyleGomoku->text())==0)
         {
-            qDebug() << "Choose Free-Style gomoku!";
-            this->mRule = GAME_RULE::FREESTYLEGOMOKU;
+            if (this->pActionFreeStyleGomoku->isChecked())
+            {
+                qDebug() << "Choose Free-Style gomoku!";
+                this->m_Rule |= GAME_RULE::FREESTYLEGOMOKU;
+            }
+            else
+            {
+                qDebug() << "Cancel Free-Style gomoku!";
+                this->m_Rule &= (~(GAME_RULE::FREESTYLEGOMOKU));
+            }
         }
-        else if (pAction->text().compare(this->pActionStandardGomoku->text())==0)
+        else if (pAction->text().compare(this->pActionStandardGomoku->text()) == 0)
         {
-            qDebug() << "Choose standard gomoku!";
-            this->mRule = GAME_RULE::STANDARDGOMOKU;
+            if (this->pActionStandardGomoku->isChecked())
+            {
+                qDebug() << "Choose standard gomoku!";
+                this->m_Rule |= GAME_RULE::STANDARDGOMOKU;
+            }
+            else
+            {
+                qDebug() << "Cancel standard gomoku!";
+                this->m_Rule &= (~(GAME_RULE::STANDARDGOMOKU));
+            }
         }
         else if (pAction->text().compare(this->pActionRenju->text())==0)
         {
-            qDebug() << "Choose renju!";
-            this->mRule = GAME_RULE::RENJU;
+            if (this->pActionRenju->isChecked())
+            {
+                qDebug() << "Choose renju!";
+                this->m_Rule |= GAME_RULE::RENJU;
+            }
+            else
+            {
+                qDebug() << "Cancel renju!";
+                this->m_Rule &= (~(GAME_RULE::RENJU));
+            }
         }
         else
         {
             qDebug() << "Choose Free-Style gomoku!";
-            this->mRule = GAME_RULE::FREESTYLEGOMOKU;
+            this->m_Rule = GAME_RULE::FREESTYLEGOMOKU;
         }
+        qDebug() << "m_Rule: " << this->m_Rule;
     }
 }
 
@@ -1426,21 +1432,22 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
         //if connect five
         bool isWin = false;
-        switch (this->mRule)
+        int i_win = 0;
+        if (0 == this->m_Rule)
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        else if (0x01 == (this->m_Rule & 0x01))
         {
-        case GAME_RULE::FREESTYLEGOMOKU:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::STANDARDGOMOKU:
-            isWin = this->m_standardGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::RENJU:
-            isWin = this->m_renju->checkWin(this->mBoard);
-            break;
-        default:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
+            if (this->m_standardGomoku->checkWin(this->mBoard))
+                i_win |= 0x01;
         }
+        else if (0x04 == (this->m_Rule & 0x04))
+        {
+            if (this->m_renju->checkWin(this->mBoard))
+                i_win |= 0x04;
+        }
+
+        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
+            isWin = true;
 
         if (isWin)
         {
@@ -1453,7 +1460,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
         }
-        else if (this->mRule == GAME_RULE::RENJU)
+        else if (0x04 == (this->m_Rule & 0x04))
         {
             if (!this->m_renju->isLegal(this->mBoard))
             {
@@ -1548,21 +1555,22 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 
         //if connect five
         bool isWin = false;
-        switch (this->mRule)
+        int i_win = 0;
+        if (0 == this->m_Rule)
+            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        else if (0x01 == (this->m_Rule & 0x01))
         {
-        case GAME_RULE::FREESTYLEGOMOKU:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::STANDARDGOMOKU:
-            isWin = this->m_standardGomoku->checkWin(this->mBoard);
-            break;
-        case GAME_RULE::RENJU:
-            isWin = this->m_renju->checkWin(this->mBoard);
-            break;
-        default:
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-            break;
+            if (this->m_standardGomoku->checkWin(this->mBoard))
+                i_win |= 0x01;
         }
+        else if (0x04 == (this->m_Rule & 0x04))
+        {
+            if (this->m_renju->checkWin(this->mBoard))
+                i_win |= 0x04;
+        }
+
+        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
+            isWin = true;
 
         if (isWin)
         {
@@ -1575,7 +1583,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, "game over!", "White win!");
             //this->mBoard->clearBoard();
         }
-        else if (this->mRule == GAME_RULE::RENJU)
+        else if (0x04 == (this->m_Rule & 0x04))
         {
             if (!this->m_renju->isLegal(this->mBoard))
             {

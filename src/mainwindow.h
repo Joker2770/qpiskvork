@@ -53,9 +53,9 @@ typedef enum game_state
 
 typedef enum game_rule
 {
-    FREESTYLEGOMOKU,
-    STANDARDGOMOKU,
-    RENJU
+    FREESTYLEGOMOKU = 0,
+    STANDARDGOMOKU = 1,
+    RENJU = 4
 } GAME_RULE;
 
 class MainWindow : public QMainWindow
@@ -151,8 +151,8 @@ private:
     long long m_max_memory;
     long long m_time_left_p1;
     long long m_time_left_p2;
+    int m_Rule;
     GAME_STATE mState;
-    GAME_RULE mRule;
     bool m_bBoard;
     bool m_bSkin;
     bool m_bOK_P1;
