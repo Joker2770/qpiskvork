@@ -58,7 +58,7 @@ int Renju::countNearStone(Board *board, const pair<int, int>& p_drt)
         }
         p_drt_idx.first += p_drt.first;
         p_drt_idx.second += p_drt.second;
-        if (abs(p_idx.first - p_drt_idx.first) > 4 || abs(p_idx.second - p_drt_idx.second) > 4)
+        if (abs(p_idx.first - p_drt_idx.first) > 5 || abs(p_idx.second - p_drt_idx.second) > 5)
             break;
     }
 
@@ -146,7 +146,7 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
                        && ((A4_SHAPS[i][3]) == (vColor[j+3]))
                         && ((A4_SHAPS[i][4]) == (vColor[j+4])))
                     {
-                        if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, '111010111' at mid, '11110111', '11101111'
+                        if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, ‘101111101’ at mid, '111010111' at mid, '11110111', '11101111'
                         {
                             if (i == 1)
                                 i_flag |= 0x01;

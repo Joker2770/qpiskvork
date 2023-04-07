@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
 	src/FreeStyleGomoku.cpp
 	src/StandardGomoku.cpp
 	src/renju.cpp
+	src/caro.cpp
 	src/board.cpp
 	src/main.cpp
 	src/mainwindow.cpp
@@ -30,6 +31,7 @@ set(PROJECT_SOURCES
 	src/FreeStyleGomoku.h
 	src/StandardGomoku.h
 	src/renju.h
+	src/caro.h
 	src/board.h
 	src/commands.h
 	src/mainwindow.h

@@ -21,6 +21,7 @@ SOURCES += \
     src/PlayerSettingDialog.cpp \
     src/StandardGomoku.cpp \
     src/renju.cpp \
+    src/caro.cpp \
     src/board.cpp \
     src/commander.cpp \
     src/main.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     src/PlayerSettingDialog.h \
     src/StandardGomoku.h \
     src/renju.h \
+    src/caro.h \
     src/board.h \
     src/commander.h \
     src/commands.h \

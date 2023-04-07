@@ -203,9 +203,9 @@ void EngineLoader::response_parse(const string &str)
                 vector<string> vKV = this->split(*iter, "=");
                 string vName = vKV.at(1);
                 size_t start = vName.find_first_of('\"') != string::npos ? (vName.find_first_of('\"') + 1) : 0;
-                size_t end = vName.find_last_of('\"') != string::npos ? (vName.find_last_of('\"') - 1) : vName.size();
-                vName = vName.substr(start, end);
-                emit(responsed_name(QString::fromStdString(vName)));
+                size_t end = vName.find_first_of('\"', start) != string::npos ? (vName.find_first_of('\"', start)) : vName.size();
+                if (end > start)
+                    emit(responsed_name(QString::fromStdString(vName.substr(start, end - start))));
             }
         }
     }

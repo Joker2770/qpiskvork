@@ -36,6 +36,7 @@
 #include "FreeStyleGomoku.h"
 #include "StandardGomoku.h"
 #include "renju.h"
+#include "caro.h"
 #include "manager.h"
 #include "PlayerSettingDialog.h"
 #include "timer.h"
@@ -53,9 +54,11 @@ typedef enum game_state
 
 typedef enum game_rule
 {
-    FREESTYLEGOMOKU,
-    STANDARDGOMOKU,
-    RENJU
+    FREESTYLEGOMOKU = 0,
+    STANDARDGOMOKU = 1,
+    CONTINUOUS = 2,
+    RENJU = 4,
+    CARO = 8
 } GAME_RULE;
 
 class MainWindow : public QMainWindow
@@ -84,7 +87,9 @@ public:
     QAction *pActionTakeBack;
     QAction *pActionFreeStyleGomoku;
     QAction *pActionStandardGomoku;
+    QAction *pActionContinuous;
     QAction *pActionRenju;
+    QAction *pActionCaro;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
@@ -110,6 +115,7 @@ public slots:
     void OnActionLicense();
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
+    void OnContinuousPos(int x, int y);
     void OnP1ResponseName(const QString &name);
     void OnP1ResponseOk();
     void OnP1ResponseError();
@@ -133,7 +139,7 @@ private:
     void DrawPlayerName();
     void DrawIndication();
 
-    vector<pair<pair<int, int>, int>> record_expend(const vector<pair<int, int>> vRecord);
+    vector<pair<pair<int, int>, int>> record_expand(const vector<pair<int, int>> vRecord, bool bContinuous = false);
 
 private:
     Board *mBoard;
@@ -141,6 +147,7 @@ private:
     FreeStyleGomoku *m_freeStyleGomoku;
     StandardGomoku *m_standardGomoku;
     Renju *m_renju;
+    Caro *m_caro;
     Timer *m_T1;
     Timer *m_T2;
     vector<QPixmap> m_images;
@@ -151,8 +158,8 @@ private:
     long long m_max_memory;
     long long m_time_left_p1;
     long long m_time_left_p2;
+    int m_Rule;
     GAME_STATE mState;
-    GAME_RULE mRule;
     bool m_bBoard;
     bool m_bSkin;
     bool m_bOK_P1;
