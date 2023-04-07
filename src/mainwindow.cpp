@@ -463,10 +463,13 @@ void MainWindow::DrawTimeLeft()
 
     if (0 == this->m_time_left_p1)
     {
+        painter.setPen(QPen(QColor(Qt::red), 2));
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T1->getElapsed())
     {
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
     {
@@ -476,26 +479,19 @@ void MainWindow::DrawTimeLeft()
 
     if (0 == this->m_time_left_p2)
     {
+        painter.setPen(QPen(QColor(Qt::red), 2));
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T2->getElapsed())
     {
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
     {
         this->m_time_left_p2 = 0;
         this->OnActionEnd();
     }
-
-    if (0 != this->m_time_left_p1)
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    else
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
-
-    if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
-    else
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 void MainWindow::DrawPlayerState()
@@ -815,7 +811,7 @@ void MainWindow::OnActionStart()
         //continuous game
         if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
         {
-            if (!this->m_manager->m_p1->m_isComputer)
+            if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
             {
                 QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
                 return;
@@ -1029,7 +1025,7 @@ void MainWindow::OnActionContinue()
             // continuous game
             if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
             {
-                if (!this->m_manager->m_p1->m_isComputer)
+                if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
                 {
                     QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
                     return;
