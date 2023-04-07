@@ -54,3 +54,4 @@ compile_commands.json
 [Bb]uild/
 .vscode/
 .vs/
+.xmake/

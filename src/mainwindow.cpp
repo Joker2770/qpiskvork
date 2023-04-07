@@ -459,14 +459,17 @@ void MainWindow::DrawTimeLeft()
 
     QPainter painter(this);
     painter.setFont(font);
-    painter.setPen(QPen(QColor(Qt::black), 2));
 
     if (0 == this->m_time_left_p1)
     {
+        painter.setPen(QPen(QColor(Qt::red), 2));
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T1->getElapsed())
     {
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+        painter.setPen(QPen(QColor(Qt::black), 2));
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
     {
@@ -476,26 +479,20 @@ void MainWindow::DrawTimeLeft()
 
     if (0 == this->m_time_left_p2)
     {
+        painter.setPen(QPen(QColor(Qt::red), 2));
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T2->getElapsed())
     {
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+        painter.setPen(QPen(QColor(Qt::black), 2));
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
     {
         this->m_time_left_p2 = 0;
         this->OnActionEnd();
     }
-
-    if (0 != this->m_time_left_p1)
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
-    else
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
-
-    if (0 != this->m_time_left_p2)
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
-    else
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
 }
 
 void MainWindow::DrawPlayerState()
@@ -707,34 +704,57 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                         this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
                     }
                 }
+
+                if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Game Over", "Draw!");
+                    return;
+                }
             }
             else
                 return;
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
         //if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && (this->m_Rule & i_win) == this->m_Rule)
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -805,7 +825,7 @@ void MainWindow::OnActionStart()
         //continuous game
         if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
         {
-            if (!this->m_manager->m_p1->m_isComputer)
+            if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
             {
                 QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
                 return;
@@ -1019,7 +1039,7 @@ void MainWindow::OnActionContinue()
             // continuous game
             if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
             {
-                if (!this->m_manager->m_p1->m_isComputer)
+                if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
                 {
                     QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
                     return;
@@ -1535,7 +1555,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.4.05\n";
+    const QString strVerNum = "Ver Num: 0.4.11\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1626,31 +1646,54 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -1754,31 +1797,54 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -1855,31 +1921,54 @@ void MainWindow::OnContinuousPos(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {

@@ -29,6 +29,16 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
+- with xmake toolchain
+
+more easier than cmake.
+
+```shell
+cd qpiskvork
+xmake config --mode=release
+xmake
+```
+
 ## references
 
 1. [https://sourceforge.net/projects/piskvork/](https://sourceforge.net/projects/piskvork/).

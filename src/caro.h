@@ -45,8 +45,8 @@ class Caro final : public rules
 public:
     bool checkWin(Board *board) override;
 
-    private:
-    bool findShap(Board *board,  const pair<int, int>& p_drt);
+private:
+    bool findShap(Board *board, const pair<int, int> &p_drt);
 };
 
 #endif
