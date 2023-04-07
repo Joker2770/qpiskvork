@@ -459,7 +459,6 @@ void MainWindow::DrawTimeLeft()
 
     QPainter painter(this);
     painter.setFont(font);
-    painter.setPen(QPen(QColor(Qt::black), 2));
 
     if (0 == this->m_time_left_p1)
     {
@@ -469,6 +468,7 @@ void MainWindow::DrawTimeLeft()
     else if (this->m_timeout_match > this->m_T1->getElapsed())
     {
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+        painter.setPen(QPen(QColor(Qt::black), 2));
         painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
@@ -485,6 +485,7 @@ void MainWindow::DrawTimeLeft()
     else if (this->m_timeout_match > this->m_T2->getElapsed())
     {
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+        painter.setPen(QPen(QColor(Qt::black), 2));
         painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
@@ -703,9 +704,22 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                         this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
                     }
                 }
+
+                if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Game Over", "Draw!");
+                    return;
+                }
             }
             else
                 return;
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
         //if connect five
@@ -1632,9 +1646,22 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
         isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
@@ -1770,9 +1797,22 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
         isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
@@ -1881,9 +1921,22 @@ void MainWindow::OnContinuousPos(int x, int y)
                 QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
                 return;
             }
+
+            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Draw!");
+                return;
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Draw!");
+            return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
         isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
