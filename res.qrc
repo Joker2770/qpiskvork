@@ -13,5 +13,6 @@
         <file>skins/star.bmp</file>
         <file>skins/wood.bmp</file>
         <file>skins/yellow.bmp</file>
+        <file>skins/whitex.bmp</file>
     </qresource>
 </RCC>

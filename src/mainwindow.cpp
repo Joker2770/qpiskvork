@@ -131,8 +131,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPixmap pm;
     pm.load(":/skins/HGarden2.bmp");
-    for (size_t i = 0; i < 5; i++)
-        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if (!pm.isNull())
+    {
+        for (size_t i = 0; i < 5; i++)
+            this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
 
     if (this->m_images.size() != 5)
         this->m_bSkin = false;
@@ -1378,7 +1381,7 @@ void MainWindow::OnActionSkin()
     {
         bool ok = false;
         QStringList s_items;
-        s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "wood" << "yellow";
+        s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "whitex" << "wood" << "yellow";
         QString s_get = QInputDialog::getItem(this, "Skin", "Please choose skin:", s_items, 0, false,
                                             &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
@@ -1387,38 +1390,41 @@ void MainWindow::OnActionSkin()
                 this->m_bSkin = false;
             else
             {
+                bool bLoad = false;
                 QPixmap pm;
                 this->m_images.clear();
 
                 if (QString::compare(s_get, "bold") == 0)
-                    pm.load(":/skins/bold.bmp");
+                    bLoad = pm.load(":/skins/bold.bmp");
                 else if (QString::compare(s_get, "fontanGomo") == 0)
-                    pm.load(":/skins/fontanGomo.bmp");
+                    bLoad = pm.load(":/skins/fontanGomo.bmp");
                 else if (QString::compare(s_get, "gems") == 0)
-                    pm.load(":/skins/gems.bmp");
+                    bLoad = pm.load(":/skins/gems.bmp");
                 else if (QString::compare(s_get, "gomoku") == 0)
-                    pm.load(":/skins/gomoku.bmp");
+                    bLoad = pm.load(":/skins/gomoku.bmp");
                 else if (QString::compare(s_get, "HGarden") == 0)
-                    pm.load(":/skins/HGarden.bmp");
+                    bLoad = pm.load(":/skins/HGarden.bmp");
                 else if (QString::compare(s_get, "HGarden2") == 0)
-                    pm.load(":/skins/HGarden2.bmp");
+                    bLoad = pm.load(":/skins/HGarden2.bmp");
                 else if (QString::compare(s_get, "light") == 0)
-                    pm.load(":/skins/light.bmp");
+                    bLoad = pm.load(":/skins/light.bmp");
                 else if (QString::compare(s_get, "pisq") == 0)
-                    pm.load(":/skins/pisq.bmp");
+                    bLoad = pm.load(":/skins/pisq.bmp");
                 else if (QString::compare(s_get, "rain") == 0)
-                    pm.load(":/skins/rain.bmp");
+                    bLoad = pm.load(":/skins/rain.bmp");
                 else if (QString::compare(s_get, "star") == 0)
-                    pm.load(":/skins/star.bmp");
+                    bLoad = pm.load(":/skins/star.bmp");
+                else if (QString::compare(s_get, "whitex") == 0)
+                    bLoad = pm.load(":/skins/whitex.bmp");
                 else if (QString::compare(s_get, "wood") == 0)
-                    pm.load(":/skins/wood.bmp");
+                    bLoad = pm.load(":/skins/wood.bmp");
                 else if (QString::compare(s_get, "yellow") == 0)
-                    pm.load(":/skins/yellow.bmp");
+                    bLoad = pm.load(":/skins/yellow.bmp");
 
-                if (!pm.isNull())
+                if (!pm.isNull() && bLoad)
                 {
                     for (size_t i = 0; i < 5; i++)
-                        this->m_images.push_back(pm.copy(i * 20, 0, 20, 20).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                        this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
                     if (this->m_images.size() != 5)
                         this->m_bSkin = false;
@@ -1466,7 +1472,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
             {
                 qDebug() << "Choose continuous!";
                 this->m_Rule |= GAME_RULE::CONTINUOUS;
-                QMessageBox::information(this, "Tips", "It will select engine of player 1 to begin continuous game!\nPlease check the setting of player 1.");
+                QMessageBox::information(this, "Tips", "It will select the engine of player 1 to begin continuous game!\n1, no turn;\n2, self play continuously.\nPlease check the setting of player 1.");
             }
             else
             {
@@ -1529,7 +1535,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.3.04\n";
+    const QString strVerNum = "Ver Num: 0.4.05\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
