@@ -715,26 +715,36 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         //if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && (this->m_Rule & i_win) == this->m_Rule)
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -1631,26 +1641,36 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         //if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -1759,26 +1779,36 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         //if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {
@@ -1860,26 +1890,36 @@ void MainWindow::OnContinuousPos(int x, int y)
         //if connect five
         bool isWin = false;
         int i_win = 0;
-        if (0 == this->m_Rule)
-            isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        else if (0x01 == (this->m_Rule & 0x01))
+        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
         {
             if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= 0x01;
+                i_win |= GAME_RULE::STANDARDGOMOKU;
+            else
+                isWin = false;
         }
-        else if (0x04 == (this->m_Rule & 0x04))
+        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
-                i_win |= 0x04;
+                i_win |= GAME_RULE::RENJU;
+            else
+                isWin = false;
         }
-        else if (0x08 == (this->m_Rule & 0x08))
+        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
         {
             if (this->m_caro->checkWin(this->mBoard))
-                i_win |= 0x08;
+                i_win |= GAME_RULE::CARO;
+            else
+                isWin = false;
         }
 
-        if ((0 != this->m_Rule) && ((this->m_Rule & i_win) == this->m_Rule))
-            isWin = true;
+        if (0 != i_win)
+        {
+            if ((this->m_Rule & i_win) == this->m_Rule)
+                isWin = true;
+            else
+                isWin = false;
+        }
 
         if (isWin)
         {

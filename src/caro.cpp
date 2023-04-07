@@ -81,7 +81,6 @@ bool Caro::findShap(Board *board,  const pair<int, int>& p_drt)
 
         if (vColor.size() >= 7)
         {
-            int i_flag = 0;
             for (size_t j = 0; j <= vColor.size() - 7; ++j)
             {
                 for (size_t i = 0; i < 6; ++i)
