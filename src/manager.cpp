@@ -39,9 +39,21 @@ Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
     this->m_engine_1 = nullptr;
     this->m_engine_2 = nullptr;
     this->m_cmd = nullptr;
+    this->m_state = BOARDSTATUS::BOARDEMPTY;
 
     this->m_p1 = new Player();
     this->m_p2 = new Player();
+
+    this->m_p1->m_color = STONECOLOR::BLACK;
+    this->m_p2->m_color = STONECOLOR::WHITE;
+    this->m_p1->m_sPath = "";
+    this->m_p2->m_sPath = "";
+    this->m_p1->m_isComputer = false;
+    this->m_p2->m_isComputer = false;
+    // qDebug() << this->m_p1->m_sPath;
+    // qDebug() << this->m_p2->m_sPath;
+    this->m_p1->m_isMyTurn = true;
+    this->m_p2->m_isMyTurn = false;
 }
 
 Manager::~Manager()
