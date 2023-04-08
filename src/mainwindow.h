@@ -136,6 +136,7 @@ private:
     void DrawMark();
     void DrawTimeLeft();
     void DrawPlayerState();
+    void DrawPlayerStone();
     void DrawPlayerName();
     void DrawIndication();
 

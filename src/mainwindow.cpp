@@ -154,11 +154,22 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bOK_P2 = false;
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
-    this->m_timeout_match = 15*60*1000;
-    this->m_timeout_turn = 30*1000;
-    this->m_max_memory = 1024*1024*1024;
-    this->m_time_left_p1 = 15*60*1000;
-    this->m_time_left_p2 = 15*60*1000;
+    this->m_timeout_match = 15 * 60 * 1000;
+    this->m_timeout_turn = 30 * 1000;
+    this->m_max_memory = 1024 * 1024 * 1024;
+    this->m_time_left_p1 = this->m_timeout_match;
+    this->m_time_left_p2 = this->m_timeout_match;
+
+    this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+    this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+    this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+    this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+    this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+    this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+    // qDebug() << this->m_manager->m_p1->m_sPath;
+    // qDebug() << this->m_manager->m_p2->m_sPath;
+    this->m_manager->m_p1->m_isMyTurn = true;
+    this->m_manager->m_p2->m_isMyTurn = false;
 
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
@@ -356,10 +367,11 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
 
+    DrawChessboard();
     DrawTimeLeft();
     DrawPlayerState();
+    DrawPlayerStone();
     DrawPlayerName();
-    DrawChessboard();
     DrawIndication();
     DrawItems();
     DrawMark();
@@ -549,6 +561,60 @@ void MainWindow::DrawPlayerState()
 
         QPoint ptCenter(pPos.x(), pPos.y());
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
+    }
+}
+
+void MainWindow::DrawPlayerStone()
+{
+    QPainter painter(this);
+    painter.setPen(QPen(QColor(Qt::transparent)));
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
+    if (STONECOLOR::BLACK == this->m_manager->m_p1->m_color)
+    {
+        if (this->m_bSkin && !this->m_images[1].isNull())
+            painter.drawPixmap((int)(0.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(1));
+        else
+        {
+            painter.setBrush(Qt::black);
+            QPoint ptCenter((int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+    else
+    {
+        if (this->m_bSkin && !this->m_images[2].isNull())
+            painter.drawPixmap((int)(0.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(2));
+        else
+        {
+            painter.setBrush(Qt::white);
+            QPoint ptCenter((int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+
+    if (STONECOLOR::WHITE == this->m_manager->m_p2->m_color)
+    {
+        if (this->m_bSkin && !this->m_images[2].isNull())
+            painter.drawPixmap(this->geometry().width() - (int)(1.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(2));
+        else
+        {
+            painter.setBrush(Qt::white);
+            QPoint ptCenter(this->geometry().width() - (int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+    else
+    {
+        if (this->m_bSkin && !this->m_images[1].isNull())
+            painter.drawPixmap(this->geometry().width() - (int)(1.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(1));
+        else
+        {
+            painter.setBrush(Qt::black);
+            QPoint ptCenter(this->geometry().width() - (int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
     }
 }
 
@@ -806,20 +872,6 @@ void MainWindow::OnActionStart()
         if (nullptr != this->m_T2)
             this->m_T2->stop();
 
-        this->m_time_left_p1 = this->m_timeout_match;
-        this->m_time_left_p2 = this->m_timeout_match;
-
-        this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-        this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-        this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-        this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-        this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-        this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-        qDebug() << this->m_manager->m_p1->m_sPath;
-        qDebug() << this->m_manager->m_p2->m_sPath;
-        this->m_manager->m_p1->m_isMyTurn = true;
-        this->m_manager->m_p2->m_isMyTurn = false;
-
         bool bStart = false;
         bool bAttach = false;
         //continuous game
@@ -1025,15 +1077,6 @@ void MainWindow::OnActionContinue()
     {
         if (nullptr != this->m_manager)
         {
-            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
-
             bool bAttach = false;
             bool bStart = false;
             // continuous game
@@ -1407,7 +1450,10 @@ void MainWindow::OnActionSkin()
         if (ok)
         {
             if (QString::compare(s_get, "none") == 0)
+            {
                 this->m_bSkin = false;
+                this->m_images.clear();
+            }
             else
             {
                 bool bLoad = false;
