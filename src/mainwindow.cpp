@@ -990,7 +990,7 @@ void MainWindow::OnActionStart()
                     if (this->m_bSwap2Board)
                     {
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1PlaceStone(int, int, int, int, int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                     }
 
@@ -1006,7 +1006,7 @@ void MainWindow::OnActionStart()
                     {
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                     }
 
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
@@ -1126,7 +1126,7 @@ void MainWindow::OnActionPause()
                 {
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                 }
             }
             if (nullptr != this->m_manager->m_engine_2)
@@ -1141,7 +1141,7 @@ void MainWindow::OnActionPause()
                 {
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                 }
             }
             bool bDetach = this->m_manager->DetachEngines();
@@ -1263,7 +1263,7 @@ void MainWindow::OnActionContinue()
                         {
                             connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
                             connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                         }
 
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
@@ -1278,7 +1278,7 @@ void MainWindow::OnActionContinue()
                         {
                             connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                             connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                         }
 
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
@@ -1322,7 +1322,7 @@ void MainWindow::OnActionContinue()
                         {
                             disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
                             disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                         }
 
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
@@ -1337,7 +1337,7 @@ void MainWindow::OnActionContinue()
                         {
                             disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                             disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                         }
 
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
@@ -1429,7 +1429,7 @@ void MainWindow::OnActionEnd()
                 {
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                 }
             }
             if (nullptr != this->m_manager->m_engine_2)
@@ -1444,7 +1444,7 @@ void MainWindow::OnActionEnd()
                 {
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                 }
             }
             bool bDetach = this->m_manager->DetachEngines();
@@ -2252,13 +2252,25 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
         bool bp_1 = false, bp_2 = false;
         pair<int, int> p_1(x1, y1), p_2(x2, y2);
         bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::WHITE);
-        bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
 
         if (bp_1 && bp_2)
         {
             this->mBoard->Notify();
             this->m_T1->pause();
             this->m_T2->start();
+            if (this->m_time_left_p2 > 0)
+            {
+                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
 
             if (!(this->m_manager->m_p2->m_isComputer))
             {
@@ -2279,11 +2291,29 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
                     this->m_T1->pause();
                     this->m_T2->start();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
 
                     vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
+                }
+                else if (0 == this->m_S2BRes_3->getOption())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
                 }
                 else
                 {
@@ -2321,14 +2351,27 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
         bool bp_1 = false, bp_2 = false, bp_3 = false;
         pair<int, int> p_1(x1, y1), p_2(x2, y2), p_3(x3, y3);
         bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::BLACK);
-        bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
-        bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
+        if (bp_2)
+            bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
 
         if (bp_1 && bp_2 && bp_3)
         {
             this->mBoard->Notify();
             this->m_T1->pause();
             this->m_T2->start();
+            if (this->m_time_left_p2 > 0)
+            {
+                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
 
             if (!(this->m_manager->m_p2->m_isComputer))
             {
@@ -2339,13 +2382,25 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 {
                     bool bp_1 = false, bp_2 = false;
                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
-                    bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+                    if (bp_1)
+                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
 
                     if (bp_1 && bp_2)
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T2->pause();
                         this->m_T1->start();
+                        if (this->m_time_left_p1 > 0)
+                        {
+                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                        }
+                        else
+                        {
+                            this->OnActionEnd();
+                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                            this->OnActionClearBoard();
+                            return;
+                        }
 
                         // exchange color
                         STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2384,11 +2439,29 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
                     this->m_T2->pause();
                     this->m_T1->start();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
 
                     vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
+                }
+                else if (0 == this->m_S2BRes_2->getOption())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
                 }
                 else
                 {
@@ -2428,6 +2501,17 @@ void MainWindow::OnP1ResponsedSwap()
 
         this->m_T1->pause();
         this->m_T2->start();
+        if (this->m_time_left_p2 > 0)
+        {
+            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+            this->OnActionClearBoard();
+            return;
+        }
 
         vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
         this->m_manager->sendBoard(vRecExpendTmp);
@@ -2472,13 +2556,25 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
         bool bp_1 = false, bp_2 = false;
         pair<int, int> p_1(x1, y1), p_2(x2, y2);
         bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::WHITE);
-        bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
 
         if (bp_1 && bp_2)
         {
             this->mBoard->Notify();
             this->m_T2->pause();
             this->m_T1->start();
+            if (this->m_time_left_p1 > 0)
+            {
+                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
 
             if (!(this->m_manager->m_p1->m_isComputer))
             {
@@ -2499,11 +2595,29 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
                     this->m_T1->pause();
                     this->m_T2->start();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
 
                     vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
+                }
+                else if (0 == this->m_S2BRes_3->getOption())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
                 }
                 else
                 {
@@ -2541,14 +2655,27 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
         bool bp_1 = false, bp_2 = false, bp_3 = false;
         pair<int, int> p_1(x1, y1), p_2(x2, y2), p_3(x3, y3);
         bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::BLACK);
-        bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
-        bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
+        if (bp_2)
+            bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
 
         if (bp_1 && bp_2 && bp_3)
         {
             this->mBoard->Notify();
             this->m_T2->pause();
             this->m_T1->start();
+            if (this->m_time_left_p1 > 0)
+            {
+                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
 
             if (!(this->m_manager->m_p1->m_isComputer))
             {
@@ -2559,13 +2686,25 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 {
                     bool bp_1 = false, bp_2 = false;
                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
-                    bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+                    if (bp_1)
+                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
 
                     if (bp_1 && bp_2)
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T2->pause();
                         this->m_T1->start();
+                        if (this->m_time_left_p1 > 0)
+                        {
+                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                        }
+                        else
+                        {
+                            this->OnActionEnd();
+                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                            this->OnActionClearBoard();
+                            return;
+                        }
 
                         // exchange color
                         STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2602,13 +2741,31 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
                     this->mBoard->Notify();
 
-                    this->m_T2->pause();
-                    this->m_T1->start();
+                    this->m_T1->pause();
+                    this->m_T2->start();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
 
                     vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
+                }
+                else if (0 == this->m_S2BRes_2->getOption())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
                 }
                 else
                 {
@@ -2648,6 +2805,17 @@ void MainWindow::OnP2ResponsedSwap()
 
         this->m_T2->pause();
         this->m_T1->start();
+        if (this->m_time_left_p1 > 0)
+        {
+            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+            this->OnActionClearBoard();
+            return;
+        }
 
         vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
         this->m_manager->sendBoard(vRecExpendTmp);
@@ -2705,8 +2873,10 @@ void MainWindow::beginSwap2Board()
                     {
                         bool bp_1 = false, bp_2 = false, bp_3 = false;
                         bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::BLACK);
-                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::WHITE);
-                        bp_3 = this->mBoard->placeStone(v_pos.at(2), STONECOLOR::BLACK);
+                        if (bp_1)
+                            bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::WHITE);
+                        if (bp_2)
+                            bp_3 = this->mBoard->placeStone(v_pos.at(2), STONECOLOR::BLACK);
 
                         if (bp_1 && bp_2 && bp_3)
                         {
@@ -2714,6 +2884,17 @@ void MainWindow::beginSwap2Board()
                             this->mBoard->Notify();
                             this->m_T1->pause();
                             this->m_T2->start();
+                            if (this->m_time_left_p2 > 0)
+                            {
+                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                            }
+                            else
+                            {
+                                this->OnActionEnd();
+                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                this->OnActionClearBoard();
+                                return;
+                            }
 
                             if (!(this->m_manager->m_p2->m_isComputer))
                             {
@@ -2724,13 +2905,25 @@ void MainWindow::beginSwap2Board()
                                 {
                                     bool bp_1 = false, bp_2 = false;
                                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
-                                    bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+                                    if (bp_1)
+                                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
 
                                     if (bp_1 && bp_2)
                                     {
                                         qDebug() << "Place 2 stones successfully!";
                                         this->m_T2->pause();
                                         this->m_T1->start();
+                                        if (this->m_time_left_p1 > 0)
+                                        {
+                                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                                        }
+                                        else
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                            this->OnActionClearBoard();
+                                            return;
+                                        }
 
                                         // exchange color
                                         STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2757,11 +2950,29 @@ void MainWindow::beginSwap2Board()
 
                                             this->m_T1->pause();
                                             this->m_T2->start();
+                                            if (this->m_time_left_p2 > 0)
+                                            {
+                                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                                            }
+                                            else
+                                            {
+                                                this->OnActionEnd();
+                                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                                this->OnActionClearBoard();
+                                                return;
+                                            }
 
                                             vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                                             this->m_manager->sendBoard(vRecExpendTmp);
                                             this->m_bBoard = true;
                                             this->m_bS2B_over = true;
+                                        }
+                                        else if (0 == this->m_S2BRes_3->getOption())
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Cancel", "cancel by user!");
+                                            this->OnActionClearBoard();
+                                            return;
                                         }
                                         else
                                         {
@@ -2794,11 +3005,29 @@ void MainWindow::beginSwap2Board()
 
                                     this->m_T2->pause();
                                     this->m_T1->start();
+                                    if (this->m_time_left_p1 > 0)
+                                    {
+                                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                                    }
+                                    else
+                                    {
+                                        this->OnActionEnd();
+                                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                        this->OnActionClearBoard();
+                                        return;
+                                    }
 
                                     vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                                     this->m_manager->sendBoard(vRecExpendTmp);
                                     this->m_bBoard = true;
                                     this->m_bS2B_over = true;
+                                }
+                                else if (0 == this->m_S2BRes_2->getOption())
+                                {
+                                    this->OnActionEnd();
+                                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                                    this->OnActionClearBoard();
+                                    return;
                                 }
                                 else
                                 {
@@ -2825,6 +3054,13 @@ void MainWindow::beginSwap2Board()
                             this->OnActionClearBoard();
                             return;
                         }
+                    }
+                    else if (0 == this->m_S2BRes_1->getOption())
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Cancel", "cancel by user!");
+                        this->OnActionClearBoard();
+                        return;
                     }
                     else
                     {

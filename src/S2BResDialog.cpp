@@ -365,10 +365,14 @@ void S2BResDialog::OnDialogS2BResAccept()
             this->m_vPos.push_back(p_2);
         }
     }
+    else
+    {}
 }
 
 void S2BResDialog::OnDialogS2BResReject()
 {
+    this->m_option = 0;
+    this->m_bSwap = false;
 }
 
 void S2BResDialog::OnRB1Triggered()
