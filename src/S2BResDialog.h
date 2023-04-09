@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: PlayerSettingDialog.h
+    > File Name: S2BResDialog.h
     > Author: Jintao Yang
     > Mail: 18608842770@163.com 
-    > Created Time: Sun Feb  5 15:18:50 2023
+    > Created Time: Sun Apr  9 09:55:20 2023
  ************************************************************************/
 
 /**
@@ -24,60 +24,58 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef __PLAYER_SETTING_DIALOG_H__
-#define __PLAYER_SETTING_DIALOG_H__
+#ifndef __S2BRESDIALOG_H__
+#define __S2BRESDIALOG_H__
 
 #include <QDialog>
-#include <QPushButton>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QLineEdit>
-#include <QGroupBox>
+#include <QObject>
+#include <QGridLayout>
+#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QRadioButton>
 #include <QDialogButtonBox>
 #include <QButtonGroup>
-#include <QObject>
+#include <QRegExpValidator>
 
-#include <iostream>
+#include<iostream>
 using namespace std;
 
-class PlayerSettingDialog : public QDialog
+class S2BResDialog : public QDialog
 {
     Q_OBJECT
-public:
-    PlayerSettingDialog(QWidget* parent=nullptr);
-    ~PlayerSettingDialog();
+private:
+    QGridLayout *gl;
+    QVBoxLayout *vbl_l, *vbl_r;
+    QHBoxLayout *hbl;
+    QRadioButton *rb_1, *rb_2, *rb_3;
+    QLabel *lb_1, *lb_2, *lb_3, *lb_4, *lb_5, *lb_6, *lb_7;
+    QLineEdit *le_1, *le_2, *le_3, *le_4, *le_5, *le_6;
+    QButtonGroup *bg;
+    QDialogButtonBox *dbb;
+    QRegExpValidator *m_RegEV;
 
-public:
-    bool isP1Human();
-    bool isP2Human();
-    const QString getP1Path();
-    const QString getP2Path();
+    vector<pair<int,int>> m_vPos;
+    int m_mode;
+    int m_option;
+    bool m_bSwap;
 
 private slots:
-    void OnDialogPlayerSettingAccept();
-    void OnDialogPlayerSettingReject();
-    void On_p1_btnOpen_clicked();
-    void On_p2_btnOpen_clicked();
-    void On_exchange_clicked();
+    void OnDialogS2BResAccept();
+    void OnDialogS2BResReject();
+    void OnRB1Triggered();
+    void OnRB2Triggered();
+    void OnRB3Triggered();
 
-private:
-    QGridLayout *gl, *gl_p1, *gl_p2;
-    QGroupBox *gb_p1, *gb_p2;
-    QHBoxLayout *p1_hbl_1, *p1_hbl_2, *p2_hbl_1, *p2_hbl_2, *hbl_btn;
+public:
+    //S2BResDialog(QWidget* parent=nullptr);
+    S2BResDialog(int i_mode, QWidget* parent=nullptr);
+    ~S2BResDialog();
 
-    QLineEdit *le_p1, *le_p2;
-    QPushButton *btn_p1, *btn_p2, *btn_exchange;
-
-    QDialogButtonBox *btn_box;
-    QRadioButton *p1_rb_1, *p1_rb_2, *p2_rb_1, *p2_rb_2;
-    QButtonGroup *p1_bg, *p2_bg;
-
-    QString m_p1_path;
-    QString m_p2_path;
-    bool m_is_p1_human;
-    bool m_is_p2_human;
+    vector<pair<int,int>> getVPos();
+    int getOption();
+    bool isSwap();
 };
 
 #endif
-

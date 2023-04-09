@@ -56,7 +56,10 @@ signals:
     void responsed_error();
     void responsed_unknown();
     void responsed_name(const QString &name);
+    void responsed_swap();
     void responsed_pos(int x, int y);
+    void responsed_2_pos(int x_1, int y_1, int x_2, int y_2);
+    void responsed_3_pos(int x_1, int y_1, int x_2, int y_2, int x_3, int y_3);
 
 private slots:
     void onReadData();

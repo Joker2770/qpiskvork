@@ -156,3 +156,18 @@ const string Commander::about_2_send()
 
     return sAbout;
 }
+
+const string Commander::swap2board_2_send(vector<pair<int, int>> vPos)
+{
+    string sSwap2Board = SWAP2BOARD;
+    sSwap2Board.append("\n");
+    vector<pair<int, int>>::iterator iter;
+    for (iter = vPos.begin(); iter != vPos.end(); ++iter)
+    {
+        sSwap2Board.append(to_string(iter->first) + "," + to_string(iter->second));
+        sSwap2Board.append("\n");
+    }
+    sSwap2Board.append("DONE");
+
+    return sSwap2Board;
+}

@@ -42,6 +42,8 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->gb_p1 = new QGroupBox();
     this->gb_p2 = new QGroupBox();
     this->btn_box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    this->p1_bg = new QButtonGroup();
+    this->p2_bg = new QButtonGroup();
     this->p1_hbl_1 = new QHBoxLayout();
     this->p1_hbl_2 = new QHBoxLayout();
     this->p2_hbl_1 = new QHBoxLayout();
@@ -76,6 +78,12 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->btn_p2->setText("open");
     this->btn_exchange->setText("exchange(Ctrl+X)");
     this->btn_exchange->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
+    this->p1_bg->setExclusive(true);
+    this->p2_bg->setExclusive(true);
+    this->p1_bg->addButton(this->p1_rb_1);
+    this->p1_bg->addButton(this->p1_rb_2);
+    this->p2_bg->addButton(this->p2_rb_1);
+    this->p2_bg->addButton(this->p2_rb_2);
     this->p1_hbl_1->addWidget(p1_rb_1);
     this->p1_hbl_1->addWidget(p1_rb_2);
     this->p1_hbl_2->addWidget(le_p1);
@@ -189,6 +197,16 @@ PlayerSettingDialog::~PlayerSettingDialog()
     {
         delete this->hbl_btn;
         this->hbl_btn = nullptr;
+    }
+    if (nullptr != this->p1_bg)
+    {
+        delete this->p1_bg;
+        this->p1_bg = nullptr;
+    }
+    if (nullptr != this->p2_bg)
+    {
+        delete this->p2_bg;
+        this->p2_bg = nullptr;
     }
     if (nullptr != this->btn_box)
     {

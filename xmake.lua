@@ -10,6 +10,7 @@ target("qpiskvork")
     add_files("src/EngineLoader.h")
     add_files("src/mainwindow.h")
     add_files("src/PlayerSettingDialog.h")
+    add_files("src/S2BResDialog.h")
 
     add_files("res.qrc")
     add_frameworks("QtCore", "QtWidgets", "QtGui")

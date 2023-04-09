@@ -354,6 +354,24 @@ void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bC
     }
 }
 
+void Manager::sendSwap2Board(const vector<pair<int, int>> vPos)
+{
+    qint64 i_write = 0;
+    if (nullptr != this->m_engine_1 && this->m_p1->m_isMyTurn)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        if (i_write <= 0)
+            qDebug() << "Failed to send swap2board to engine_1!";
+    }
+
+    if (nullptr != this->m_engine_2 && this->m_p2->m_isMyTurn)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        if (i_write <= 0)
+            qDebug() << "Failed to send swap2board to engine_2!";
+    }
+}
+
 void Manager::sendAbout()
 {
     qint64 i_write = 0;

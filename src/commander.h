@@ -47,6 +47,8 @@ public:
     const string end_2_send(void);
     const string about_2_send(void);
 
+    const string swap2board_2_send(vector<pair<int, int>> vPos);
+
 };
 
 #endif

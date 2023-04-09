@@ -188,7 +188,57 @@ void EngineLoader::response_parse(const string &str)
         emit responsed_error();
     else if (s_tmp.find_first_of("UNKNOWN ") == 0)
         emit responsed_unknown();
-    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && this->split(s_tmp, ',').size() == 2)
+    else if (s_tmp.find_first_of("SWAP") == 0)
+        emit responsed_swap();
+    else if ((3 <= this->split(s_tmp, " ").size())
+     && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(','))
+      && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos)
+      && (this->split(s_tmp, " ").at(2).find_first_of(',') != string::npos))
+    {
+        vector<string> s_pos = this->split(s_tmp, " ");
+        int x[3] = {-1, -1, -1}, y[3] = {-1, -1, -1};
+        for (size_t i = 0; i < 3; i++)
+        {
+            s_pos[i].erase(remove(s_pos[i].begin(), s_pos[i].end(), ' '), s_pos[i].end());
+            vector<int> i_pos = this->split(s_pos[i], ',');
+            if (i_pos.size() == 2)
+            {
+                if (i_pos.front() >= 0)
+                    x[i] = i_pos.front();
+                if (i_pos.back() >= 0)
+                    y[i] = i_pos.back();
+            }
+            else
+                break;
+        }
+        if (x[0] > 0 && x[1] > 0 && x[2] > 0 && y[0] > 0 && y[1] > 0 && y[2] > 0)
+            emit responsed_3_pos(x[0], y[0], x[1], y[1], x[2], y[2]);
+    }
+    else if ((2 <= this->split(s_tmp, " ").size())
+     && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(','))
+      && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos))
+    {
+        vector<string> s_pos = this->split(s_tmp, " ");
+        int x[2] = {-1, -1}, y[2] = {-1, -1};
+        for (size_t i = 0; i < 2; i++)
+        {
+            s_pos[i].erase(remove(s_pos[i].begin(), s_pos[i].end(), ' '), s_pos[i].end());
+            vector<int> i_pos = this->split(s_pos[i], ',');
+            if (i_pos.size() == 2)
+            {
+                if (i_pos.front() >= 0)
+                    x[i] = i_pos.front();
+                if (i_pos.back() >= 0)
+                    y[i] = i_pos.back();
+            }
+            else
+                break;
+        }
+        if (x[0] > 0 && x[1] > 0 && y[0] > 0 && y[1] > 0)
+            emit responsed_2_pos(x[0], y[0], x[1], y[1]);
+    }
+    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1)
+     && (this->split(s_tmp, ',').size() == 2))
     {
         vector<int> vPos = this->split(s_tmp, ',');
         emit responsed_pos(vPos[0], vPos[1]);
