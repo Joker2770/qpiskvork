@@ -905,6 +905,17 @@ void MainWindow::OnActionStart()
         if (nullptr != this->m_T2)
             this->m_T2->stop();
 
+        this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+        this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+        this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+        this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+        this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+        this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+        // qDebug() << this->m_manager->m_p1->m_sPath;
+        // qDebug() << this->m_manager->m_p2->m_sPath;
+        this->m_manager->m_p1->m_isMyTurn = true;
+        this->m_manager->m_p2->m_isMyTurn = false;
+
         bool bStart = false;
         bool bAttach = false;
         //continuous game
@@ -1375,7 +1386,7 @@ void MainWindow::OnActionContinue()
                     }
                 }
 
-                if (this->m_bSwap2Board)
+                if (this->m_bSwap2Board && (this->mBoard->getVRecord().size() < 6))
                 {
                     this->mState = GAME_STATE::PLAYING;
                     this->pRuleActionGroup->setDisabled(true);
@@ -1453,11 +1464,6 @@ void MainWindow::OnActionEnd()
         this->m_bOK_P2 = false;
         this->m_p1_name.clear();
         this->m_p2_name.clear();
-
-        this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-        this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-        this->m_manager->m_p1->m_isMyTurn = true;
-        this->m_manager->m_p2->m_isMyTurn = false;
 
         if (0 == this->mBoard->getVRecord().size())
             this->pRuleActionGroup->setEnabled(true);
