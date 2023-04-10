@@ -2306,16 +2306,16 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
                     this->mBoard->Notify();
 
-                    this->m_T1->pause();
-                    this->m_T2->start();
-                    if (this->m_time_left_p2 > 0)
+                    this->m_T2->pause();
+                    this->m_T1->start();
+                    if (this->m_time_left_p1 > 0)
                     {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
                     }
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2709,16 +2709,16 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     if (bp_1 && bp_2)
                     {
                         qDebug() << "Place 2 stones successfully!";
-                        this->m_T2->pause();
-                        this->m_T1->start();
-                        if (this->m_time_left_p1 > 0)
+                        this->m_T1->pause();
+                        this->m_T2->start();
+                        if (this->m_time_left_p2 > 0)
                         {
-                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
                         }
                         else
                         {
                             this->OnActionEnd();
-                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                             this->OnActionClearBoard();
                             return;
                         }
