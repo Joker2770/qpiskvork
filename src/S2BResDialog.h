@@ -30,7 +30,6 @@
 #include <QDialog>
 #include <QObject>
 #include <QGridLayout>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -46,20 +45,19 @@ class S2BResDialog : public QDialog
 {
     Q_OBJECT
 private:
-    QGridLayout *gl;
-    QVBoxLayout *vbl_l, *vbl_r;
-    QHBoxLayout *hbl;
-    QRadioButton *rb_1, *rb_2, *rb_3;
-    QLabel *lb_1, *lb_2, *lb_3, *lb_4, *lb_5, *lb_6, *lb_7;
-    QLineEdit *le_1, *le_2, *le_3, *le_4, *le_5, *le_6;
-    QButtonGroup *bg;
-    QDialogButtonBox *dbb;
+    QGridLayout gl_c1, gl_c2, gl_c3, gl_opts_2, gl_opts_3;
+    QHBoxLayout hbl_c1, hbl_c2;
+    QRadioButton rb_1_c2, rb_2_c2, rb_3_c2, rb_1_c3, rb_2_c3;
+    QLabel lb_1_c1, lb_2_c1, lb_3_c1, lb_4_c1, lb_5_c1, lb_1_c2, lb_2_c2, lb_3_c2, lb_4_c2, lb_5_c2, lb_1_c3, lb_2_c3;
+    QLineEdit le_1_c1, le_2_c1, le_3_c1, le_4_c1, le_5_c1, le_6_c1, le_1_c2, le_2_c2, le_3_c2, le_4_c2;
+    QButtonGroup bg_c2, bg_c3;
+    QDialogButtonBox *dbb_c1, *dbb_c2, *dbb_c3;
     QRegExpValidator *m_RegEV;
 
     vector<pair<int,int>> m_vPos;
     int m_mode;
-    int m_option;
-    bool m_bSwap;
+    int m_option_c2, m_option_c3;
+    bool m_bCanceled;
 
 private slots:
     void OnDialogS2BResAccept();
@@ -74,8 +72,9 @@ public:
     ~S2BResDialog();
 
     vector<pair<int,int>> getVPos();
-    int getOption();
-    bool isSwap();
+    int getOption_c2();
+    int getOption_c3();
+    bool isCanceled();
 };
 
 #endif

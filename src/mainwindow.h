@@ -140,7 +140,7 @@ protected:
 
 private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;
-    QSharedPointer<S2BResDialog> m_S2BRes_1, m_S2BRes_2, m_S2BRes_3;
+    S2BResDialog *m_S2BRes_1, *m_S2BRes_2, *m_S2BRes_3;
     void DrawChessboard();
     void DrawItems();
     void DrawMark();

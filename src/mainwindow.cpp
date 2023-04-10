@@ -26,10 +26,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      m_player_setting(new PlayerSettingDialog(this)),
-      m_S2BRes_1(new S2BResDialog(1, this)),
-      m_S2BRes_2(new S2BResDialog(2, this)),
-      m_S2BRes_3(new S2BResDialog(3, this))
+      m_player_setting(new PlayerSettingDialog(this))
 {
 #ifdef USE_DEFAULT_MENU_BAR
     this->pMenuBar = this->menuBar();
@@ -180,6 +177,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_manager->m_p1->m_isMyTurn = true;
     this->m_manager->m_p2->m_isMyTurn = false;
 
+    this->m_S2BRes_1 = new S2BResDialog(1, this);
+    this->m_S2BRes_2 = new S2BResDialog(2, this);
+    this->m_S2BRes_3 = new S2BResDialog(3, this);
+
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
     connect(this->pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
@@ -200,6 +201,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_S2BRes_1)
+    {
+        delete this->m_S2BRes_1;
+        this->m_S2BRes_1 = nullptr;
+    }
+    if (nullptr != this->m_S2BRes_2)
+    {
+        delete this->m_S2BRes_2;
+        this->m_S2BRes_2 = nullptr;
+    }
+    if (nullptr != this->m_S2BRes_3)
+    {
+        delete this->m_S2BRes_3;
+        this->m_S2BRes_3 = nullptr;
+    }
     if (nullptr != this->m_T1)
     {
         delete this->m_T1;
@@ -1162,9 +1178,6 @@ void MainWindow::OnActionPause()
         this->m_p1_name.clear();
         this->m_p2_name.clear();
 
-        if (0 == this->mBoard->getVRecord().size())
-            this->pRuleActionGroup->setEnabled(true);
-
         this->mState = GAME_STATE::PAUSING;
     }
 }
@@ -1464,9 +1477,6 @@ void MainWindow::OnActionEnd()
         this->m_bOK_P2 = false;
         this->m_p1_name.clear();
         this->m_p2_name.clear();
-
-        if (0 == this->mBoard->getVRecord().size())
-            this->pRuleActionGroup->setEnabled(true);
 
         this->mState = GAME_STATE::PAUSING;
     }
@@ -2276,11 +2286,18 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
             {
                 this->m_S2BRes_3->exec();
 
-                if ((2 == this->m_S2BRes_3->getOption()) && !(this->m_S2BRes_3->isSwap())) // case 3 option 2
+                if (this->m_S2BRes_3->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if (2 == this->m_S2BRes_3->getOption_c3()) // case 3 option 2
                 {
                     // go on
                 }
-                else if ((1 == this->m_S2BRes_3->getOption()) && this->m_S2BRes_3->isSwap()) // case 3 option 1
+                else if (1 == this->m_S2BRes_3->getOption_c3()) // case 3 option 1
                 {
                     // exchange color
                     STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2307,13 +2324,6 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
-                }
-                else if (0 == this->m_S2BRes_3->getOption())
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
-                    this->OnActionClearBoard();
-                    return;
                 }
                 else
                 {
@@ -2378,7 +2388,14 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 this->m_S2BRes_2->exec();
 
                 vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
-                if ((3 == this->m_S2BRes_2->getOption()) && !(this->m_S2BRes_2->isSwap()) && (v_pos.size() == 2))
+                if (this->m_S2BRes_2->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
                 {
                     bool bp_1 = false, bp_2 = false;
                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
@@ -2424,11 +2441,11 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         return;
                     }
                 }
-                else if ((2 == this->m_S2BRes_2->getOption()) && !(this->m_S2BRes_2->isSwap()))
+                else if (2 == this->m_S2BRes_2->getOption_c2())
                 {
                     /* code */
                 }
-                else if ((1 == this->m_S2BRes_2->getOption()) && this->m_S2BRes_2->isSwap())
+                else if (1 == this->m_S2BRes_2->getOption_c2())
                 {
                     // exchange color
                     STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2455,13 +2472,6 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
-                }
-                else if (0 == this->m_S2BRes_2->getOption())
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
-                    this->OnActionClearBoard();
-                    return;
                 }
                 else
                 {
@@ -2580,11 +2590,18 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
             {
                 this->m_S2BRes_3->exec();
 
-                if ((2 == this->m_S2BRes_3->getOption()) && !(this->m_S2BRes_3->isSwap())) // case 3 option 2
+                if (this->m_S2BRes_3->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if (2 == this->m_S2BRes_3->getOption_c3()) // case 3 option 2
                 {
                     // go on
                 }
-                else if ((1 == this->m_S2BRes_3->getOption()) && this->m_S2BRes_3->isSwap()) // case 3 option 1
+                else if (1 == this->m_S2BRes_3->getOption_c3()) // case 3 option 1
                 {
                     // exchange color
                     STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2611,13 +2628,6 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
-                }
-                else if (0 == this->m_S2BRes_3->getOption())
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
-                    this->OnActionClearBoard();
-                    return;
                 }
                 else
                 {
@@ -2682,7 +2692,14 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 this->m_S2BRes_2->exec();
 
                 vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
-                if ((3 == this->m_S2BRes_2->getOption()) && !(this->m_S2BRes_2->isSwap()) && (v_pos.size() == 2))
+                if (this->m_S2BRes_2->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
                 {
                     bool bp_1 = false, bp_2 = false;
                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
@@ -2728,11 +2745,11 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         return;
                     }
                 }
-                else if ((2 == this->m_S2BRes_2->getOption()) && !(this->m_S2BRes_2->isSwap()))
+                else if (2 == this->m_S2BRes_2->getOption_c2())
                 {
                     /* code */
                 }
-                else if ((1 == this->m_S2BRes_2->getOption()) && this->m_S2BRes_2->isSwap())
+                else if (1 == this->m_S2BRes_2->getOption_c2())
                 {
                     // exchange color
                     STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2759,13 +2776,6 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->m_manager->sendBoard(vRecExpendTmp);
                     this->m_bBoard = true;
                     this->m_bS2B_over = true;
-                }
-                else if (0 == this->m_S2BRes_2->getOption())
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
-                    this->OnActionClearBoard();
-                    return;
                 }
                 else
                 {
@@ -2869,7 +2879,14 @@ void MainWindow::beginSwap2Board()
                     this->m_S2BRes_1->exec();
 
                     vector<pair<int, int>> v_pos = this->m_S2BRes_1->getVPos();
-                    if (v_pos.size() == 3)
+                    if (this->m_S2BRes_1->isCanceled())
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Cancel", "cancel by user!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+                    else if ((v_pos.size() == 3) && (!this->m_S2BRes_1->isCanceled()))
                     {
                         bool bp_1 = false, bp_2 = false, bp_3 = false;
                         bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::BLACK);
@@ -2901,7 +2918,14 @@ void MainWindow::beginSwap2Board()
                                 this->m_S2BRes_2->exec();
 
                                 vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
-                                if (3 == this->m_S2BRes_2->getOption() && !(this->m_S2BRes_2->isSwap()) && (v_pos.size() == 2))
+                                if (this->m_S2BRes_2->isCanceled())
+                                {
+                                    this->OnActionEnd();
+                                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                                    this->OnActionClearBoard();
+                                    return;
+                                }
+                                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
                                 {
                                     bool bp_1 = false, bp_2 = false;
                                     bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
@@ -2935,11 +2959,18 @@ void MainWindow::beginSwap2Board()
                                         // to p1 human
                                         this->m_S2BRes_3->exec();
 
-                                        if ((2 == this->m_S2BRes_3->getOption()) && !(this->m_S2BRes_3->isSwap())) // case 3 option 2
+                                        if (this->m_S2BRes_3->isCanceled())
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Cancel", "cancel by user!");
+                                            this->OnActionClearBoard();
+                                            return;
+                                        }
+                                        else if (2 == this->m_S2BRes_3->getOption_c3() && !(this->m_S2BRes_3->isCanceled())) // case 3 option 2
                                         {
                                             // go on
                                         }
-                                        else if ((1 == this->m_S2BRes_3->getOption()) && this->m_S2BRes_3->isSwap()) // case 3 option 1
+                                        else if ((1 == this->m_S2BRes_3->getOption_c3()) && !(this->m_S2BRes_3->isCanceled())) // case 3 option 1
                                         {
                                             // exchange color
                                             STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -2967,13 +2998,6 @@ void MainWindow::beginSwap2Board()
                                             this->m_bBoard = true;
                                             this->m_bS2B_over = true;
                                         }
-                                        else if (0 == this->m_S2BRes_3->getOption())
-                                        {
-                                            this->OnActionEnd();
-                                            QMessageBox::information(this, "Cancel", "cancel by user!");
-                                            this->OnActionClearBoard();
-                                            return;
-                                        }
                                         else
                                         {
                                             this->OnActionEnd();
@@ -2990,11 +3014,11 @@ void MainWindow::beginSwap2Board()
                                         return;
                                     }
                                 }
-                                else if (2 == this->m_S2BRes_2->getOption() && !(this->m_S2BRes_2->isSwap()))
+                                else if (2 == this->m_S2BRes_2->getOption_c2())
                                 {
                                     /* code */
                                 }
-                                else if (1 == this->m_S2BRes_2->getOption() && this->m_S2BRes_2->isSwap())
+                                else if (1 == this->m_S2BRes_2->getOption_c2())
                                 {
                                     // exchange color
                                     STONECOLOR cTmp = this->m_manager->m_p1->m_color;
@@ -3022,13 +3046,6 @@ void MainWindow::beginSwap2Board()
                                     this->m_bBoard = true;
                                     this->m_bS2B_over = true;
                                 }
-                                else if (0 == this->m_S2BRes_2->getOption())
-                                {
-                                    this->OnActionEnd();
-                                    QMessageBox::information(this, "Cancel", "cancel by user!");
-                                    this->OnActionClearBoard();
-                                    return;
-                                }
                                 else
                                 {
                                     this->OnActionEnd();
@@ -3054,13 +3071,6 @@ void MainWindow::beginSwap2Board()
                             this->OnActionClearBoard();
                             return;
                         }
-                    }
-                    else if (0 == this->m_S2BRes_1->getOption())
-                    {
-                        this->OnActionEnd();
-                        QMessageBox::information(this, "Cancel", "cancel by user!");
-                        this->OnActionClearBoard();
-                        return;
                     }
                     else
                     {

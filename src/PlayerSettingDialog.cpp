@@ -36,7 +36,7 @@ using namespace std;
 PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     QDialog(parent,Qt::WindowCloseButtonHint|Qt::Drawer)
 {
-    this->gl = new QGridLayout(this);
+    this->gl = new QGridLayout();
     this->gl_p1 = new QGridLayout();
     this->gl_p2 = new QGridLayout();
     this->gb_p1 = new QGroupBox();
@@ -110,6 +110,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     //this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowTitle("Player Setting");
     this->setModal(true);
+    this->setLayout(this->gl);
     this->resize(450, 300);
 
     this->m_p1_path = this->le_p1->text();
