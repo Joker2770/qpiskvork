@@ -1179,6 +1179,12 @@ void MainWindow::OnActionPause()
         this->m_p2_name.clear();
 
         this->mState = GAME_STATE::PAUSING;
+
+        if (this->mBoard->GetState() == BOARDSTATUS::BOARDEMPTY)
+        {
+            this->mState = GAME_STATE::IDLE;
+            this->pRuleActionGroup->setEnabled(true);
+        }
     }
 }
 
@@ -1479,6 +1485,12 @@ void MainWindow::OnActionEnd()
         this->m_p2_name.clear();
 
         this->mState = GAME_STATE::PAUSING;
+
+        if (this->mBoard->GetState() == BOARDSTATUS::BOARDEMPTY)
+        {
+            this->mState = GAME_STATE::IDLE;
+            this->pRuleActionGroup->setEnabled(true);
+        }
     }
 }
 
