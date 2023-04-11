@@ -1783,7 +1783,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.4.11\n";
+    const QString strVerNum = "Ver Num: 0.5.08\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -2289,7 +2289,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                 if (this->m_S2BRes_3->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2391,7 +2391,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 if (this->m_S2BRes_2->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2593,7 +2593,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                 if (this->m_S2BRes_3->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2695,7 +2695,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 if (this->m_S2BRes_2->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2882,7 +2882,7 @@ void MainWindow::beginSwap2Board()
                     if (this->m_S2BRes_1->isCanceled())
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Cancel", "cancel by user!");
+                        QMessageBox::information(this, "Cancel", "Canceled by user!");
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2921,7 +2921,7 @@ void MainWindow::beginSwap2Board()
                                 if (this->m_S2BRes_2->isCanceled())
                                 {
                                     this->OnActionEnd();
-                                    QMessageBox::information(this, "Cancel", "cancel by user!");
+                                    QMessageBox::information(this, "Cancel", "Canceled by user!");
                                     this->OnActionClearBoard();
                                     return;
                                 }
@@ -2962,7 +2962,7 @@ void MainWindow::beginSwap2Board()
                                         if (this->m_S2BRes_3->isCanceled())
                                         {
                                             this->OnActionEnd();
-                                            QMessageBox::information(this, "Cancel", "cancel by user!");
+                                            QMessageBox::information(this, "Cancel", "Canceled by user!");
                                             this->OnActionClearBoard();
                                             return;
                                         }

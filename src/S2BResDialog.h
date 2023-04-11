@@ -71,7 +71,7 @@ public:
     S2BResDialog(int i_mode, QWidget* parent=nullptr);
     ~S2BResDialog();
 
-    vector<pair<int,int>> getVPos();
+    vector<pair<int, int>> getVPos();
     int getOption_c2();
     int getOption_c3();
     bool isCanceled();

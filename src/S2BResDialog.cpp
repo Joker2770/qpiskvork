@@ -45,7 +45,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
 
     this->m_option_c2 = -1;
     this->m_option_c3 = -1;
-    this->m_bCanceled = false;
+    this->m_bCanceled = true;
 
     if (1 == i_mode)
     {
@@ -181,7 +181,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         //this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c3));
-        this->resize(200, 100);
+        this->resize(150, 100);
 
         this->m_mode = 3;
 

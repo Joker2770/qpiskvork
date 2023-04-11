@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qpiskvork VERSION 0.4 LANGUAGES CXX)
+project(qpiskvork VERSION 0.5 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
