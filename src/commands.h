@@ -56,6 +56,7 @@ const char RECTSTART[] = "RECTSTART";
 const char RESTART[] = "RESTART";
 const char TAKEBACK[] = "TAKEBACK";
 const char PLAY[] = "PLAY";
+const char SWAP2BOARD[] = "SWAP2BOARD";
 
 // Commands that are sent by the brain
 const char UNKNOWN[] = "UNKNOWN";

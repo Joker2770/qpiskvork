@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTimeoutTurn = new QAction("Turn Timeout", this);
     this->pActionMaxMemory = new QAction("Max Memory", this);
     this->pActionSkin = new QAction("Skin", this);
+    this->pActionSwap2Board = new QAction("Swap2board", this);
     this->pActionStart = new QAction("Start", this);
     this->pActionPause = new QAction("Pause", this);
     this->pActionContinue = new QAction("Continue", this);
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTimeoutTurn->setShortcut(QKeySequence(Qt::Key_T));
     this->pActionMaxMemory->setShortcut(QKeySequence(Qt::Key_O));
     this->pActionSkin->setShortcut(QKeySequence(Qt::Key_K));
+    this->pActionSwap2Board->setShortcut(QKeySequence(Qt::Key_W));
     this->pActionFreeStyleGomoku->setShortcut(QKeySequence(Qt::Key_F));
     this->pActionStandardGomoku->setShortcut(QKeySequence(Qt::Key_S));
     this->pActionContinuous->setShortcut(QKeySequence(Qt::Key_N));
@@ -103,11 +105,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionContinuous->setCheckable(true);
     this->pActionRenju->setCheckable(true);
     this->pActionCaro->setCheckable(true);
+    this->pActionSwap2Board->setCheckable(true);
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionFreeStyleGomoku));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionStandardGomoku));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionContinuous));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionRenju));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionCaro));
+    this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionSwap2Board));
     this->pActionFreeStyleGomoku->setChecked(true);
 
 #ifndef USE_DEFAULT_MENU_BAR
@@ -127,6 +131,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowFlags(this->windowFlags()&~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
+    this->m_bSwap2Board = false;
+    this->m_bS2B_over = false;
     this->m_bSkin = true;
 
     QPixmap pm;
@@ -154,11 +160,26 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bOK_P2 = false;
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
-    this->m_timeout_match = 15*60*1000;
-    this->m_timeout_turn = 30*1000;
-    this->m_max_memory = 1024*1024*1024;
-    this->m_time_left_p1 = 15*60*1000;
-    this->m_time_left_p2 = 15*60*1000;
+    this->m_timeout_match = 15 * 60 * 1000;
+    this->m_timeout_turn = 30 * 1000;
+    this->m_max_memory = 1024 * 1024 * 1024;
+    this->m_time_left_p1 = this->m_timeout_match;
+    this->m_time_left_p2 = this->m_timeout_match;
+
+    this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+    this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+    this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
+    this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
+    this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
+    this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
+    // qDebug() << this->m_manager->m_p1->m_sPath;
+    // qDebug() << this->m_manager->m_p2->m_sPath;
+    this->m_manager->m_p1->m_isMyTurn = true;
+    this->m_manager->m_p2->m_isMyTurn = false;
+
+    this->m_S2BRes_1 = new S2BResDialog(1, this);
+    this->m_S2BRes_2 = new S2BResDialog(2, this);
+    this->m_S2BRes_3 = new S2BResDialog(3, this);
 
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
@@ -180,6 +201,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_S2BRes_1)
+    {
+        delete this->m_S2BRes_1;
+        this->m_S2BRes_1 = nullptr;
+    }
+    if (nullptr != this->m_S2BRes_2)
+    {
+        delete this->m_S2BRes_2;
+        this->m_S2BRes_2 = nullptr;
+    }
+    if (nullptr != this->m_S2BRes_3)
+    {
+        delete this->m_S2BRes_3;
+        this->m_S2BRes_3 = nullptr;
+    }
     if (nullptr != this->m_T1)
     {
         delete this->m_T1;
@@ -275,6 +311,11 @@ MainWindow::~MainWindow()
         delete this->pActionSkin;
         this->pActionSkin = nullptr;
     }
+    if (nullptr != this->pActionSwap2Board)
+    {
+        delete this->pActionSwap2Board;
+        this->pActionSwap2Board = nullptr;
+    }
     if (nullptr != this->pActionFreeStyleGomoku)
     {
         delete this->pActionFreeStyleGomoku;
@@ -356,10 +397,11 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
 
+    DrawChessboard();
     DrawTimeLeft();
     DrawPlayerState();
+    DrawPlayerStone();
     DrawPlayerName();
-    DrawChessboard();
     DrawIndication();
     DrawItems();
     DrawMark();
@@ -552,6 +594,60 @@ void MainWindow::DrawPlayerState()
     }
 }
 
+void MainWindow::DrawPlayerStone()
+{
+    QPainter painter(this);
+    painter.setPen(QPen(QColor(Qt::transparent)));
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+
+    if (STONECOLOR::BLACK == this->m_manager->m_p1->m_color)
+    {
+        if (this->m_bSkin && !this->m_images[1].isNull())
+            painter.drawPixmap((int)(0.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(1));
+        else
+        {
+            painter.setBrush(Qt::black);
+            QPoint ptCenter((int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+    else
+    {
+        if (this->m_bSkin && !this->m_images[2].isNull())
+            painter.drawPixmap((int)(0.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(2));
+        else
+        {
+            painter.setBrush(Qt::white);
+            QPoint ptCenter((int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+
+    if (STONECOLOR::WHITE == this->m_manager->m_p2->m_color)
+    {
+        if (this->m_bSkin && !this->m_images[2].isNull())
+            painter.drawPixmap(this->geometry().width() - (int)(1.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(2));
+        else
+        {
+            painter.setBrush(Qt::white);
+            QPoint ptCenter(this->geometry().width() - (int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+    else
+    {
+        if (this->m_bSkin && !this->m_images[1].isNull())
+            painter.drawPixmap(this->geometry().width() - (int)(1.25 * RECT_WIDTH), this->geometry().height() - (int)(1.25 * RECT_HEIGHT), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(1));
+        else
+        {
+            painter.setBrush(Qt::black);
+            QPoint ptCenter(this->geometry().width() - (int)(0.75 * RECT_WIDTH), this->geometry().height() - (int)(0.75 * RECT_HEIGHT));
+            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+        }
+    }
+}
+
 void MainWindow::DrawPlayerName()
 {
     QFont font;
@@ -627,7 +723,10 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 {
     if (this->mState == GAME_STATE::PLAYING)
     {
-        if ((GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS)) || (this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer))
+        if ((GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+         || (this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer)
+          || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer)
+          || (this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3))
             return;
 
         QPoint pt;
@@ -668,9 +767,17 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                         QMessageBox::information(this, "Game Over", "Player 1 timeout!");
                         return;
                     }
-                    if (this->m_bBoard)
+
+                    if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = true;
+                        this->m_bS2B_over = true;
+                    }
+                    else if (this->m_bBoard)
+                    {
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -693,9 +800,17 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                         QMessageBox::information(this, "Game Over", "Player 2 timeout!");
                         return;
                     }
-                    if (this->m_bBoard)
+
+                    if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = true;
+                        this->m_bS2B_over = true;
+                    }
+                    else if (this->m_bBoard)
+                    {
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -806,17 +921,14 @@ void MainWindow::OnActionStart()
         if (nullptr != this->m_T2)
             this->m_T2->stop();
 
-        this->m_time_left_p1 = this->m_timeout_match;
-        this->m_time_left_p2 = this->m_timeout_match;
-
         this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
         this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
         this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
         this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
         this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
         this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-        qDebug() << this->m_manager->m_p1->m_sPath;
-        qDebug() << this->m_manager->m_p2->m_sPath;
+        // qDebug() << this->m_manager->m_p1->m_sPath;
+        // qDebug() << this->m_manager->m_p2->m_sPath;
         this->m_manager->m_p1->m_isMyTurn = true;
         this->m_manager->m_p2->m_isMyTurn = false;
 
@@ -891,6 +1003,13 @@ void MainWindow::OnActionStart()
             {
                 if (nullptr != this->m_manager->m_engine_1)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                    }
+
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
@@ -899,6 +1018,13 @@ void MainWindow::OnActionStart()
                 }
                 if (nullptr != this->m_manager->m_engine_2)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+                    }
+
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
                     connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
@@ -936,6 +1062,13 @@ void MainWindow::OnActionStart()
             {
                 if (nullptr != this->m_manager->m_engine_1)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                    }
+
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
@@ -944,6 +1077,13 @@ void MainWindow::OnActionStart()
                 }
                 if (nullptr != this->m_manager->m_engine_2)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                    }
+
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
@@ -965,9 +1105,17 @@ void MainWindow::OnActionStart()
         }
 
         this->mBoard->Notify();
-        this->m_manager->beginMatch();
 
         this->mState = GAME_STATE::PLAYING;
+
+        if (this->m_bSwap2Board)
+        {
+            this->m_bS2B_over = false;
+            this->beginSwap2Board();
+        }
+        else
+            this->m_manager->beginMatch();
+
         this->pRuleActionGroup->setDisabled(true);
     }
 }
@@ -989,6 +1137,13 @@ void MainWindow::OnActionPause()
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+
+                if (this->m_bSwap2Board)
+                {
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                }
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
@@ -997,6 +1152,13 @@ void MainWindow::OnActionPause()
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+
+                if (this->m_bSwap2Board)
+                {
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+                }
             }
             bool bDetach = this->m_manager->DetachEngines();
             qDebug() << "DetachFlag: " << bDetach;
@@ -1015,6 +1177,7 @@ void MainWindow::OnActionPause()
         this->m_bOK_P2 = false;
         this->m_p1_name.clear();
         this->m_p2_name.clear();
+
         this->mState = GAME_STATE::PAUSING;
     }
 }
@@ -1025,15 +1188,6 @@ void MainWindow::OnActionContinue()
     {
         if (nullptr != this->m_manager)
         {
-            this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
-            this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
-            this->m_manager->m_p1->m_sPath = this->m_player_setting->getP1Path();
-            this->m_manager->m_p2->m_sPath = this->m_player_setting->getP2Path();
-            this->m_manager->m_p1->m_isComputer = !(this->m_player_setting->isP1Human());
-            this->m_manager->m_p2->m_isComputer = !(this->m_player_setting->isP2Human());
-            qDebug() << this->m_manager->m_p1->m_sPath;
-            qDebug() << this->m_manager->m_p2->m_sPath;
-
             bool bAttach = false;
             bool bStart = false;
             // continuous game
@@ -1118,6 +1272,13 @@ void MainWindow::OnActionContinue()
                 {
                     if (nullptr != this->m_manager->m_engine_1)
                     {
+                        if (this->m_bSwap2Board)
+                        {
+                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                        }
+
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                         connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
@@ -1126,6 +1287,13 @@ void MainWindow::OnActionContinue()
                     }
                     if (nullptr != this->m_manager->m_engine_2)
                     {
+                        if (this->m_bSwap2Board)
+                        {
+                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+                        }
+
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
                         connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
@@ -1163,6 +1331,13 @@ void MainWindow::OnActionContinue()
                 {
                     if (nullptr != this->m_manager->m_engine_1)
                     {
+                        if (this->m_bSwap2Board)
+                        {
+                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                        }
+
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
@@ -1171,6 +1346,13 @@ void MainWindow::OnActionContinue()
                     }
                     if (nullptr != this->m_manager->m_engine_2)
                     {
+                        if (this->m_bSwap2Board)
+                        {
+                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+                        }
+
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
@@ -1216,8 +1398,20 @@ void MainWindow::OnActionContinue()
                         return;
                     }
                 }
-                this->m_manager->sendBoard(vRecExpendTmp);
-                this->m_bBoard = true;
+
+                if (this->m_bSwap2Board && (this->mBoard->getVRecord().size() < 6))
+                {
+                    this->mState = GAME_STATE::PLAYING;
+                    this->pRuleActionGroup->setDisabled(true);
+                    this->m_bS2B_over = false;
+                    this->OnActionClearBoard();
+                    this->beginSwap2Board();
+                }
+                else
+                {
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = true;
+                }
             }
         }
 
@@ -1243,6 +1437,13 @@ void MainWindow::OnActionEnd()
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
                 disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+
+                if (this->m_bSwap2Board)
+                {
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                }
             }
             if (nullptr != this->m_manager->m_engine_2)
             {
@@ -1251,6 +1452,13 @@ void MainWindow::OnActionEnd()
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
                 disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+
+                if (this->m_bSwap2Board)
+                {
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+                }
             }
             bool bDetach = this->m_manager->DetachEngines();
             qDebug() << "DetachFlag: " << bDetach;
@@ -1269,6 +1477,7 @@ void MainWindow::OnActionEnd()
         this->m_bOK_P2 = false;
         this->m_p1_name.clear();
         this->m_p2_name.clear();
+
         this->mState = GAME_STATE::PAUSING;
     }
 }
@@ -1294,6 +1503,9 @@ void MainWindow::OnActionTakeBack()
 {
     if (this->mState != GAME_STATE::PLAYING)
     {
+        if (this->m_bSwap2Board && (this->mBoard->getVRecord().size() < 6))
+            return;
+
         bool b_succ = this->mBoard->takeBackStone();
         if (!b_succ)
         {
@@ -1407,7 +1619,10 @@ void MainWindow::OnActionSkin()
         if (ok)
         {
             if (QString::compare(s_get, "none") == 0)
+            {
                 this->m_bSkin = false;
+                this->m_images.clear();
+            }
             else
             {
                 bool bLoad = false;
@@ -1526,6 +1741,19 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::CARO));
             }
         }
+        else if (pAction->text().compare(this->pActionSwap2Board->text())==0)
+        {
+            if (this->pActionSwap2Board->isChecked())
+            {
+                qDebug() << "Choose swap2board!";
+                this->m_bSwap2Board = true;
+            }
+            else
+            {
+                qDebug() << "Cancel swap2board!";
+                this->m_bSwap2Board = false;
+            }
+        }
         else
         {
             qDebug() << "Choose Free-Style gomoku!";
@@ -1555,7 +1783,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.4.11\n";
+    const QString strVerNum = "Ver Num: 0.5.08\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1587,7 +1815,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 {
     if (this->mState == GAME_STATE::PLAYING)
     {
-        if (!this->m_manager->m_p1->m_isMyTurn || !this->m_manager->m_p1->m_isComputer)
+        if (!this->m_manager->m_p1->m_isMyTurn || !this->m_manager->m_p1->m_isComputer || (this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3))
             return;
 
         pair<int, int> p_idx(x, y);
@@ -1628,7 +1856,14 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                         return;
                     }
 
-                    if (this->m_bBoard)
+                    if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
+                    {
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = true;
+                        this->m_bS2B_over = true;
+                    }
+                    else if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
@@ -1738,7 +1973,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 {
     if (this->mState == GAME_STATE::PLAYING)
     {
-        if (!this->m_manager->m_p2->m_isMyTurn || !this->m_manager->m_p2->m_isComputer)
+        if (!this->m_manager->m_p2->m_isMyTurn || !this->m_manager->m_p2->m_isComputer || (this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3))
             return;
 
         pair<int, int> p_idx(x, y);
@@ -1779,7 +2014,14 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                         return;
                     }
 
-                    if (this->m_bBoard)
+                    if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
+                    {
+                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        this->m_manager->sendBoard(vRecExpendTmp);
+                        this->m_bBoard = true;
+                        this->m_bS2B_over = true;
+                    }
+                    else if (this->m_bBoard)
                     {
                         vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
@@ -2009,6 +2251,285 @@ void MainWindow::OnContinuousPos(int x, int y)
     }
 }
 
+void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
+{
+    if (this->mState == GAME_STATE::PLAYING && this->m_bSwap2Board && this->mBoard->getVRecord().size() == 3)
+    {
+        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+        this->m_manager->m_p2->m_color = cTmp;
+
+        bool bp_1 = false, bp_2 = false;
+        pair<int, int> p_1(x1, y1), p_2(x2, y2);
+        bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::WHITE);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
+
+        if (bp_1 && bp_2)
+        {
+            this->mBoard->Notify();
+            this->m_T1->pause();
+            this->m_T2->start();
+            if (this->m_time_left_p2 > 0)
+            {
+                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
+
+            if (!(this->m_manager->m_p2->m_isComputer))
+            {
+                this->m_S2BRes_3->exec();
+
+                if (this->m_S2BRes_3->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if (2 == this->m_S2BRes_3->getOption_c3()) // case 3 option 2
+                {
+                    // go on
+                }
+                else if (1 == this->m_S2BRes_3->getOption_c3()) // case 3 option 1
+                {
+                    // exchange color
+                    STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                    this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                    this->m_manager->m_p2->m_color = cTmp;
+
+                    this->mBoard->Notify();
+
+                    this->m_T2->pause();
+                    this->m_T1->start();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+
+                    vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = true;
+                    this->m_bS2B_over = true;
+                }
+                else
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+            }
+            else
+            {
+                vector<pair<int, int>> vP;
+                for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                {
+                    vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                }
+
+                this->m_manager->sendSwap2Board(vP);
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+            this->OnActionClearBoard();
+            return;
+        }
+    }
+}
+
+void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    if (this->mState == GAME_STATE::PLAYING && this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3)
+    {
+        bool bp_1 = false, bp_2 = false, bp_3 = false;
+        pair<int, int> p_1(x1, y1), p_2(x2, y2), p_3(x3, y3);
+        bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
+        if (bp_2)
+            bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
+
+        if (bp_1 && bp_2 && bp_3)
+        {
+            this->mBoard->Notify();
+            this->m_T1->pause();
+            this->m_T2->start();
+            if (this->m_time_left_p2 > 0)
+            {
+                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
+
+            if (!(this->m_manager->m_p2->m_isComputer))
+            {
+                this->m_S2BRes_2->exec();
+
+                vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
+                if (this->m_S2BRes_2->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
+                {
+                    bool bp_1 = false, bp_2 = false;
+                    bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
+                    if (bp_1)
+                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+
+                    if (bp_1 && bp_2)
+                    {
+                        qDebug() << "Place 2 stones successfully!";
+                        this->m_T2->pause();
+                        this->m_T1->start();
+                        if (this->m_time_left_p1 > 0)
+                        {
+                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                        }
+                        else
+                        {
+                            this->OnActionEnd();
+                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                            this->OnActionClearBoard();
+                            return;
+                        }
+
+                        // exchange color
+                        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                        this->m_manager->m_p2->m_color = cTmp;
+
+                        this->mBoard->Notify();
+
+                        vector<pair<int, int>> vP;
+                        for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                        {
+                            vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                        }
+                        this->m_manager->sendSwap2Board(vP);
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+                }
+                else if (2 == this->m_S2BRes_2->getOption_c2())
+                {
+                    /* code */
+                }
+                else if (1 == this->m_S2BRes_2->getOption_c2())
+                {
+                    // exchange color
+                    STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                    this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                    this->m_manager->m_p2->m_color = cTmp;
+
+                    this->mBoard->Notify();
+
+                    this->m_T2->pause();
+                    this->m_T1->start();
+                    if (this->m_time_left_p1 > 0)
+                    {
+                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+
+                    vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = true;
+                    this->m_bS2B_over = true;
+                }
+                else
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+            }
+            else
+            {
+                vector<pair<int, int>> vP;
+                for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                {
+                    vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                }
+                this->m_manager->sendSwap2Board(vP);
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+            this->OnActionClearBoard();
+            return;
+        }
+    }
+}
+
+void MainWindow::OnP1ResponsedSwap()
+{
+    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 2) || (this->mBoard->getVRecord().size() == 5)))
+    {
+        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+        this->m_manager->m_p2->m_color = cTmp;
+
+        this->m_T1->pause();
+        this->m_T2->start();
+        if (this->m_time_left_p2 > 0)
+        {
+            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+            this->OnActionClearBoard();
+            return;
+        }
+
+        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+        this->m_manager->sendBoard(vRecExpendTmp);
+        this->m_bBoard = true;
+        this->m_bS2B_over = true;
+    }
+}
+
 void MainWindow::OnP1ResponseName(const QString &name)
 {
     qDebug() << "...................";
@@ -2034,6 +2555,285 @@ void MainWindow::OnP1ResponseUnknown()
     QMessageBox::information(this, "game over!", "Player 1 responsed UNKNOWN!");
 }
 
+void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
+{
+    if (this->mState == GAME_STATE::PLAYING && this->m_bSwap2Board && this->mBoard->getVRecord().size() == 3)
+    {
+        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+        this->m_manager->m_p2->m_color = cTmp;
+
+        bool bp_1 = false, bp_2 = false;
+        pair<int, int> p_1(x1, y1), p_2(x2, y2);
+        bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::WHITE);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::BLACK);
+
+        if (bp_1 && bp_2)
+        {
+            this->mBoard->Notify();
+            this->m_T2->pause();
+            this->m_T1->start();
+            if (this->m_time_left_p1 > 0)
+            {
+                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
+
+            if (!(this->m_manager->m_p1->m_isComputer))
+            {
+                this->m_S2BRes_3->exec();
+
+                if (this->m_S2BRes_3->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if (2 == this->m_S2BRes_3->getOption_c3()) // case 3 option 2
+                {
+                    // go on
+                }
+                else if (1 == this->m_S2BRes_3->getOption_c3()) // case 3 option 1
+                {
+                    // exchange color
+                    STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                    this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                    this->m_manager->m_p2->m_color = cTmp;
+
+                    this->mBoard->Notify();
+
+                    this->m_T1->pause();
+                    this->m_T2->start();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+
+                    vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = true;
+                    this->m_bS2B_over = true;
+                }
+                else
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+            }
+            else
+            {
+                vector<pair<int, int>> vP;
+                for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                {
+                    vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                }
+
+                this->m_manager->sendSwap2Board(vP);
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+            this->OnActionClearBoard();
+            return;
+        }
+    }
+}
+
+void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    if (this->mState == GAME_STATE::PLAYING && this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3)
+    {
+        bool bp_1 = false, bp_2 = false, bp_3 = false;
+        pair<int, int> p_1(x1, y1), p_2(x2, y2), p_3(x3, y3);
+        bp_1 = this->mBoard->placeStone(p_1, STONECOLOR::BLACK);
+        if (bp_1)
+            bp_2 = this->mBoard->placeStone(p_2, STONECOLOR::WHITE);
+        if (bp_2)
+            bp_3 = this->mBoard->placeStone(p_3, STONECOLOR::BLACK);
+
+        if (bp_1 && bp_2 && bp_3)
+        {
+            this->mBoard->Notify();
+            this->m_T2->pause();
+            this->m_T1->start();
+            if (this->m_time_left_p1 > 0)
+            {
+                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            }
+            else
+            {
+                this->OnActionEnd();
+                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                this->OnActionClearBoard();
+                return;
+            }
+
+            if (!(this->m_manager->m_p1->m_isComputer))
+            {
+                this->m_S2BRes_2->exec();
+
+                vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
+                if (this->m_S2BRes_2->isCanceled())
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
+                {
+                    bool bp_1 = false, bp_2 = false;
+                    bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
+                    if (bp_1)
+                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+
+                    if (bp_1 && bp_2)
+                    {
+                        qDebug() << "Place 2 stones successfully!";
+                        this->m_T1->pause();
+                        this->m_T2->start();
+                        if (this->m_time_left_p2 > 0)
+                        {
+                            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                        }
+                        else
+                        {
+                            this->OnActionEnd();
+                            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                            this->OnActionClearBoard();
+                            return;
+                        }
+
+                        // exchange color
+                        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                        this->m_manager->m_p2->m_color = cTmp;
+
+                        this->mBoard->Notify();
+
+                        vector<pair<int, int>> vP;
+                        for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                        {
+                            vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                        }
+                        this->m_manager->sendSwap2Board(vP);
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+                }
+                else if (2 == this->m_S2BRes_2->getOption_c2())
+                {
+                    /* code */
+                }
+                else if (1 == this->m_S2BRes_2->getOption_c2())
+                {
+                    // exchange color
+                    STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                    this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                    this->m_manager->m_p2->m_color = cTmp;
+
+                    this->mBoard->Notify();
+
+                    this->m_T1->pause();
+                    this->m_T2->start();
+                    if (this->m_time_left_p2 > 0)
+                    {
+                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+
+                    vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                    this->m_manager->sendBoard(vRecExpendTmp);
+                    this->m_bBoard = true;
+                    this->m_bS2B_over = true;
+                }
+                else
+                {
+                    this->OnActionEnd();
+                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    this->OnActionClearBoard();
+                    return;
+                }
+            }
+            else
+            {
+                vector<pair<int, int>> vP;
+                for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                {
+                    vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                }
+                this->m_manager->sendSwap2Board(vP);
+            }
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+            this->OnActionClearBoard();
+            return;
+        }
+    }
+}
+
+void MainWindow::OnP2ResponsedSwap()
+{
+    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 2) || (this->mBoard->getVRecord().size() == 5)))
+    {
+        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+        this->m_manager->m_p2->m_color = cTmp;
+
+        this->m_T2->pause();
+        this->m_T1->start();
+        if (this->m_time_left_p1 > 0)
+        {
+            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+        }
+        else
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+            this->OnActionClearBoard();
+            return;
+        }
+
+        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+        this->m_manager->sendBoard(vRecExpendTmp);
+        this->m_bBoard = true;
+        this->m_bS2B_over = true;
+    }
+}
+
 void MainWindow::OnP2ResponseName(const QString &name)
 {
     qDebug() << "...................";
@@ -2057,5 +2857,231 @@ void MainWindow::OnP2ResponseUnknown()
 {
     this->OnActionEnd();
     QMessageBox::information(this, "game over!", "Player 2 responsed UNKNOWN!");
+}
+
+void MainWindow::beginSwap2Board()
+{
+    if (6 > this->mBoard->getVRecord().size() && this->m_bSwap2Board && !this->m_bS2B_over)
+    {
+        if (3 > this->mBoard->getVRecord().size())
+        {
+            this->mBoard->clearBoard();
+            if (this->m_manager->m_p1->m_isMyTurn)
+            {
+                if (this->m_manager->m_p1->m_isComputer)
+                {
+                    vector<pair<int, int >> vP;
+                    vP.clear();
+                    this->m_manager->sendSwap2Board(vP);
+                }
+                else
+                {
+                    this->m_S2BRes_1->exec();
+
+                    vector<pair<int, int>> v_pos = this->m_S2BRes_1->getVPos();
+                    if (this->m_S2BRes_1->isCanceled())
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Cancel", "Canceled by user!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+                    else if ((v_pos.size() == 3) && (!this->m_S2BRes_1->isCanceled()))
+                    {
+                        bool bp_1 = false, bp_2 = false, bp_3 = false;
+                        bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::BLACK);
+                        if (bp_1)
+                            bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::WHITE);
+                        if (bp_2)
+                            bp_3 = this->mBoard->placeStone(v_pos.at(2), STONECOLOR::BLACK);
+
+                        if (bp_1 && bp_2 && bp_3)
+                        {
+                            qDebug() << "Place 3 stones successfully!";
+                            this->mBoard->Notify();
+                            this->m_T1->pause();
+                            this->m_T2->start();
+                            if (this->m_time_left_p2 > 0)
+                            {
+                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                            }
+                            else
+                            {
+                                this->OnActionEnd();
+                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                this->OnActionClearBoard();
+                                return;
+                            }
+
+                            if (!(this->m_manager->m_p2->m_isComputer))
+                            {
+                                this->m_S2BRes_2->exec();
+
+                                vector<pair<int, int>> v_pos = this->m_S2BRes_2->getVPos();
+                                if (this->m_S2BRes_2->isCanceled())
+                                {
+                                    this->OnActionEnd();
+                                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                                    this->OnActionClearBoard();
+                                    return;
+                                }
+                                else if ((3 == this->m_S2BRes_2->getOption_c2()) && (v_pos.size() == 2))
+                                {
+                                    bool bp_1 = false, bp_2 = false;
+                                    bp_1 = this->mBoard->placeStone(v_pos.at(0), STONECOLOR::WHITE);
+                                    if (bp_1)
+                                        bp_2 = this->mBoard->placeStone(v_pos.at(1), STONECOLOR::BLACK);
+
+                                    if (bp_1 && bp_2)
+                                    {
+                                        qDebug() << "Place 2 stones successfully!";
+                                        this->m_T2->pause();
+                                        this->m_T1->start();
+                                        if (this->m_time_left_p1 > 0)
+                                        {
+                                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                                        }
+                                        else
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                            this->OnActionClearBoard();
+                                            return;
+                                        }
+
+                                        // exchange color
+                                        STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                                        this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                                        this->m_manager->m_p2->m_color = cTmp;
+
+                                        this->mBoard->Notify();
+
+                                        // to p1 human
+                                        this->m_S2BRes_3->exec();
+
+                                        if (this->m_S2BRes_3->isCanceled())
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Cancel", "Canceled by user!");
+                                            this->OnActionClearBoard();
+                                            return;
+                                        }
+                                        else if (2 == this->m_S2BRes_3->getOption_c3() && !(this->m_S2BRes_3->isCanceled())) // case 3 option 2
+                                        {
+                                            // go on
+                                        }
+                                        else if ((1 == this->m_S2BRes_3->getOption_c3()) && !(this->m_S2BRes_3->isCanceled())) // case 3 option 1
+                                        {
+                                            // exchange color
+                                            STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                                            this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                                            this->m_manager->m_p2->m_color = cTmp;
+
+                                            this->mBoard->Notify();
+
+                                            this->m_T1->pause();
+                                            this->m_T2->start();
+                                            if (this->m_time_left_p2 > 0)
+                                            {
+                                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+                                            }
+                                            else
+                                            {
+                                                this->OnActionEnd();
+                                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                                this->OnActionClearBoard();
+                                                return;
+                                            }
+
+                                            vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                                            this->m_manager->sendBoard(vRecExpendTmp);
+                                            this->m_bBoard = true;
+                                            this->m_bS2B_over = true;
+                                        }
+                                        else
+                                        {
+                                            this->OnActionEnd();
+                                            QMessageBox::information(this, "Error", "Unknown Error!");
+                                            this->OnActionClearBoard();
+                                            return;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        this->OnActionEnd();
+                                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                                        this->OnActionClearBoard();
+                                        return;
+                                    }
+                                }
+                                else if (2 == this->m_S2BRes_2->getOption_c2())
+                                {
+                                    /* code */
+                                }
+                                else if (1 == this->m_S2BRes_2->getOption_c2())
+                                {
+                                    // exchange color
+                                    STONECOLOR cTmp = this->m_manager->m_p1->m_color;
+                                    this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
+                                    this->m_manager->m_p2->m_color = cTmp;
+
+                                    this->mBoard->Notify();
+
+                                    this->m_T2->pause();
+                                    this->m_T1->start();
+                                    if (this->m_time_left_p1 > 0)
+                                    {
+                                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+                                    }
+                                    else
+                                    {
+                                        this->OnActionEnd();
+                                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                        this->OnActionClearBoard();
+                                        return;
+                                    }
+
+                                    vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                                    this->m_manager->sendBoard(vRecExpendTmp);
+                                    this->m_bBoard = true;
+                                    this->m_bS2B_over = true;
+                                }
+                                else
+                                {
+                                    this->OnActionEnd();
+                                    QMessageBox::information(this, "Error", "Unknown Error!");
+                                    this->OnActionClearBoard();
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                vector<pair<int, int>> vP;
+                                for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+                                {
+                                    vP.push_back(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first));
+                                }
+                                this->m_manager->sendSwap2Board(vP);
+                            }
+                        }
+                        else
+                        {
+                            this->OnActionEnd();
+                            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+                            this->OnActionClearBoard();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        this->OnActionEnd();
+                        QMessageBox::information(this, "Error", "Illegal pos from input!");
+                        this->OnActionClearBoard();
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }
 

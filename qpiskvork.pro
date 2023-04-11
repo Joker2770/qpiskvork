@@ -19,6 +19,7 @@ SOURCES += \
     src/EngineLoader.cpp \
     src/FreeStyleGomoku.cpp \
     src/PlayerSettingDialog.cpp \
+    src/S2BResDialog.cpp \
     src/StandardGomoku.cpp \
     src/renju.cpp \
     src/caro.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     src/EngineLoader.h \
     src/FreeStyleGomoku.h \
     src/PlayerSettingDialog.h \
+    src/S2BResDialog.h \
     src/StandardGomoku.h \
     src/renju.h \
     src/caro.h \

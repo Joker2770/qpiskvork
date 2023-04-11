@@ -35,6 +35,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
+#include <QButtonGroup>
 #include <QObject>
 
 #include <iostream>
@@ -70,6 +71,7 @@ private:
 
     QDialogButtonBox *btn_box;
     QRadioButton *p1_rb_1, *p1_rb_2, *p2_rb_1, *p2_rb_2;
+    QButtonGroup *p1_bg, *p2_bg;
 
     QString m_p1_path;
     QString m_p2_path;

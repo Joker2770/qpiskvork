@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qpiskvork VERSION 0.4 LANGUAGES CXX)
+project(qpiskvork VERSION 0.5 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -28,6 +28,7 @@ set(PROJECT_SOURCES
 	src/EngineLoader.cpp
 	src/commander.cpp
 	src/PlayerSettingDialog.cpp
+	src/S2BResDialog.cpp
 	src/FreeStyleGomoku.h
 	src/StandardGomoku.h
 	src/renju.h
@@ -44,6 +45,7 @@ set(PROJECT_SOURCES
 	src/EngineLoader.h
 	src/commander.h
 	src/PlayerSettingDialog.h
+	src/S2BResDialog.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

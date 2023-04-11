@@ -39,6 +39,7 @@
 #include "caro.h"
 #include "manager.h"
 #include "PlayerSettingDialog.h"
+#include "S2BResDialog.h"
 #include "timer.h"
 
 #define RECT_WIDTH		(36)
@@ -79,6 +80,7 @@ public:
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
     QAction *pActionSkin;
+    QAction *pActionSwap2Board;
     QAction *pActionStart;
     QAction *pActionPause;
     QAction *pActionContinue;
@@ -116,14 +118,21 @@ public slots:
     void OnP1PlaceStone(int x, int y);
     void OnP2PlaceStone(int x, int y);
     void OnContinuousPos(int x, int y);
+    void OnP1Responsed2Pos(int x_1, int y_1, int x_2, int y_2);
+    void OnP1Responsed3Pos(int x_1, int y_1, int x_2, int y_2, int x_3, int y_3);
+    void OnP1ResponsedSwap();
     void OnP1ResponseName(const QString &name);
     void OnP1ResponseOk();
     void OnP1ResponseError();
     void OnP1ResponseUnknown();
+    void OnP2Responsed2Pos(int x_1, int y_1, int x_2, int y_2);
+    void OnP2Responsed3Pos(int x_1, int y_1, int x_2, int y_2, int x_3, int y_3);
+    void OnP2ResponsedSwap();
     void OnP2ResponseName(const QString &name);
     void OnP2ResponseOk();
     void OnP2ResponseError();
     void OnP2ResponseUnknown();
+    void beginSwap2Board();
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -131,11 +140,13 @@ protected:
 
 private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;
+    S2BResDialog *m_S2BRes_1, *m_S2BRes_2, *m_S2BRes_3;
     void DrawChessboard();
     void DrawItems();
     void DrawMark();
     void DrawTimeLeft();
     void DrawPlayerState();
+    void DrawPlayerStone();
     void DrawPlayerName();
     void DrawIndication();
 
@@ -161,6 +172,8 @@ private:
     int m_Rule;
     GAME_STATE mState;
     bool m_bBoard;
+    bool m_bSwap2Board;
+    bool m_bS2B_over;
     bool m_bSkin;
     bool m_bOK_P1;
     bool m_bOK_P2;

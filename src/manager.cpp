@@ -39,9 +39,21 @@ Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
     this->m_engine_1 = nullptr;
     this->m_engine_2 = nullptr;
     this->m_cmd = nullptr;
+    this->m_state = BOARDSTATUS::BOARDEMPTY;
 
     this->m_p1 = new Player();
     this->m_p2 = new Player();
+
+    this->m_p1->m_color = STONECOLOR::BLACK;
+    this->m_p2->m_color = STONECOLOR::WHITE;
+    this->m_p1->m_sPath = "";
+    this->m_p2->m_sPath = "";
+    this->m_p1->m_isComputer = false;
+    this->m_p2->m_isComputer = false;
+    // qDebug() << this->m_p1->m_sPath;
+    // qDebug() << this->m_p2->m_sPath;
+    this->m_p1->m_isMyTurn = true;
+    this->m_p2->m_isMyTurn = false;
 }
 
 Manager::~Manager()
@@ -339,6 +351,24 @@ void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bC
             if (i_write <= 0)
                 qDebug() << "Failed to send board to engine_2!";
         }
+    }
+}
+
+void Manager::sendSwap2Board(const vector<pair<int, int>> vPos)
+{
+    qint64 i_write = 0;
+    if (nullptr != this->m_engine_1 && this->m_p1->m_isMyTurn)
+    {
+        i_write = this->m_engine_1->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        if (i_write <= 0)
+            qDebug() << "Failed to send swap2board to engine_1!";
+    }
+
+    if (nullptr != this->m_engine_2 && this->m_p2->m_isMyTurn)
+    {
+        i_write = this->m_engine_2->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        if (i_write <= 0)
+            qDebug() << "Failed to send swap2board to engine_2!";
     }
 }
 

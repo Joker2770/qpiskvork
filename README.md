@@ -13,7 +13,7 @@ dependencies of compiling.
 * qmake or cmake
 
 ## build
-- with qtcreator
+- with QtCreator
 
 Simply build with QtCreator by double-click on `qpiskvork.pro` first of all.
 
@@ -31,7 +31,7 @@ make
 
 - with xmake toolchain
 
-more easier than cmake.
+More easier than cmake.
 
 ```shell
 cd qpiskvork
