@@ -1066,7 +1066,7 @@ void MainWindow::OnActionStart()
                     {
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
                         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
                     }
 
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
@@ -1081,7 +1081,7 @@ void MainWindow::OnActionStart()
                     {
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
                         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap));
+                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
                     }
 
                     disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
@@ -1795,7 +1795,7 @@ void MainWindow::OnActionPlayerSetting()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.08\n";
+    const QString strVerNum = "Ver Num: 0.5.13\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -2515,7 +2515,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
 void MainWindow::OnP1ResponsedSwap()
 {
-    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 2) || (this->mBoard->getVRecord().size() == 5)))
+    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 3) || (this->mBoard->getVRecord().size() == 5)))
     {
         STONECOLOR cTmp = this->m_manager->m_p1->m_color;
         this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
@@ -2820,7 +2820,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
 void MainWindow::OnP2ResponsedSwap()
 {
-    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 2) || (this->mBoard->getVRecord().size() == 5)))
+    if ((this->mState == GAME_STATE::PLAYING) && this->m_bSwap2Board && ((this->mBoard->getVRecord().size() == 3) || (this->mBoard->getVRecord().size() == 5)))
     {
         STONECOLOR cTmp = this->m_manager->m_p1->m_color;
         this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
