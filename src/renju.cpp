@@ -89,11 +89,19 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
     if (board->getVRecord().size() >= 9)
     {
         vector<int> vColor;
-        vColor.push_back(1);
 
         pair<int, int> p_last_move = board->getVRecord().back();
         pair<int, int> p_idx = board->coord2idx(p_last_move.first);
         pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
+
+        // push back current stone color
+        if (STONECOLOR::BLACK == board->getIdxStoneColor(p_idx))
+            vColor.push_back(1);
+        else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_idx))
+            vColor.push_back(2);
+        else
+            return 0;
+
         while (!board->isPosOutOfBoard(p_drt_idx))
         {
             if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
@@ -205,11 +213,19 @@ int Renju::countA3(Board *board, const pair<int, int>& p_drt)
     if (board->getVRecord().size() >= 6)
     {
         vector<int> vColor;
-        vColor.push_back(1);
 
         pair<int, int> p_last_move = board->getVRecord().back();
         pair<int, int> p_idx = board->coord2idx(p_last_move.first);
         pair<int, int> p_drt_idx(p_idx.first + p_drt.first, p_idx.second + p_drt.second);
+
+        // push back current stone color
+        if (STONECOLOR::BLACK == board->getIdxStoneColor(p_idx))
+            vColor.push_back(1);
+        else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_idx))
+            vColor.push_back(2);
+        else
+            return 0;
+
         while (!board->isPosOutOfBoard(p_drt_idx))
         {
             if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
