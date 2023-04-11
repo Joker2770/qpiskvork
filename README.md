@@ -45,3 +45,4 @@ xmake
 2. [https://plastovicka.github.io/protocl2en.htm](https://plastovicka.github.io/protocl2en.htm).
 3. [https://gomocup.org/](https://gomocup.org/).
 4. [https://www.renju.net/rifrules/](https://www.renju.net/rifrules/).
+5. [https://www.renju.net/rule/](https://www.renju.net/rule/)

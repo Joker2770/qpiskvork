@@ -2509,6 +2509,7 @@ void MainWindow::OnP1ResponsedSwap()
         this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
         this->m_manager->m_p2->m_color = cTmp;
 
+        this->mBoard->Notify();
         this->m_T1->pause();
         this->m_T2->start();
         if (this->m_time_left_p2 > 0)
@@ -2813,6 +2814,7 @@ void MainWindow::OnP2ResponsedSwap()
         this->m_manager->m_p1->m_color = this->m_manager->m_p2->m_color;
         this->m_manager->m_p2->m_color = cTmp;
 
+        this->mBoard->Notify();
         this->m_T2->pause();
         this->m_T1->start();
         if (this->m_time_left_p1 > 0)
