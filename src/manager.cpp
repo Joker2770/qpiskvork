@@ -208,7 +208,8 @@ bool Manager::startMatch(int i_size)
         if (this->m_p1->m_isComputer && !(this->m_p1->m_sPath.isEmpty()))
         {
             qint64 i_write_1 = 0;
-            i_write_1 = this->m_engine_1->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
+            string sCmd = this->m_cmd->start_2_send(i_size);
+            i_write_1 = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
             qDebug() << "i_write_1: " << i_write_1;
             if (i_write_1 > 0)
             {
@@ -226,7 +227,8 @@ bool Manager::startMatch(int i_size)
         if (this->m_p2->m_isComputer && !(this->m_p2->m_sPath.isEmpty()))
         {
             qint64 i_write_2 = 0;
-            i_write_2 = this->m_engine_2->sendCommand(this->m_cmd->start_2_send(i_size).c_str());
+            string sCmd = this->m_cmd->start_2_send(i_size);
+            i_write_2 = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
             qDebug() << "i_write_2: " << i_write_2;
             if (i_write_2 > 0)
             {
@@ -248,13 +250,15 @@ void Manager::beginMatch()
 
     if (this->m_p1->m_isMyTurn && this->m_p1->m_isComputer && nullptr != this->m_engine_1)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->begin_2_send().c_str());
+        string sCmd = this->m_cmd->begin_2_send();
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0)
             qDebug() << "Failed to send begin to engine_1!";
     }
     else if (this->m_p2->m_isMyTurn && this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->begin_2_send().c_str());
+        string sCmd = this->m_cmd->begin_2_send();
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0)
             qDebug() << "Failed to send begin to engine_2!";
     }
@@ -270,7 +274,8 @@ bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
 
     if (this->m_p1->m_isComputer && nullptr != this->m_engine_1)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
+        string sCmd = this->m_cmd->info_2_send(key, szValue);
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
         else
         {
@@ -289,7 +294,8 @@ bool Manager::infoMatch_p2(INFO_KEY key, const char* szValue)
 
     if (this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->info_2_send(key, szValue).c_str());
+        string sCmd = this->m_cmd->info_2_send(key, szValue);
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send info to engine_2!";
         else
         {
@@ -307,7 +313,8 @@ void Manager::turn_2_p1(int iX, int iY)
 
     if (this->m_p1->m_isMyTurn && this->m_p1->m_isComputer && nullptr != this->m_engine_1)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
+        string sCmd = this->m_cmd->move_2_send(iX, iY);
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
     }
 }
@@ -318,12 +325,13 @@ void Manager::turn_2_p2(int iX, int iY)
 
     if (this->m_p2->m_isMyTurn && this->m_p2->m_isComputer && nullptr != this->m_engine_2)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->move_2_send(iX, iY).c_str());
+        string sCmd = this->m_cmd->move_2_send(iX, iY);
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_2!";
     }
 }
 
-void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bContinuous)
+void Manager::sendBoard(const vector<pair<pair<int, int>, int>> &vRecord, bool bContinuous)
 {
     qint64 i_write = 0;
 
@@ -331,7 +339,8 @@ void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bC
     {
         if (nullptr != this->m_engine_1)
         {
-            i_write = this->m_engine_1->sendCommand(this->m_cmd->board_2_send(vRecord, 3).c_str());
+            string sCmd = this->m_cmd->board_2_send(vRecord, 3);
+            i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
             if (i_write <= 0)
                 qDebug() << "Failed to send board to engine_1!";
         }
@@ -340,33 +349,37 @@ void Manager::sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bC
     {
         if (nullptr != this->m_engine_1 && this->m_p1->m_isMyTurn)
         {
-            i_write = this->m_engine_1->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p1->m_color).c_str());
+            string sCmd = this->m_cmd->board_2_send(vRecord, this->m_p1->m_color);
+            i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
             if (i_write <= 0)
                 qDebug() << "Failed to send board to engine_1!";
         }
 
         if (nullptr != this->m_engine_2 && this->m_p2->m_isMyTurn)
         {
-            i_write = this->m_engine_2->sendCommand(this->m_cmd->board_2_send(vRecord, this->m_p2->m_color).c_str());
+            string sCmd = this->m_cmd->board_2_send(vRecord, this->m_p2->m_color);
+            i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
             if (i_write <= 0)
                 qDebug() << "Failed to send board to engine_2!";
         }
     }
 }
 
-void Manager::sendSwap2Board(const vector<pair<int, int>> vPos)
+void Manager::sendSwap2Board(const vector<pair<int, int>> &vPos)
 {
     qint64 i_write = 0;
     if (nullptr != this->m_engine_1 && this->m_p1->m_isMyTurn)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        string sCmd = this->m_cmd->swap2board_2_send(vPos);
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0)
             qDebug() << "Failed to send swap2board to engine_1!";
     }
 
     if (nullptr != this->m_engine_2 && this->m_p2->m_isMyTurn)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->swap2board_2_send(vPos).c_str());
+        string sCmd = this->m_cmd->swap2board_2_send(vPos);
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0)
             qDebug() << "Failed to send swap2board to engine_2!";
     }
@@ -378,13 +391,15 @@ void Manager::sendAbout()
 
     if (nullptr != this->m_engine_1)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->about_2_send().c_str());
+        string sCmd = this->m_cmd->about_2_send();
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send about to engine_1!";
     }
 
     if (nullptr != this->m_engine_2)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->about_2_send().c_str());
+        string sCmd = this->m_cmd->about_2_send();
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send about to engine_2!";
     }
 }
@@ -395,13 +410,15 @@ void Manager::endMatch()
 
     if (nullptr != this->m_engine_1)
     {
-        i_write = this->m_engine_1->sendCommand(this->m_cmd->end_2_send().c_str());
+        string sCmd = this->m_cmd->end_2_send();
+        i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
     }
 
     if (nullptr != this->m_engine_2)
     {
-        i_write = this->m_engine_2->sendCommand(this->m_cmd->end_2_send().c_str());
+        string sCmd = this->m_cmd->end_2_send();
+        i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
         if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
     }
 }

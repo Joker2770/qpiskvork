@@ -55,8 +55,8 @@ public:
     void beginMatch();
     void turn_2_p1(int i_x, int i_y);
     void turn_2_p2(int i_x, int i_y);
-    void sendBoard(const vector<pair<pair<int, int>, int>> vRecord, bool bContinuous = false);
-    void sendSwap2Board(const vector<pair<int,int>> vPos);
+    void sendBoard(const vector<pair<pair<int, int>, int>> &vRecord, bool bContinuous = false);
+    void sendSwap2Board(const vector<pair<int,int>> &vPos);
     void sendAbout();
     void endMatch();
 
