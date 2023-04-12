@@ -259,18 +259,18 @@ void S2BResDialog::OnDialogS2BResAccept()
         }
 
         if (this->rb_1_c2.isChecked())
-            this->m_option_c2 == 1;
+            this->m_option_c2 = 1;
         else if (this->rb_2_c2.isChecked())
-            this->m_option_c2 == 2;
+            this->m_option_c2 = 2;
         else if (this->rb_3_c2.isChecked())
-            this->m_option_c2 == 3;
+            this->m_option_c2 = 3;
     }
     else if (3 == this->m_mode)
     {
         if (this->rb_1_c3.isChecked())
-            this->m_option_c3 == 1;
+            this->m_option_c3 = 1;
         else if (this->rb_2_c3.isChecked())
-            this->m_option_c3 == 2;
+            this->m_option_c3 = 2;
     }
 }
 

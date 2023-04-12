@@ -416,9 +416,9 @@ void MainWindow::DrawChessboard()
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black), 2));
 
-    for (int i = 0; i < this->mBoard->getBSize().first; ++i)
+    for (unsigned int i = 0; i < this->mBoard->getBSize().first; ++i)
     {
-        for (int j = 0; j < this->mBoard->getBSize().second; ++j)
+        for (unsigned int j = 0; j < this->mBoard->getBSize().second; ++j)
         {
             if (this->m_bSkin && !this->m_images.at(0).isNull())
                 painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));

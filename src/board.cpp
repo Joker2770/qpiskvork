@@ -28,7 +28,7 @@
 #include <iostream>
 using namespace std;
 
-Board::Board() : i_width(15), i_height(15), iMaxRecordSize(15 * 15)
+Board::Board() : iMaxRecordSize(15 * 15), i_width(15), i_height(15)
 {
     this->vRecord.clear();
     this->m_iState = BOARDSTATUS::BOARDEMPTY;
@@ -74,7 +74,7 @@ bool Board::isPosOutOfBoard(const pair<int, int> idx)
         return true;
 }
 
-bool Board::setBSize(const pair<int, int> wh)
+bool Board::setBSize(const pair<unsigned int, unsigned int> wh)
 {
     if (8 <= wh.first && wh.first <= MAXBSIZE && 8 <= wh.second && wh.second <= MAXBSIZE)
     {
@@ -88,7 +88,7 @@ bool Board::setBSize(const pair<int, int> wh)
         return false;
 }
 
-pair<int, int> Board::getBSize()
+pair<unsigned int, unsigned int> Board::getBSize()
 {
     pair<int, int> pTmp(this->i_width, this->i_height);
     return pTmp;

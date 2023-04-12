@@ -117,8 +117,8 @@ vector<string> EngineLoader::split(const string &str, const string &pattern)
     string::size_type pos;
     vector<string> result;
     string strs = str + pattern;
-    int size = strs.size();
-    for (int i = 0; i < size; ++i) {
+    unsigned int size = strs.size();
+    for (unsigned int i = 0; i < size; ++i) {
         pos = strs.find(pattern, i);
         if (pos < size)
         {
