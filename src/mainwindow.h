@@ -74,6 +74,7 @@ public:
     QMenu *pMenuGame;
     QMenu *pMenuSetting;
     QMenu *pMenuPlayer;
+    QMenu *pMenuShow;
     QMenu *pMenuAbout;
     QAction *pActionBoardSize;
     QAction *pActionTimeoutMatch;
@@ -92,6 +93,7 @@ public:
     QAction *pActionContinuous;
     QAction *pActionRenju;
     QAction *pActionCaro;
+    QAction *pActionNumOfMove;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
@@ -112,6 +114,7 @@ public slots:
     void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
     void OnActionPlayerSetting();
+    void OnActionNumOfMove();
     void OnActionVer();
     void OnActionFeedback();
     void OnActionLicense();
@@ -143,6 +146,7 @@ private:
     S2BResDialog *m_S2BRes_1, *m_S2BRes_2, *m_S2BRes_3;
     void DrawChessboard();
     void DrawItems();
+    void DrawStepNum();
     void DrawMark();
     void DrawTimeLeft();
     void DrawPlayerState();
@@ -175,6 +179,7 @@ private:
     bool m_bSwap2Board;
     bool m_bS2B_over;
     bool m_bSkin;
+    bool m_bNumOfMove;
     bool m_bOK_P1;
     bool m_bOK_P2;
 };
