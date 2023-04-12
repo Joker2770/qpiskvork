@@ -969,7 +969,13 @@ void MainWindow::OnActionStart()
 {
     if (GAME_STATE::PLAYING != this->mState)
     {
-        this->mBoard->clearBoard();
+        if (BOARDSTATUS::BOARDEMPTY != this->mBoard->GetState())
+        {
+            if (QMessageBox::information(this, "Tips", "It will clear board and start new game!", QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok)
+                this->mBoard->clearBoard();
+            else
+                return;
+        }
 
         if (nullptr != this->m_T1)
             this->m_T1->stop();
