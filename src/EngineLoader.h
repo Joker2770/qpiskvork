@@ -43,7 +43,7 @@ public:
 
     bool setProgram(const QString &sProgram);
     void startProgram();
-    qint64 sendCommand(const char* sCmd);
+    qint64 sendCommand(const char* sCmd, unsigned int iLen);
 
     vector<string> split(const string &str, const string &pattern);
     vector<int> split(const string &str, char sep);

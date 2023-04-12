@@ -66,7 +66,7 @@ void EngineLoader::startProgram()
     }
 }
 
-qint64 EngineLoader::sendCommand(const char* s_cmd)
+qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int ilen)
 {
     qDebug() << s_cmd;
     qint64 i_w = 0;

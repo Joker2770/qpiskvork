@@ -9,15 +9,15 @@ This program aims to become a gomoku or renju manager with the [protocol](https:
 
 ## dependencies
 dependencies of compiling.
-* Qt5+ (REQUIRED COMPONENTS Core Gui Widgets)
-* qmake or cmake
+  * Qt5+ (REQUIRED COMPONENTS Core Gui Widgets)
+  * qmake or cmake
 
 ## build
-- with QtCreator
+  - with QtCreator
 
 Simply build with QtCreator by double-click on `qpiskvork.pro` first of all.
 
-- with cmake toolchain
+  - with cmake toolchain
 
 Simply build with the steps as fallow:
 
@@ -29,7 +29,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
-- with xmake toolchain
+  - with xmake toolchain
 
 More easier than cmake.
 
@@ -41,8 +41,8 @@ xmake
 
 ## references
 
-1. [https://sourceforge.net/projects/piskvork/](https://sourceforge.net/projects/piskvork/).
-2. [https://plastovicka.github.io/protocl2en.htm](https://plastovicka.github.io/protocl2en.htm).
-3. [https://gomocup.org/](https://gomocup.org/).
-4. [https://www.renju.net/rifrules/](https://www.renju.net/rifrules/).
-5. [https://www.renju.net/rule/](https://www.renju.net/rule/)
+ 1. [https://sourceforge.net/projects/piskvork/](https://sourceforge.net/projects/piskvork/).
+ 2. [https://plastovicka.github.io/protocl2en.htm](https://plastovicka.github.io/protocl2en.htm).
+ 3. [https://gomocup.org/](https://gomocup.org/).
+ 4. [https://www.renju.net/rifrules/](https://www.renju.net/rifrules/).
+ 5. [https://www.renju.net/rule/](https://www.renju.net/rule/)
