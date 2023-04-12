@@ -66,13 +66,13 @@ void EngineLoader::startProgram()
     }
 }
 
-qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int ilen)
+qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int iLen)
 {
     qDebug() << s_cmd;
     qint64 i_w = 0;
     if (this->mProcess->isWritable())
     {
-        i_w = this->mProcess->write(s_cmd, strlen(s_cmd));
+        i_w = this->mProcess->write(s_cmd, iLen);
         if (i_w < 0)    return i_w;
         else
         {
@@ -117,8 +117,8 @@ vector<string> EngineLoader::split(const string &str, const string &pattern)
     string::size_type pos;
     vector<string> result;
     string strs = str + pattern;
-    int size = strs.size();
-    for (int i = 0; i < size; ++i) {
+    unsigned int size = strs.size();
+    for (unsigned int i = 0; i < size; ++i) {
         pos = strs.find(pattern, i);
         if (pos < size)
         {

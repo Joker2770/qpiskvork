@@ -61,8 +61,8 @@ public:
     int idx2Coord(const pair<int, int> idx);
     bool isPosEmpty(const pair<int, int> idx);
     bool isPosOutOfBoard(const pair<int, int> idx);
-    bool setBSize(const pair<int, int> wh);
-    pair<int, int> getBSize();
+    bool setBSize(const pair<unsigned int, unsigned int> wh);
+    pair<unsigned int, unsigned int> getBSize();
     int getMaxRecordSize();
     vector<pair<int, int>> &getVRecord();
     int getIdxStoneColor(const pair<int, int> idx);
@@ -91,8 +91,8 @@ private:
     unsigned int iMaxRecordSize;
 
     // int BSize;
-    int i_width;
-    int i_height;
+    unsigned int i_width;
+    unsigned int i_height;
 
     int m_iState;
 };

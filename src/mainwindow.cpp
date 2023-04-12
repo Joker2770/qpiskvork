@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QInputDialog>
+#include <QPainterPath>
 
 #include "mainwindow.h"
 #include "EngineLoader.h"
@@ -37,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame = new QMenu("Game", this);
     this->pMenuSetting = new QMenu("Setting", this);
     this->pMenuPlayer = new QMenu("Player", this);
+    this->pMenuShow = new QMenu("Show", this);
     this->pMenuAbout = new QMenu("About", this);
     this->pActionBoardSize = new QAction("Board Size", this);
     this->pActionTimeoutMatch = new QAction("Match Timeout", this);
@@ -55,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionContinuous = new QAction("Continuous", this);
     this->pActionRenju = new QAction("Renju", this);
     this->pActionCaro = new QAction("Caro", this);
+    this->pActionNumOfMove = new QAction("Number of move", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
@@ -77,11 +80,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju->setShortcut(QKeySequence(Qt::Key_R));
     this->pActionCaro->setShortcut(QKeySequence(Qt::Key_C));
     this->pActionPlayerSetting->setShortcut(QKeySequence(Qt::Key_P));
+    this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
+    this->pActionNumOfMove->setCheckable(true);
+    this->pActionNumOfMove->setChecked(false);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
     this->pMenuSetting->addAction(this->pActionMaxMemory);
-    this->pMenuSetting->addAction(this->pActionSkin);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
     this->pMenuGame->addAction(this->pActionContinue);
@@ -89,12 +94,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
+    this->pMenuShow->addAction(this->pActionNumOfMove);
+    this->pMenuShow->addAction(this->pActionSkin);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
     this->pMenuAbout->addAction(this->pActionLicense);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
+    this->pMenuBar->addMenu(this->pMenuShow);
     this->pMenuBar->addMenu(this->pMenuAbout);
 
     this->pMenuSetting->addSeparator();
@@ -134,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bSwap2Board = false;
     this->m_bS2B_over = false;
     this->m_bSkin = true;
+    this->m_bNumOfMove = false;
 
     QPixmap pm;
     pm.load(":/skins/HGarden2.bmp");
@@ -194,6 +203,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
     connect(this->pRuleActionGroup,SIGNAL(triggered(QAction *)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
+    connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
     connect(this->pActionLicense, SIGNAL(triggered()), this, SLOT(OnActionLicense()));
@@ -346,6 +356,11 @@ MainWindow::~MainWindow()
         delete this->pActionPlayerSetting;
         this->pActionPlayerSetting = nullptr;
     }
+    if (nullptr != this->pActionNumOfMove)
+    {
+        delete this->pActionNumOfMove;
+        this->pActionNumOfMove = nullptr;
+    }
     if (nullptr != this->pActionLicense)
     {
         delete this->pActionLicense;
@@ -376,6 +391,11 @@ MainWindow::~MainWindow()
         delete this->pMenuSetting;
         this->pMenuSetting = nullptr;
     }
+    if (nullptr != this->pMenuShow)
+    {
+        delete this->pMenuShow;
+        this->pMenuShow = nullptr;
+    }
     if (nullptr != this->pMenuAbout)
     {
         delete this->pMenuAbout;
@@ -404,6 +424,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawPlayerName();
     DrawIndication();
     DrawItems();
+    DrawStepNum();
     DrawMark();
 
     update();
@@ -416,9 +437,9 @@ void MainWindow::DrawChessboard()
     painter.setBrush(Qt::darkYellow);
     painter.setPen(QPen(QColor(Qt::black), 2));
 
-    for (int i = 0; i < this->mBoard->getBSize().first; ++i)
+    for (unsigned int i = 0; i < this->mBoard->getBSize().first; ++i)
     {
-        for (int j = 0; j < this->mBoard->getBSize().second; ++j)
+        for (unsigned int j = 0; j < this->mBoard->getBSize().second; ++j)
         {
             if (this->m_bSkin && !this->m_images.at(0).isNull())
                 painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));
@@ -488,6 +509,41 @@ void MainWindow::DrawItems()
             painter.drawPixmap(p.x() * RECT_WIDTH, p.y() * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
             painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
+    }
+}
+
+void MainWindow::DrawStepNum()
+{
+    if ((nullptr != this->mBoard) && this->m_bNumOfMove)
+    {
+        QPainter painter(this);
+        painter.setRenderHints(QPainter::Antialiasing, true);
+        painter.setRenderHints(QPainter::SmoothPixmapTransform, true);
+        painter.setRenderHints(QPainter::TextAntialiasing, true);
+
+        QFont font;
+        font.setPixelSize(15);
+        font.setBold(true);
+        painter.setFont(font);
+
+        for (size_t i = 0; i < this->mBoard->getVRecord().size(); i++)
+        {
+            int i_x = this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first + 1;
+            int i_y = this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 2;
+            QString s_idx = QString::number(i, 10);
+
+            QFontMetricsF fm(painter.font());
+            double textWidth = fm.width(s_idx);
+            double textHeight = fm.height();
+
+            QPainterPath path;
+            path.addText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5)), painter.font(), s_idx);
+            painter.setPen(QPen(QColor(Qt::blue), 2));
+            painter.drawPath(path);
+
+            painter.setPen(QPen(QColor(Qt::white), 1));
+            painter.drawText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5)), s_idx);
+        }
     }
 }
 
@@ -914,7 +970,13 @@ void MainWindow::OnActionStart()
 {
     if (GAME_STATE::PLAYING != this->mState)
     {
-        this->mBoard->clearBoard();
+        if (BOARDSTATUS::BOARDEMPTY != this->mBoard->GetState())
+        {
+            if (QMessageBox::information(this, "Tips", "It will clear board and start new game!", QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok)
+                this->mBoard->clearBoard();
+            else
+                return;
+        }
 
         if (nullptr != this->m_T1)
             this->m_T1->stop();
@@ -1793,9 +1855,23 @@ void MainWindow::OnActionPlayerSetting()
     }
 }
 
+void MainWindow::OnActionNumOfMove()
+{
+    if (this->pActionNumOfMove->isChecked())
+    {
+        qDebug() << "Show number of move.";
+        this->m_bNumOfMove = true;
+    }
+    else
+    {
+        qDebug() << "Cancel number of move.";
+        this->m_bNumOfMove = false;
+    }
+}
+
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.15\n";
+    const QString strVerNum = "Ver Num: 0.5.20\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
