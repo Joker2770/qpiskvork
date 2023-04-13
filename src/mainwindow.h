@@ -154,6 +154,11 @@ private:
     void DrawPlayerName();
     void DrawIndication();
 
+    void connectP1Signals();
+    void connectP2Signals();
+    void disconnectP1Signals();
+    void disconnectP2Signals();
+
     vector<pair<pair<int, int>, int>> record_expand(const vector<pair<int, int>> vRecord, bool bContinuous = false);
 
 private:

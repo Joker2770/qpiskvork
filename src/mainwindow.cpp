@@ -1009,21 +1009,7 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                if (nullptr != this->m_manager->m_engine_1)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                    }
-
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                }
+                this->connectP1Signals();
 
                 bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
                 qDebug() << "StartFlag: " << bStart;
@@ -1047,21 +1033,7 @@ void MainWindow::OnActionStart()
             }
             else
             {
-                if (nullptr != this->m_manager->m_engine_1)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                    }
-
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                }
+                this->disconnectP1Signals();
 
                 this->m_manager->DetachEngines();
                 QMessageBox::information(this, "Error!", "Failied to start game!");
@@ -1077,36 +1049,8 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                if (nullptr != this->m_manager->m_engine_1)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                    }
-
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                    connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                }
-                if (nullptr != this->m_manager->m_engine_2)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                    }
-
-                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                    connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-                }
+                this->connectP1Signals();
+                this->connectP2Signals();
 
                 bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
                 qDebug() << "StartFlag: " << bStart;
@@ -1136,36 +1080,8 @@ void MainWindow::OnActionStart()
             }
             else
             {
-                if (nullptr != this->m_manager->m_engine_1)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                    }
-
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                }
-                if (nullptr != this->m_manager->m_engine_2)
-                {
-                    if (this->m_bSwap2Board)
-                    {
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                    }
-
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-                }
+                this->disconnectP1Signals();
+                this->disconnectP2Signals();
                 this->m_manager->DetachEngines();
                 QMessageBox::information(this, "Error!", "Failied to start game!");
                 return;
@@ -1203,39 +1119,8 @@ void MainWindow::OnActionPause()
         if (nullptr != this->m_manager)
         {
             this->m_manager->endMatch();
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                else
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-
-                if (this->m_bSwap2Board)
-                {
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                }
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-
-                if (this->m_bSwap2Board)
-                {
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                }
-            }
+            this->disconnectP1Signals();
+            this->disconnectP2Signals();
             bool bDetach = this->m_manager->DetachEngines();
             qDebug() << "DetachFlag: " << bDetach;
         }
@@ -1285,14 +1170,7 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    if (nullptr != this->m_manager->m_engine_1)
-                    {
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                    }
+                    this->connectP1Signals();
 
                     bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
                     qDebug() << "StartFlag: " << bStart;
@@ -1317,14 +1195,7 @@ void MainWindow::OnActionContinue()
                 }
                 else
                 {
-                    if (nullptr != this->m_manager->m_engine_1)
-                    {
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                    }
+                    this->disconnectP1Signals();
                     this->m_manager->DetachEngines();
                     QMessageBox::information(this, "Error!", "Failied to start game!");
                     return;
@@ -1352,36 +1223,8 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    if (nullptr != this->m_manager->m_engine_1)
-                    {
-                        if (this->m_bSwap2Board)
-                        {
-                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                            connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                        }
-
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                    }
-                    if (nullptr != this->m_manager->m_engine_2)
-                    {
-                        if (this->m_bSwap2Board)
-                        {
-                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                            connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                        }
-
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                        connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-                    }
+                    this->connectP1Signals();
+                    this->connectP2Signals();
 
                     bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
                     qDebug() << "StartFlag: " << bStart;
@@ -1411,36 +1254,8 @@ void MainWindow::OnActionContinue()
                 }
                 else
                 {
-                    if (nullptr != this->m_manager->m_engine_1)
-                    {
-                        if (this->m_bSwap2Board)
-                        {
-                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                        }
-
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-                    }
-                    if (nullptr != this->m_manager->m_engine_2)
-                    {
-                        if (this->m_bSwap2Board)
-                        {
-                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                        }
-
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-                    }
+                    this->disconnectP1Signals();
+                    this->disconnectP2Signals();
                     this->m_manager->DetachEngines();
                     QMessageBox::information(this, "Error!", "Failied to start game!");
                     return;
@@ -1509,39 +1324,8 @@ void MainWindow::OnActionEnd()
         if (nullptr != this->m_manager)
         {
             this->m_manager->endMatch();
-            if (nullptr != this->m_manager->m_engine_1)
-            {
-                if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
-                else
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
-                disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
-
-                if (this->m_bSwap2Board)
-                {
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
-                }
-            }
-            if (nullptr != this->m_manager->m_engine_2)
-            {
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
-                disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
-
-                if (this->m_bSwap2Board)
-                {
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
-                    disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
-                }
-            }
+            this->disconnectP1Signals();
+            this->disconnectP2Signals();
             bool bDetach = this->m_manager->DetachEngines();
             qDebug() << "DetachFlag: " << bDetach;
         }
@@ -3189,3 +2973,84 @@ void MainWindow::beginSwap2Board()
     }
 }
 
+void MainWindow::connectP1Signals()
+{
+    if (nullptr != this->m_manager->m_engine_1)
+    {
+        if (this->m_bSwap2Board)
+        {
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+        }
+
+        if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+        else
+            connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+    }
+}
+
+void MainWindow::connectP2Signals()
+{
+    if (nullptr != this->m_manager->m_engine_2)
+    {
+        if (this->m_bSwap2Board)
+        {
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+            connect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+        }
+
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+    }
+}
+
+void MainWindow::disconnectP1Signals()
+{
+    if (nullptr != this->m_manager->m_engine_1)
+    {
+        if (this->m_bSwap2Board)
+        {
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+        }
+
+        if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
+        else
+            disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP1PlaceStone(int, int)));
+        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
+        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
+        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
+        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+    }
+}
+
+void MainWindow::disconnectP2Signals()
+{
+    if (nullptr != this->m_manager->m_engine_2)
+    {
+        if (this->m_bSwap2Board)
+        {
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP2Responsed2Pos(int, int, int, int)));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP2Responsed3Pos(int, int, int, int, int, int)));
+            disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_swap()), this, SLOT(OnP2ResponsedSwap()));
+        }
+
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_pos(int, int)), this, SLOT(OnP2PlaceStone(int, int)));
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_name(QString)), this, SLOT(OnP2ResponseName(QString)));
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+    }
+}
