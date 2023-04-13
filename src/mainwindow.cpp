@@ -1011,6 +1011,13 @@ void MainWindow::OnActionStart()
             {
                 if (nullptr != this->m_manager->m_engine_1)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                        connect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                    }
+
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                     connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
@@ -1042,6 +1049,13 @@ void MainWindow::OnActionStart()
             {
                 if (nullptr != this->m_manager->m_engine_1)
                 {
+                    if (this->m_bSwap2Board)
+                    {
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_2_pos(int, int, int, int)), this, SLOT(OnP1Responsed2Pos(int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_3_pos(int, int, int, int, int, int)), this, SLOT(OnP1Responsed3Pos(int, int, int, int, int, int)));
+                        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_swap()), this, SLOT(OnP1ResponsedSwap()));
+                    }
+
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_pos(int, int)), this, SLOT(OnContinuousPos(int, int)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_name(QString)), this, SLOT(OnP1ResponseName(QString)));
                     disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
