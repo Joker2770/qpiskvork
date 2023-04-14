@@ -2155,7 +2155,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
         {
             this->mBoard->Notify();
             this->m_T1->pause();
-            this->m_T2->start();
+            this->m_T2->resume();
             if (this->m_time_left_p2 > 0)
             {
                 this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2193,7 +2193,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->mBoard->Notify();
 
                     this->m_T2->pause();
-                    this->m_T1->start();
+                    this->m_T1->resume();
                     if (this->m_time_left_p1 > 0)
                     {
                         this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2292,7 +2292,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T2->pause();
-                        this->m_T1->start();
+                        this->m_T1->resume();
                         if (this->m_time_left_p1 > 0)
                         {
                             this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2341,7 +2341,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->mBoard->Notify();
 
                     this->m_T2->pause();
-                    this->m_T1->start();
+                    this->m_T1->resume();
                     if (this->m_time_left_p1 > 0)
                     {
                         this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2397,7 +2397,7 @@ void MainWindow::OnP1ResponsedSwap()
 
         this->mBoard->Notify();
         this->m_T1->pause();
-        this->m_T2->start();
+        this->m_T2->resume();
         if (this->m_time_left_p2 > 0)
         {
             this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2460,7 +2460,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
         {
             this->mBoard->Notify();
             this->m_T2->pause();
-            this->m_T1->start();
+            this->m_T1->resume();
             if (this->m_time_left_p1 > 0)
             {
                 this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2498,7 +2498,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->mBoard->Notify();
 
                     this->m_T1->pause();
-                    this->m_T2->start();
+                    this->m_T2->resume();
                     if (this->m_time_left_p2 > 0)
                     {
                         this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2597,7 +2597,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T1->pause();
-                        this->m_T2->start();
+                        this->m_T2->resume();
                         if (this->m_time_left_p2 > 0)
                         {
                             this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2646,7 +2646,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->mBoard->Notify();
 
                     this->m_T1->pause();
-                    this->m_T2->start();
+                    this->m_T2->resume();
                     if (this->m_time_left_p2 > 0)
                     {
                         this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2702,7 +2702,7 @@ void MainWindow::OnP2ResponsedSwap()
 
         this->mBoard->Notify();
         this->m_T2->pause();
-        this->m_T1->start();
+        this->m_T1->resume();
         if (this->m_time_left_p1 > 0)
         {
             this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2824,7 +2824,7 @@ void MainWindow::beginSwap2Board()
                                     {
                                         qDebug() << "Place 2 stones successfully!";
                                         this->m_T2->pause();
-                                        this->m_T1->start();
+                                        this->m_T1->resume();
                                         if (this->m_time_left_p1 > 0)
                                         {
                                             this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2868,7 +2868,7 @@ void MainWindow::beginSwap2Board()
                                             this->mBoard->Notify();
 
                                             this->m_T1->pause();
-                                            this->m_T2->start();
+                                            this->m_T2->resume();
                                             if (this->m_time_left_p2 > 0)
                                             {
                                                 this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
@@ -2916,7 +2916,7 @@ void MainWindow::beginSwap2Board()
                                     this->mBoard->Notify();
 
                                     this->m_T2->pause();
-                                    this->m_T1->start();
+                                    this->m_T1->resume();
                                     if (this->m_time_left_p1 > 0)
                                     {
                                         this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
