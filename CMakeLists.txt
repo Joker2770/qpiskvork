@@ -73,7 +73,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(qpiskvork PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(qpiskvork PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia)
 
 set_target_properties(qpiskvork PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
