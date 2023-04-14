@@ -9,7 +9,7 @@ This program aims to become a gomoku or renju manager with the [protocol](https:
 
 ## dependencies
 dependencies of compiling.
-*   Qt5+ (REQUIRED COMPONENTS Core Gui Widgets)
+*   Qt5+ (REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 *   qmake or cmake
 
 ## build
@@ -38,6 +38,10 @@ cd qpiskvork
 xmake config --mode=release
 xmake
 ```
+
+## features
+
+1.  Sounds effect support.
 
 ## references
 

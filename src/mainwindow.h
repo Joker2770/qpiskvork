@@ -31,6 +31,8 @@
 #include <QDialog>
 #include <QSharedPointer>
 #include <QPixmap>
+#include <QtMultimedia/QMediaPlayer>
+#include <QtMultimedia/QMediaPlaylist>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -159,6 +161,8 @@ private:
     void disconnectP1Signals();
     void disconnectP2Signals();
 
+    void playSoundEffect(int idx);
+
     vector<pair<pair<int, int>, int>> record_expand(const vector<pair<int, int>> &vRecord, bool bContinuous = false);
 
 private:
@@ -171,6 +175,8 @@ private:
     Timer *m_T1;
     Timer *m_T2;
     vector<QPixmap> m_images;
+    QMediaPlayer *m_music;
+    QMediaPlaylist *m_soundList;
     QString m_p1_name;
     QString m_p2_name;
     long long m_timeout_match;

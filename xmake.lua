@@ -13,4 +13,4 @@ target("qpiskvork")
     add_files("src/S2BResDialog.h")
 
     add_files("res.qrc")
-    add_frameworks("QtCore", "QtWidgets", "QtGui")
+    add_frameworks("QtCore", "QtWidgets", "QtGui" "QtMultimedia")

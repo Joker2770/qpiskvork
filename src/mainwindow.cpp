@@ -190,6 +190,17 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_S2BRes_2 = new S2BResDialog(2, this);
     this->m_S2BRes_3 = new S2BResDialog(3, this);
 
+    this->m_music = new QMediaPlayer();
+    this->m_soundList = new QMediaPlaylist();
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/click.wav")));
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/connect.wav")));
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/enter.wav")));
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/gameend.wav")));
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/leave.wav")));
+    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/match.wav")));
+    this->m_soundList->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
+    this->m_music->setPlaylist(this->m_soundList);
+
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
     connect(this->pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
@@ -211,6 +222,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_music)
+    {
+        delete this->m_music;
+        this->m_music = nullptr;
+    }
+    if (nullptr != this->m_soundList)
+    {
+        delete this->m_soundList;
+        this->m_soundList = nullptr;
+    }
     if (nullptr != this->m_S2BRes_1)
     {
         delete this->m_S2BRes_1;
@@ -807,6 +828,8 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             }
             if (bSucceed)
             {
+                this->playSoundEffect(0);
+
                 this->mBoard->Notify();
 
                 if (this->m_manager->m_p1->m_isMyTurn)
@@ -1009,6 +1032,8 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
+                this->playSoundEffect(5);
+
                 this->connectP1Signals();
 
                 bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
@@ -1023,6 +1048,8 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
+                this->playSoundEffect(2);
+
                 this->m_manager->sendAbout();
 
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
@@ -1049,6 +1076,8 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
+                this->playSoundEffect(5);
+
                 this->connectP1Signals();
                 this->connectP2Signals();
 
@@ -1064,6 +1093,8 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
+                this->playSoundEffect(2);
+
                 this->m_manager->sendAbout();
 
                 this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
@@ -1118,6 +1149,8 @@ void MainWindow::OnActionPause()
     {
         if (nullptr != this->m_manager)
         {
+            this->playSoundEffect(4);
+
             this->m_manager->endMatch();
             this->disconnectP1Signals();
             this->disconnectP2Signals();
@@ -1170,6 +1203,8 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
+                    this->playSoundEffect(5);
+
                     this->connectP1Signals();
 
                     bStart = this->m_manager->startMatch(this->mBoard->getBSize().first);
@@ -1184,6 +1219,8 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
+                    this->playSoundEffect(2);
+
                     this->m_manager->sendAbout();
 
                     this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
@@ -1223,6 +1260,8 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
+                    this->playSoundEffect(5);
+
                     this->connectP1Signals();
                     this->connectP2Signals();
 
@@ -1238,6 +1277,8 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
+                    this->playSoundEffect(2);
+
                     this->m_manager->sendAbout();
 
                     this->m_manager->infoMatch_p1(INFO_KEY::TIMEOUT_MATCH, to_string(this->m_timeout_match).c_str());
@@ -1323,6 +1364,8 @@ void MainWindow::OnActionEnd()
     {
         if (nullptr != this->m_manager)
         {
+            this->playSoundEffect(3);
+
             this->m_manager->endMatch();
             this->disconnectP1Signals();
             this->disconnectP2Signals();
@@ -1725,6 +1768,8 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
+                this->playSoundEffect(0);
+
                 this->mBoard->Notify();
 
                 if (this->m_manager->m_p2->m_isMyTurn)
@@ -1883,6 +1928,8 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
+                this->playSoundEffect(0);
+
                 this->mBoard->Notify();
 
                 if (this->m_manager->m_p1->m_isMyTurn)
@@ -2032,6 +2079,8 @@ void MainWindow::OnContinuousPos(int x, int y)
             }
             if (bSucceed)
             {
+                this->playSoundEffect(0);
+
                 if (this->m_time_left_p1 > 0)
                 {
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2153,6 +2202,8 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
+            this->playSoundEffect(0);
+
             this->mBoard->Notify();
             this->m_T1->pause();
             this->m_T2->resume();
@@ -2254,6 +2305,8 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
+            this->playSoundEffect(0);
+
             this->mBoard->Notify();
             this->m_T1->pause();
             this->m_T2->start();
@@ -2458,6 +2511,8 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
+            this->playSoundEffect(0);
+
             this->mBoard->Notify();
             this->m_T2->pause();
             this->m_T1->resume();
@@ -2559,6 +2614,8 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
+            this->playSoundEffect(0);
+
             this->mBoard->Notify();
             this->m_T2->pause();
             this->m_T1->start();
@@ -3053,4 +3110,10 @@ void MainWindow::disconnectP2Signals()
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
     }
+}
+
+void MainWindow::playSoundEffect(int i_idx)
+{
+    this->m_soundList->setCurrentIndex(i_idx);
+    this->m_music->play();
 }
