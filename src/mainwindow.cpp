@@ -752,7 +752,7 @@ void MainWindow::DrawIndication()
     }
 }
 
-vector<pair<pair<int,int>, int>> MainWindow::record_expand(const vector<pair<int, int>> vRecord, bool bContinuous)
+vector<pair<pair<int,int>, int>> MainWindow::record_expand(const vector<pair<int, int>> &vRecord, bool bContinuous)
 {
     vector<pair<pair<int,int>, int>> vRecExpendTmp;
     vRecExpendTmp.clear();
