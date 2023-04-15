@@ -50,6 +50,8 @@ plugs:
 layout:
   /etc/fonts:
     bind: $SNAP/etc/fonts
+  /etc/pulse:
+    bind: $SNAP/etc/pulse
   /usr/local/share:
     bind: $SNAP/usr/local/share
   /usr/share/X11:
@@ -73,6 +75,10 @@ apps:
       - opengl
       - removable-media
       - gsettings
+      - network
+      - network-bind
+      - network-manager
+      - network-manager-observe
       - process-control
       - system-observe
     environment:
@@ -102,6 +108,7 @@ parts:
     stage-packages:
       - libqt5multimedia5
       - libqt5multimediawidgets5
+      - libqt5multimedia5-plugins
 
   desktop-qt5:
       source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
