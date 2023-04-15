@@ -106,6 +106,8 @@ parts:
       - make
       - qtmultimedia5-dev
     stage-packages:
+      - libqt5core5a
+      - libqt5widgets5
       - libqt5multimedia5
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
