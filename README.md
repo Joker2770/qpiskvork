@@ -1,6 +1,8 @@
 # qpiskvork
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/81b307ac0e004c58adeef0c80f620310)](https://app.codacy.com/gh/Joker2770/qpiskvork?utm_source=github.com&utm_medium=referral&utm_content=Joker2770/qpiskvork&utm_campaign=Badge_Grade_Settings)
+[![qpiskvork](https://snapcraft.io/qpiskvork/badge.svg)](https://snapcraft.io/qpiskvork)
+[![qpiskvork](https://snapcraft.io/qpiskvork/trending.svg?name=0)](https://snapcraft.io/qpiskvork)
 
 Another gomoku or renju manager adapting to Windows and Linux systems.
 
