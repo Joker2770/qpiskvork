@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.5.26
+Encoding=UTF-8
+Name=qpiskvork
+Comment=A gomoku or renju manager adapting to Windows and Linux systems.
+Exec=qpiskvork
+Terminal=false
+Type=Application
+Categories=Utility;Game;BoardGame;
+Icon=${SNAP}/meta/gui/qpiskvork.png

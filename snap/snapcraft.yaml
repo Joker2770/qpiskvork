@@ -1,0 +1,134 @@
+#    qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.
+#    Copyright (C) 2023  Jintao Yang <yjt950840@outlook.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+name: qpiskvork # you probably want to 'snapcraft register <name>'
+version: '0.5.26' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Another gomoku or renju manager adapting to Windows and Linux systems. # 79 char long summary
+description: |
+  This program aims to become a gomoku or renju manager with the protocol(https://plastovicka.github.io/protocl2en.htm).
+
+  **For loading engines successfully, the step as follow is necessary. **
+     `sudo snap connect qpiskvork:system-observe`
+
+  _More details: https://github.com/Joker2770/qpiskvork.git_
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+base: core18
+license: 'GPL-2.0+'
+
+plugs:
+  # Support for common GTK themes
+  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+
+layout:
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+  /usr/local/share:
+    bind: $SNAP/usr/local/share
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules
+
+apps:
+  qpiskvork:
+    command: usr/local/bin/qpiskvork
+    command-chain:
+      - bin/desktop-launch
+    plugs:
+      - home
+      - desktop
+      - desktop-legacy
+      - audio-playback
+      - wayland
+      - unity7
+      - x11
+      - opengl
+      - removable-media
+      - gsettings
+      - process-control
+      - system-observe
+    environment:
+      DISABLE_WAYLAND: 1
+      XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
+      # Use GTK3 cursor theme, icon theme and open/save file dialogs.
+      # QT_QPA_PLATFORMTHEME: gtk3
+
+parts:
+  qpiskvork:
+    after: [desktop-qt5]
+    plugin: cmake
+    configflags:
+      - "-DCMAKE_INSTALL_PREFIX=/usr/local"
+      - "-DCMAKE_BUILD_TYPE=Release"
+      - "-DENABLE_TESTING=OFF"
+      - "-DBUILD_TESTING=OFF"
+    source: https://github.com/Joker2770/qpiskvork.git
+    source-type: git
+    source-branch: features
+    source-depth: 1
+    build-packages:
+      - gcc
+      - g++
+      - make
+      - qtmultimedia5-dev
+    stage-packages:
+      - libqt5multimedia5
+      - libqt5multimediawidgets5
+
+  desktop-qt5:
+      source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+      source-subdir: qt
+      plugin: make
+      make-parameters: ["FLAVOR=qt5"]
+      build-packages:
+        - qtbase5-dev
+        - dpkg-dev
+      stage-packages:
+        - libxkbcommon0
+        - ttf-ubuntu-font-family
+        - dmz-cursor-theme
+        - light-themes
+        - adwaita-icon-theme
+        - gnome-themes-standard
+        - shared-mime-info
+        - libqt5gui5
+        - libgdk-pixbuf2.0-0
+        - libgtk2.0-0
+        - libqt5svg5 # for loading icon themes which are svg
+        - try: [appmenu-qt5] # not available on core18
+        - locales-all
+
+  # qt5-gtk-platform:
+    # plugin: nil
+    # stage-packages:
+      # - qt5-gtk-platformtheme
+      # - libcanberra-gtk-module
+
