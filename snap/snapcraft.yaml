@@ -16,12 +16,18 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 name: qpiskvork # you probably want to 'snapcraft register <name>'
-version: '0.5.26' # just for humans, typically '1.2+git' or '1.3.2'
+version: '0.5.28' # just for humans, typically '1.2+git' or '1.3.2'
 summary: Another gomoku or renju manager adapting to Windows and Linux systems. # 79 char long summary
 description: |
-  This program aims to become a gomoku or renju manager with the protocol(https://plastovicka.github.io/protocl2en.htm).
+  This program aims to become a gomoku or renju manager with the protocol
+  (https://plastovicka.github.io/protocl2en.htm).
+
+  * Support many rules(Free-style/Standard gomoku, renju, caro, swap2 etc.).
+  * Support many AI engines such as Rapfi, Yixin, AIWine, embryo etc.
+  * Wonderful GUI for human-computer interaction.
 
   **For loading engines successfully, the step as follow is necessary. **
+
      `sudo snap connect qpiskvork:system-observe`
 
   _More details: https://github.com/Joker2770/qpiskvork.git_
@@ -61,7 +67,7 @@ layout:
 
 apps:
   qpiskvork:
-    command: usr/local/bin/qpiskvork
+    command: desktop-launch $SNAP/usr/local/bin/qpiskvork
     command-chain:
       - bin/desktop-launch
     plugs:
