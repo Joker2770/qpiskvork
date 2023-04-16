@@ -190,16 +190,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_S2BRes_2 = new S2BResDialog(2, this);
     this->m_S2BRes_3 = new S2BResDialog(3, this);
 
-    this->m_music = new QMediaPlayer();
-    this->m_soundList = new QMediaPlaylist();
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/click.wav")));
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/connect.wav")));
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/enter.wav")));
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/gameend.wav")));
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/leave.wav")));
-    this->m_soundList->addMedia(QMediaContent(QUrl("qrc:/sounds/match.wav")));
-    this->m_soundList->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
-    this->m_music->setPlaylist(this->m_soundList);
+    this->m_effect = new QSoundEffect(this);
 
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
@@ -222,15 +213,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (nullptr != this->m_music)
+    if (nullptr != this->m_effect)
     {
-        delete this->m_music;
-        this->m_music = nullptr;
-    }
-    if (nullptr != this->m_soundList)
-    {
-        delete this->m_soundList;
-        this->m_soundList = nullptr;
+        delete this->m_effect;
+        this->m_effect = nullptr;
     }
     if (nullptr != this->m_S2BRes_1)
     {
@@ -828,7 +814,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(0);
+                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
                 this->mBoard->Notify();
 
@@ -1032,7 +1018,7 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                this->playSoundEffect(5);
+                this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
 
                 this->connectP1Signals();
 
@@ -1048,7 +1034,7 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
-                this->playSoundEffect(2);
+                this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
 
                 this->m_manager->sendAbout();
 
@@ -1076,7 +1062,7 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                this->playSoundEffect(5);
+                this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
 
                 this->connectP1Signals();
                 this->connectP2Signals();
@@ -1093,7 +1079,7 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
-                this->playSoundEffect(2);
+                this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
 
                 this->m_manager->sendAbout();
 
@@ -1149,7 +1135,7 @@ void MainWindow::OnActionPause()
     {
         if (nullptr != this->m_manager)
         {
-            this->playSoundEffect(4);
+            this->playSoundEffect(QUrl("qrc:/sounds/leave.wav"));
 
             this->m_manager->endMatch();
             this->disconnectP1Signals();
@@ -1203,7 +1189,7 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    this->playSoundEffect(5);
+                    this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
 
                     this->connectP1Signals();
 
@@ -1219,7 +1205,7 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
-                    this->playSoundEffect(2);
+                    this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
 
                     this->m_manager->sendAbout();
 
@@ -1260,7 +1246,7 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    this->playSoundEffect(5);
+                    this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
 
                     this->connectP1Signals();
                     this->connectP2Signals();
@@ -1277,7 +1263,7 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
-                    this->playSoundEffect(2);
+                    this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
 
                     this->m_manager->sendAbout();
 
@@ -1364,7 +1350,7 @@ void MainWindow::OnActionEnd()
     {
         if (nullptr != this->m_manager)
         {
-            this->playSoundEffect(3);
+            this->playSoundEffect(QUrl("qrc:/sounds/gameend.wav"));
 
             this->m_manager->endMatch();
             this->disconnectP1Signals();
@@ -1712,7 +1698,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.26-features\n";
+    const QString strVerNum = "Ver Num: 0.5.28-features\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -1768,7 +1754,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(0);
+                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
                 this->mBoard->Notify();
 
@@ -1928,7 +1914,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(0);
+                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
                 this->mBoard->Notify();
 
@@ -2079,7 +2065,7 @@ void MainWindow::OnContinuousPos(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(0);
+                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
                 if (this->m_time_left_p1 > 0)
                 {
@@ -2202,7 +2188,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(0);
+            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2305,7 +2291,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(0);
+            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2481,6 +2467,7 @@ void MainWindow::OnP1ResponseName(const QString &name)
 void MainWindow::OnP1ResponseOk()
 {
     this->m_bOK_P1 = true;
+    this->playSoundEffect(QUrl("qrc:/sounds/connect.wav"));
 }
 
 void MainWindow::OnP1ResponseError()
@@ -2511,7 +2498,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(0);
+            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
             this->mBoard->Notify();
             this->m_T2->pause();
@@ -2614,7 +2601,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(0);
+            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
 
             this->mBoard->Notify();
             this->m_T2->pause();
@@ -2790,6 +2777,7 @@ void MainWindow::OnP2ResponseName(const QString &name)
 void MainWindow::OnP2ResponseOk()
 {
     this->m_bOK_P2 = true;
+    this->playSoundEffect(QUrl("qrc:/sounds/connect.wav"));
 }
 
 void MainWindow::OnP2ResponseError()
@@ -3112,8 +3100,9 @@ void MainWindow::disconnectP2Signals()
     }
 }
 
-void MainWindow::playSoundEffect(int i_idx)
+void MainWindow::playSoundEffect(const QUrl &url)
 {
-    this->m_soundList->setCurrentIndex(i_idx);
-    this->m_music->play();
+    this->m_effect->setSource(url);
+    this->m_effect->setLoopCount(1);
+    this->m_effect->play();
 }
