@@ -61,7 +61,7 @@ layout:
 
 apps:
   qpiskvork:
-    command: usr/local/bin/qpiskvork
+    command: desktop-launch $SNAP/usr/local/bin/qpiskvork
     command-chain:
       - bin/desktop-launch
     plugs:
