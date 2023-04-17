@@ -45,7 +45,10 @@ EngineLoader::~EngineLoader()
     if (nullptr != this->mProcess)
     {
         if (this->mProcess->isOpen())
+        {
             this->mProcess->close();
+            this->mProcess->waitForFinished();
+        }
         delete this->mProcess;
         this->mProcess = nullptr;
     }
@@ -63,6 +66,7 @@ void EngineLoader::startProgram()
     {
         this->mProcess->setProgram(this->mProgram);
         this->mProcess->start();
+        this->mProcess->waitForStarted();
     }
 }
 
@@ -73,11 +77,13 @@ qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int iLen)
     if (this->mProcess->isWritable())
     {
         i_w = this->mProcess->write(s_cmd, iLen);
+        this->mProcess->waitForBytesWritten();
         if (i_w < 0)    return i_w;
         else
         {
             const char szEnd[2] = {0x0d, 0x0a};
             i_w += this->mProcess->write(szEnd, 2);
+            this->mProcess->waitForBytesWritten();
         }
     }
     return i_w;
