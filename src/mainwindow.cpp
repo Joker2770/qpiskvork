@@ -814,7 +814,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
                 this->mBoard->Notify();
 
@@ -1754,7 +1754,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
                 this->mBoard->Notify();
 
@@ -1914,7 +1914,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
                 this->mBoard->Notify();
 
@@ -2065,7 +2065,7 @@ void MainWindow::OnContinuousPos(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
                 if (this->m_time_left_p1 > 0)
                 {
@@ -2188,7 +2188,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2291,7 +2291,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2498,7 +2498,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
             this->mBoard->Notify();
             this->m_T2->pause();
@@ -2601,7 +2601,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/click.wav"));
+            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
 
             this->mBoard->Notify();
             this->m_T2->pause();
