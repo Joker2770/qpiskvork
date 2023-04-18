@@ -26,9 +26,11 @@ description: |
   * Support many AI engines such as Rapfi, Yixin, AIWine, embryo etc.
   * Wonderful GUI for human-computer interaction.
 
-  **For loading engines successfully, the step as follow is necessary. **
+  **For loading engines successfully, the steps as follow is necessary. **
 
      sudo snap connect qpiskvork:system-observe
+     sudo snap connect qpiskvork:system-trace
+     sudo snap connect qpiskvork:process-control
 
   _More details: https://github.com/Joker2770/qpiskvork.git_
 
@@ -89,6 +91,7 @@ apps:
       - hardware-observe
       - mount-observe
       - system-observe
+      - system-trace
     environment:
       DISABLE_WAYLAND: 1
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
