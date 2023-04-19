@@ -1323,11 +1323,8 @@ void MainWindow::OnActionContinue()
                     }
                 }
 
-                if (this->m_bSwap2Board && (this->mBoard->getVRecord().size() < 6))
+                if (this->m_bSwap2Board && !(this->m_bS2B_over))
                 {
-                    this->mState = GAME_STATE::PLAYING;
-                    this->pRuleActionGroup->setDisabled(true);
-                    this->m_bS2B_over = false;
                     this->OnActionClearBoard();
                     this->beginSwap2Board();
                 }
@@ -1388,6 +1385,10 @@ void MainWindow::OnActionClearBoard()
     if (this->mState != GAME_STATE::PLAYING)
     {
         this->mBoard->clearBoard();
+
+        this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
+        this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
+
         this->mBoard->Notify();
 
         if (nullptr != this->m_T1)
