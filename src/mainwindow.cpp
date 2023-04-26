@@ -982,6 +982,8 @@ void MainWindow::OnActionStart()
             this->m_T1->stop();
         if (nullptr != this->m_T2)
             this->m_T2->stop();
+        this->m_time_left_p1 = this->m_timeout_match;
+        this->m_time_left_p2 = this->m_timeout_match;
 
         this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
         this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
@@ -1670,7 +1672,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.20\n";
+    const QString strVerNum = "Ver Num: 0.5.30\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
