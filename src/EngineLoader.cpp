@@ -152,35 +152,35 @@ vector<int> EngineLoader::split(const string &str, char sep)
     return tokens;
 }
 
-string EngineLoader::format_string(string& res) {
-    //delete 0x0d,0x0a
-    res.erase(remove(res.begin(), res.end(), '\r'), res.end());
-    res.erase(remove(res.begin(), res.end(), '\n'), res.end());
-    return res;
-}
+// string EngineLoader::format_string(string& res) {
+//     //delete 0x0d,0x0a
+//     res.erase(remove(res.begin(), res.end(), '\r'), res.end());
+//     res.erase(remove(res.begin(), res.end(), '\n'), res.end());
+//     return res;
+// }
 
-const string EngineLoader::response_filter(const string &str_res)
-{
-    string s_get, s_tmp;
-    s_get.clear();
-    s_tmp.clear();
-    s_tmp = str_res;
-    if (s_tmp.empty())
-        return "";
-    if (s_tmp.find_first_of("OK") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (s_tmp.find_first_of("ERROR ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (s_tmp.find_first_of("UNKNOWN ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (s_tmp.find_first_of("MESSAGE ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if (s_tmp.find_first_of("DEBUG ") == 0)
-        s_get = this->format_string(s_tmp);
-    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && this->split(s_tmp, ',').size() == 2)
-        s_get = this->format_string(s_tmp);
-    return s_get;
-}
+// const string EngineLoader::response_filter(const string &str_res)
+// {
+//     string s_get, s_tmp;
+//     s_get.clear();
+//     s_tmp.clear();
+//     s_tmp = str_res;
+//     if (s_tmp.empty())
+//         return "";
+//     if (s_tmp.find_first_of("OK") == 0)
+//         s_get = this->format_string(s_tmp);
+//     else if (s_tmp.find_first_of("ERROR ") == 0)
+//         s_get = this->format_string(s_tmp);
+//     else if (s_tmp.find_first_of("UNKNOWN ") == 0)
+//         s_get = this->format_string(s_tmp);
+//     else if (s_tmp.find_first_of("MESSAGE ") == 0)
+//         s_get = this->format_string(s_tmp);
+//     else if (s_tmp.find_first_of("DEBUG ") == 0)
+//         s_get = this->format_string(s_tmp);
+//     else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && this->split(s_tmp, ',').size() == 2)
+//         s_get = this->format_string(s_tmp);
+//     return s_get;
+// }
 
 void EngineLoader::response_parse(const string &str)
 {

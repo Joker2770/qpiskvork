@@ -47,8 +47,8 @@ public:
 
     vector<string> split(const string &str, const string &pattern);
     vector<int> split(const string &str, char sep);
-    string format_string(string &str);
-    const string response_filter(const string &sResp);
+    // string format_string(string &str);
+    // const string response_filter(const string &sResp);
     void response_parse(const string &sResp);
 
 signals:
