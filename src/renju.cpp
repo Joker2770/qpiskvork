@@ -148,11 +148,11 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
             {
                 for (size_t i = 0; i < 5; ++i)
                 {
-                    if (((A4_SHAPS[i][0]) == (vColor[j]))
-                     && ((A4_SHAPS[i][1]) == (vColor[j+1]))
-                      && ((A4_SHAPS[i][2]) == (vColor[j+2]))
-                       && ((A4_SHAPS[i][3]) == (vColor[j+3]))
-                        && ((A4_SHAPS[i][4]) == (vColor[j+4])))
+                    if (((A4_SHAPES[i][0]) == (vColor[j]))
+                     && ((A4_SHAPES[i][1]) == (vColor[j+1]))
+                      && ((A4_SHAPES[i][2]) == (vColor[j+2]))
+                       && ((A4_SHAPES[i][3]) == (vColor[j+3]))
+                        && ((A4_SHAPES[i][4]) == (vColor[j+4])))
                     {
                         if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, ‘101111101’ at mid, '111010111' at mid, '11110111', '11101111'
                         {
@@ -272,14 +272,14 @@ int Renju::countA3(Board *board, const pair<int, int>& p_drt)
             {
                 for (size_t i = 0; i < 4; ++i)
                 {
-                    //qDebug() << "A3_element: " << A3_SHAPS[i][0] << A3_SHAPS[i][1] << A3_SHAPS[i][2] << A3_SHAPS[i][3] << A3_SHAPS[i][4] << A3_SHAPS[i][5];
+                    //qDebug() << "A3_element: " << A3_SHAPES[i][0] << A3_SHAPES[i][1] << A3_SHAPES[i][2] << A3_SHAPES[i][3] << A3_SHAPES[i][4] << A3_SHAPES[i][5];
                     //qDebug() << "vColor_element: " << vColor[j] << vColor[j + 1] << vColor[j + 2] << vColor[j + 3] << vColor[j + 4] << vColor[j + 5];
-                    if (((A3_SHAPS[i][0]) == (vColor[j]))
-                     && ((A3_SHAPS[i][1]) == (vColor[j+1]))
-                      && ((A3_SHAPS[i][2]) == (vColor[j+2]))
-                       && ((A3_SHAPS[i][3]) == (vColor[j+3]))
-                        && ((A3_SHAPS[i][4]) == (vColor[j+4]))
-                       && ((A3_SHAPS[i][5]) == (vColor[j+5])))
+                    if (((A3_SHAPES[i][0]) == (vColor[j]))
+                     && ((A3_SHAPES[i][1]) == (vColor[j+1]))
+                      && ((A3_SHAPES[i][2]) == (vColor[j+2]))
+                       && ((A3_SHAPES[i][3]) == (vColor[j+3]))
+                        && ((A3_SHAPES[i][4]) == (vColor[j+4]))
+                       && ((A3_SHAPES[i][5]) == (vColor[j+5])))
                     {
                         //Never could be a double-three(alive) in one line. ('101101' is not alive)
 
