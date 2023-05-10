@@ -46,14 +46,14 @@ typedef enum pattern
 } PATTERN;
 
 // 0 - pos empty, 1 - pos black, 2 - pos white
-const int A4_SHAPS[][5] = {
+const int A4_SHAPES[][5] = {
     {0, 1, 1, 1, 1},
     {1, 0, 1, 1, 1},
     {1, 1, 0, 1, 1},
     {1, 1, 1, 0, 1},
     {1, 1, 1, 1, 0}};
 // A3 is that add one stone could be A4, especially '2011102', '|01110|', '|011102' and '201110|' are Dead-Three. (| - boarder)
-const int A3_SHAPS[][6] = {
+const int A3_SHAPES[][6] = {
     {0, 1, 1, 1, 0, 0},
     {0, 0, 1, 1, 1, 0},
     {0, 1, 0, 1, 1, 0},
