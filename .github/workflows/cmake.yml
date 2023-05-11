@@ -16,10 +16,9 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     name: Build
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
         matrix:
-            os: [ubuntu-16.04,ubuntu-18.04]
             qt_ver: [5.9.8,5.12.6]
             qt_target: [desktop]
 
