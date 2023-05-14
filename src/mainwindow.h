@@ -96,6 +96,7 @@ public:
     QAction *pActionNumOfMove;
     QAction *pActionXAxisLetter;
     QAction *pActionYAxisLetter;
+    QAction *pActionTimeSecond;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;

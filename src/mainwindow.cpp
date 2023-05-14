@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove = new QAction("Number of move", this);
     this->pActionXAxisLetter = new QAction("X-axis Letter", this);
     this->pActionYAxisLetter = new QAction("Y-axis Letter", this);
+    this->pActionTimeSecond = new QAction("Countdown With Second", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
@@ -91,6 +92,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionYAxisLetter->setShortcut(QKeySequence(Qt::Key_Y));
     this->pActionYAxisLetter->setCheckable(true);
     this->pActionYAxisLetter->setChecked(false);
+    this->pActionTimeSecond->setShortcut(QKeySequence(Qt::Key_Z));
+    this->pActionTimeSecond->setCheckable(true);
+    this->pActionTimeSecond->setChecked(false);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -105,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuShow->addAction(this->pActionNumOfMove);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
+    this->pMenuShow->addAction(this->pActionTimeSecond);
     this->pMenuShow->addAction(this->pActionSkin);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
@@ -381,6 +386,11 @@ MainWindow::~MainWindow()
         delete this->pActionYAxisLetter;
         this->pActionYAxisLetter = nullptr;
     }
+    if (nullptr != pActionTimeSecond)
+    {
+        delete this->pActionTimeSecond;
+        this->pActionTimeSecond = nullptr;
+    }
     if (nullptr != this->pActionLicense)
     {
         delete this->pActionLicense;
@@ -587,7 +597,10 @@ void MainWindow::DrawTimeLeft()
     {
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+        if (this->pActionTimeSecond->isChecked())
+            painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
+        else
+            painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
     {
@@ -604,7 +617,10 @@ void MainWindow::DrawTimeLeft()
     {
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+        if (this->pActionTimeSecond->isChecked())
+            painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
+        else
+            painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
     {
