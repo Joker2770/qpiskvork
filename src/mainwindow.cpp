@@ -60,7 +60,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove = new QAction("Number of move", this);
     this->pActionXAxisLetter = new QAction("X-axis Letter", this);
     this->pActionYAxisLetter = new QAction("Y-axis Letter", this);
+    this->pActionXAxisStartFrom_1 = new QAction("X-axis start from 1", this);
+    this->pActionYAxisStartFrom_1 = new QAction("Y-axis start from 1", this);
     this->pActionTimeSecond = new QAction("Countdown With Second", this);
+    this->pActionGridSize = new QAction("Grid Size", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
@@ -92,9 +95,16 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionYAxisLetter->setShortcut(QKeySequence(Qt::Key_Y));
     this->pActionYAxisLetter->setCheckable(true);
     this->pActionYAxisLetter->setChecked(false);
+    this->pActionXAxisStartFrom_1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
+    this->pActionXAxisStartFrom_1->setCheckable(true);
+    this->pActionXAxisStartFrom_1->setChecked(false);
+    this->pActionYAxisStartFrom_1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Y));
+    this->pActionYAxisStartFrom_1->setCheckable(true);
+    this->pActionYAxisStartFrom_1->setChecked(false);
     this->pActionTimeSecond->setShortcut(QKeySequence(Qt::Key_Z));
     this->pActionTimeSecond->setCheckable(true);
     this->pActionTimeSecond->setChecked(false);
+    this->pActionGridSize->setShortcut(QKeySequence(Qt::Key_G));
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -109,7 +119,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuShow->addAction(this->pActionNumOfMove);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
+    this->pMenuShow->addAction(this->pActionXAxisStartFrom_1);
+    this->pMenuShow->addAction(this->pActionYAxisStartFrom_1);
     this->pMenuShow->addAction(this->pActionTimeSecond);
+    this->pMenuShow->addAction(this->pActionGridSize);
     this->pMenuShow->addAction(this->pActionSkin);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
@@ -142,6 +155,8 @@ MainWindow::MainWindow(QWidget *parent)
 #endif
 
     this->setWindowIcon(QIcon(":/icon/icon.jpg"));
+    this->RECT_WIDTH = 36;
+    this->RECT_HEIGHT = 36;
 
     this->mBoard = new Board();
     // pair<int, int> pBSize(15, 15);
@@ -166,6 +181,7 @@ MainWindow::MainWindow(QWidget *parent)
         for (size_t i = 0; i < 5; i++)
             this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
+    this->m_cur_skin_idx = 6;
 
     if (this->m_images.size() != 5)
         this->m_bSkin = false;
@@ -219,6 +235,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pRuleActionGroup,SIGNAL(triggered(QAction *)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
+    connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
     connect(this->pActionLicense, SIGNAL(triggered()), this, SLOT(OnActionLicense()));
@@ -386,10 +403,25 @@ MainWindow::~MainWindow()
         delete this->pActionYAxisLetter;
         this->pActionYAxisLetter = nullptr;
     }
+    if (nullptr != pActionXAxisStartFrom_1)
+    {
+        delete this->pActionXAxisStartFrom_1;
+        this->pActionXAxisStartFrom_1 = nullptr;
+    }
+    if (nullptr != pActionYAxisStartFrom_1)
+    {
+        delete this->pActionYAxisStartFrom_1;
+        this->pActionYAxisStartFrom_1 = nullptr;
+    }
     if (nullptr != pActionTimeSecond)
     {
         delete this->pActionTimeSecond;
         this->pActionTimeSecond = nullptr;
+    }
+    if (nullptr != pActionGridSize)
+    {
+        delete this->pActionGridSize;
+        this->pActionGridSize = nullptr;
     }
     if (nullptr != this->pActionLicense)
     {
@@ -598,9 +630,9 @@ void MainWindow::DrawTimeLeft()
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
+            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
         else
-            painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
     {
@@ -618,9 +650,9 @@ void MainWindow::DrawTimeLeft()
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
+            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
         else
-            painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
     {
@@ -753,18 +785,18 @@ void MainWindow::DrawPlayerName()
     painter.setPen(QPen(QColor(Qt::black), 2));
 
     if (!this->m_p1_name.isEmpty())
-        painter.drawText(50, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, this->m_p1_name);
+        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, this->m_p1_name);
     else if (this->m_manager->m_p1->m_isComputer)
-        painter.drawText(50, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "AI");
+        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "AI");
     else
-        painter.drawText(50, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "Human");
+        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "Human");
 
     if (!this->m_p2_name.isEmpty())
-        painter.drawText(this->geometry().width() - 200, this->geometry().height() - 30, 150, 50, Qt::AlignRight, this->m_p2_name);
+        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, this->m_p2_name);
     else if (this->m_manager->m_p2->m_isComputer)
-        painter.drawText(this->geometry().width() - 200, this->geometry().height() - 30, 150, 50, Qt::AlignRight, "AI");
+        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, "AI");
     else
-        painter.drawText(this->geometry().width() - 200, this->geometry().height() - 30, 150, 50, Qt::AlignRight, "Human");
+        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, "Human");
 }
 
 void MainWindow::DrawIndication()
@@ -785,15 +817,25 @@ void MainWindow::DrawIndication()
             if (this->pActionXAxisLetter->isChecked() && i < 26)
                 painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(string(1, 'A' + i)));
             else
-                painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+            {
+                if (this->pActionXAxisStartFrom_1->isChecked())
+                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i + 1)));
+                else
+                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+            }
         }
 
         for (size_t i = 0; i < this->mBoard->getBSize().second; i++)
         {
             if (this->pActionYAxisLetter->isChecked() && i < 26)
-                painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(string(1, 'A' + i)));
+                painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(string(1, 'A' + i)));
             else
-                painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+            {
+                if (this->pActionYAxisStartFrom_1->isChecked())
+                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i + 1)));
+                else
+                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+            }
         }
     }
 }
@@ -1528,6 +1570,83 @@ void MainWindow::OnActionMaxMemory()
     }
 }
 
+void MainWindow::OnActionGridSize()
+{
+    // if (this->mState != GAME_STATE::PLAYING)
+    // {
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, "Grid Size", "Please input grid size:", 36, 25, 50,
+                                         1, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
+        {
+            this->RECT_WIDTH = i_get;
+            this->RECT_HEIGHT = i_get;
+            bool bLoad = false;
+            QPixmap pm;
+            this->m_images.clear();
+
+            switch (this->m_cur_skin_idx)
+            {
+            case 1:
+                bLoad = pm.load(":/skins/bold.bmp");
+                break;
+            case 2:
+                bLoad = pm.load(":/skins/fontanGomo.bmp");
+                break;
+            case 3:
+                bLoad = pm.load(":/skins/gems.bmp");
+                break;
+            case 4:
+                bLoad = pm.load(":/skins/gomoku.bmp");
+                break;
+            case 5:
+                bLoad = pm.load(":/skins/HGarden.bmp");
+                break;
+            case 6:
+                bLoad = pm.load(":/skins/HGarden2.bmp");
+                break;
+            case 7:
+                bLoad = pm.load(":/skins/light.bmp");
+                break;
+            case 8:
+                bLoad = pm.load(":/skins/pisq.bmp");
+                break;
+            case 9:
+                bLoad = pm.load(":/skins/rain.bmp");
+                break;
+            case 10:
+                bLoad = pm.load(":/skins/star.bmp");
+                break;
+            case 11:
+                bLoad = pm.load(":/skins/whitex.bmp");
+                break;
+            case 12:
+                bLoad = pm.load(":/skins/wood.bmp");
+                break;
+            case 13:
+                bLoad = pm.load(":/skins/yellow.bmp");
+                break;
+            default:
+                // bLoad = pm.load(":/skins/HGarden2.bmp");
+                break;
+            }
+
+            if (!pm.isNull() && bLoad)
+            {
+                for (size_t i = 0; i < 5; i++)
+                    this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+                if (this->m_images.size() != 5)
+                    this->m_bSkin = false;
+                else
+                    this->m_bSkin = true;
+            }
+
+            resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
+        }
+    // }
+}
+
 void MainWindow::OnActionSkin()
 {
     if (this->mState != GAME_STATE::PLAYING)
@@ -1535,7 +1654,7 @@ void MainWindow::OnActionSkin()
         bool ok = false;
         QStringList s_items;
         s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "whitex" << "wood" << "yellow";
-        QString s_get = QInputDialog::getItem(this, "Skin", "Please choose skin:", s_items, 0, false,
+        QString s_get = QInputDialog::getItem(this, "Skin", "Please choose skin:", s_items, this->m_cur_skin_idx, false,
                                             &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1543,6 +1662,7 @@ void MainWindow::OnActionSkin()
             {
                 this->m_bSkin = false;
                 this->m_images.clear();
+                this->m_cur_skin_idx = 0;
             }
             else
             {
@@ -1551,31 +1671,70 @@ void MainWindow::OnActionSkin()
                 this->m_images.clear();
 
                 if (QString::compare(s_get, "bold") == 0)
+                {
                     bLoad = pm.load(":/skins/bold.bmp");
+                    this->m_cur_skin_idx = 1;
+                }
                 else if (QString::compare(s_get, "fontanGomo") == 0)
+                {
                     bLoad = pm.load(":/skins/fontanGomo.bmp");
+                    this->m_cur_skin_idx = 2;
+                }
                 else if (QString::compare(s_get, "gems") == 0)
+                {
                     bLoad = pm.load(":/skins/gems.bmp");
+                    this->m_cur_skin_idx = 3;
+                }
                 else if (QString::compare(s_get, "gomoku") == 0)
+                {
                     bLoad = pm.load(":/skins/gomoku.bmp");
+                    this->m_cur_skin_idx = 4;
+                }
                 else if (QString::compare(s_get, "HGarden") == 0)
+                {
                     bLoad = pm.load(":/skins/HGarden.bmp");
+                    this->m_cur_skin_idx = 5;
+                }
                 else if (QString::compare(s_get, "HGarden2") == 0)
+                {
                     bLoad = pm.load(":/skins/HGarden2.bmp");
+                    this->m_cur_skin_idx = 6;
+                }
                 else if (QString::compare(s_get, "light") == 0)
+                {
                     bLoad = pm.load(":/skins/light.bmp");
+                    this->m_cur_skin_idx = 7;
+                }
                 else if (QString::compare(s_get, "pisq") == 0)
+                {
                     bLoad = pm.load(":/skins/pisq.bmp");
+                    this->m_cur_skin_idx = 8;
+                }
                 else if (QString::compare(s_get, "rain") == 0)
+                {
                     bLoad = pm.load(":/skins/rain.bmp");
+                    this->m_cur_skin_idx = 9;
+                }
                 else if (QString::compare(s_get, "star") == 0)
+                {
                     bLoad = pm.load(":/skins/star.bmp");
+                    this->m_cur_skin_idx = 10;
+                }
                 else if (QString::compare(s_get, "whitex") == 0)
+                {
                     bLoad = pm.load(":/skins/whitex.bmp");
+                    this->m_cur_skin_idx = 11;
+                }
                 else if (QString::compare(s_get, "wood") == 0)
+                {
                     bLoad = pm.load(":/skins/wood.bmp");
+                    this->m_cur_skin_idx = 12;
+                }
                 else if (QString::compare(s_get, "yellow") == 0)
+                {
                     bLoad = pm.load(":/skins/yellow.bmp");
+                    this->m_cur_skin_idx = 13;
+                }
 
                 if (!pm.isNull() && bLoad)
                 {

@@ -42,9 +42,6 @@
 #include "S2BResDialog.h"
 #include "timer.h"
 
-#define RECT_WIDTH		(36)
-#define RECT_HEIGHT		(36)
-
 typedef enum game_state
 {
     IDLE,
@@ -96,7 +93,10 @@ public:
     QAction *pActionNumOfMove;
     QAction *pActionXAxisLetter;
     QAction *pActionYAxisLetter;
+    QAction *pActionXAxisStartFrom_1;
+    QAction *pActionYAxisStartFrom_1;
     QAction *pActionTimeSecond;
+    QAction *pActionGridSize;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
@@ -114,6 +114,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void OnActionGridSize();
     void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
     void OnActionPlayerSetting();
@@ -181,7 +182,10 @@ private:
     long long m_max_memory;
     long long m_time_left_p1;
     long long m_time_left_p2;
+    unsigned int m_cur_skin_idx;
     int m_Rule;
+    int RECT_WIDTH;
+    int RECT_HEIGHT;
     GAME_STATE mState;
     bool m_bBoard;
     bool m_bSwap2Board;
