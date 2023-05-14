@@ -804,9 +804,9 @@ void MainWindow::DrawIndication()
     if (nullptr != this->mBoard)
     {
         QFont font;
-        font.setPixelSize(10);
+        font.setPixelSize(12);
         font.setItalic(true);
-        // font.setBold(true);
+        font.setBold(true);
 
         QPainter painter(this);
         painter.setFont(font);
@@ -1877,7 +1877,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.30\n";
+    const QString strVerNum = "Ver Num: 0.5.42\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
