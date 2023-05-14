@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju = new QAction("Renju", this);
     this->pActionCaro = new QAction("Caro", this);
     this->pActionNumOfMove = new QAction("Number of move", this);
+    this->pActionXAxisLetter = new QAction("X-axis Letter", this);
+    this->pActionYAxisLetter = new QAction("Y-axis Letter", this);
     this->pActionPlayerSetting = new QAction("Setting", this);
     this->pActionVer = new QAction("Ver Info", this);
     this->pActionFeedback = new QAction("Feedback", this);
@@ -83,6 +85,12 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
     this->pActionNumOfMove->setCheckable(true);
     this->pActionNumOfMove->setChecked(false);
+    this->pActionXAxisLetter->setShortcut(QKeySequence(Qt::Key_X));
+    this->pActionXAxisLetter->setCheckable(true);
+    this->pActionXAxisLetter->setChecked(false);
+    this->pActionYAxisLetter->setShortcut(QKeySequence(Qt::Key_Y));
+    this->pActionYAxisLetter->setCheckable(true);
+    this->pActionYAxisLetter->setChecked(false);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -95,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuShow->addAction(this->pActionNumOfMove);
+    this->pMenuShow->addAction(this->pActionXAxisLetter);
+    this->pMenuShow->addAction(this->pActionYAxisLetter);
     this->pMenuShow->addAction(this->pActionSkin);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
@@ -360,6 +370,16 @@ MainWindow::~MainWindow()
     {
         delete this->pActionNumOfMove;
         this->pActionNumOfMove = nullptr;
+    }
+    if (nullptr != pActionXAxisLetter)
+    {
+        delete this->pActionXAxisLetter;
+        this->pActionXAxisLetter = nullptr;
+    }
+    if (nullptr != pActionYAxisLetter)
+    {
+        delete this->pActionYAxisLetter;
+        this->pActionYAxisLetter = nullptr;
     }
     if (nullptr != this->pActionLicense)
     {
@@ -745,10 +765,20 @@ void MainWindow::DrawIndication()
         painter.setPen(QPen(QColor(Qt::black), 2));
 
         for (size_t i = 0; i < this->mBoard->getBSize().first; i++)
-            painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+        {
+            if (this->pActionXAxisLetter->isChecked() && i < 26)
+                painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(string(1, 'A' + i)));
+            else
+                painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+        }
 
         for (size_t i = 0; i < this->mBoard->getBSize().second; i++)
-            painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+        {
+            if (this->pActionYAxisLetter->isChecked() && i < 26)
+                painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(string(1, 'A' + i)));
+            else
+                painter.drawText((int)(RECT_WIDTH * 0.5), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+        }
     }
 }
 

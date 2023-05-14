@@ -94,6 +94,8 @@ public:
     QAction *pActionRenju;
     QAction *pActionCaro;
     QAction *pActionNumOfMove;
+    QAction *pActionXAxisLetter;
+    QAction *pActionYAxisLetter;
     QAction *pActionPlayerSetting;
     QAction *pActionVer;
     QAction *pActionFeedback;
