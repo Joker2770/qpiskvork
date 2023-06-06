@@ -592,7 +592,7 @@ void MainWindow::DrawStepNum()
         {
             int i_x = this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first + 1;
             int i_y = this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 2;
-            QString s_idx = QString::number(i, 10);
+            QString s_idx = QString::number(i + 1, 10);
 
             QFontMetricsF fm(painter.font());
             double textWidth = fm.width(s_idx);
