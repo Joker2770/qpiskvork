@@ -48,12 +48,14 @@ bool Caro::findShap(Board *board,  const pair<int, int>& p_drt)
         else
             return false;
 
-        while (!board->isPosOutOfBoard(p_drt_idx))
+        while (true)
         {
             if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(1);
             else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(2);
+            else if (board->isPosOutOfBoard(p_drt_idx))
+                vColor.push_back(3);
             else
                 vColor.push_back(0);
 
@@ -66,12 +68,14 @@ bool Caro::findShap(Board *board,  const pair<int, int>& p_drt)
         reverse(vColor.begin(), vColor.end());
         p_drt_idx.first = p_idx.first - p_drt.first;
         p_drt_idx.second = p_idx.second - p_drt.second;
-        while (!board->isPosOutOfBoard(p_drt_idx))
+        while (true)
         {
             if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(1);
             else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(2);
+            else if (board->isPosOutOfBoard(p_drt_idx))
+                vColor.push_back(3);
             else
                 vColor.push_back(0);
 
@@ -91,7 +95,7 @@ bool Caro::findShap(Board *board,  const pair<int, int>& p_drt)
         {
             for (size_t j = 0; j <= vColor.size() - 7; ++j)
             {
-                for (size_t i = 0; i < 20; ++i)
+                for (size_t i = 0; i < 34; ++i)
                 {
                     if (((WIN_SHAPES[i][0]) == (vColor[j])) &&
                         ((WIN_SHAPES[i][1]) == (vColor[j + 1])) &&
