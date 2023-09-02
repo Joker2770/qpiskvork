@@ -92,6 +92,7 @@ apps:
       - mount-observe
       - system-observe
       - system-trace
+      - personal-files
     environment:
       DISABLE_WAYLAND: 1
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
