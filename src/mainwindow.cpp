@@ -165,7 +165,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_p1_name.clear();
     this->m_p2_name.clear();
 
-    this->resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
+    this->resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
     this->setWindowFlags(this->windowFlags()&~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
@@ -504,7 +504,7 @@ void MainWindow::DrawChessboard()
         for (unsigned int j = 0; j < this->mBoard->getBSize().second; ++j)
         {
             if (this->m_bSkin && !this->m_images.at(0).isNull())
-                painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));
+                painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));
             else
                 painter.drawRect((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT);
         }
@@ -535,7 +535,7 @@ void MainWindow::DrawMark()
 
 
         if (this->m_bSkin && !this->m_images.at(idx).isNull())
-            painter.drawPixmap(pMark.x() * RECT_WIDTH, pMark.y() * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
+            painter.drawPixmap(pMark.x() * RECT_WIDTH, pMark.y() * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
             painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
@@ -568,7 +568,7 @@ void MainWindow::DrawItems()
         }
 
         if (this->m_bSkin && !this->m_images.at(idx).isNull())
-            painter.drawPixmap(p.x() * RECT_WIDTH, p.y() * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
+            painter.drawPixmap(p.x() * RECT_WIDTH, p.y() * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
             painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.5), (int)(RECT_HEIGHT * 0.5));
     }
@@ -599,12 +599,12 @@ void MainWindow::DrawStepNum()
             double textHeight = fm.height();
 
             QPainterPath path;
-            path.addText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5)), painter.font(), s_idx);
+            path.addText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5) + this->pMenuBar->height()), painter.font(), s_idx);
             painter.setPen(QPen(QColor(Qt::blue), 2));
             painter.drawPath(path);
 
             painter.setPen(QPen(QColor(Qt::white), 1));
-            painter.drawText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5)), s_idx);
+            painter.drawText(QPointF((i_x + 0.5) * RECT_WIDTH + textWidth * (-0.5), (i_y + 0.5) * RECT_HEIGHT + textHeight * (0.5) + this->pMenuBar->height()), s_idx);
         }
     }
 }
@@ -623,16 +623,16 @@ void MainWindow::DrawTimeLeft()
     if (0 == this->m_time_left_p1)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T1->getElapsed())
     {
         this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
+            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
         else
-            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+            painter.drawText(this->RECT_WIDTH + 15, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
     else
     {
@@ -643,16 +643,16 @@ void MainWindow::DrawTimeLeft()
     if (0 == this->m_time_left_p2)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignRight, "TIMEOUT");
     }
     else if (this->m_timeout_match > this->m_T2->getElapsed())
     {
         this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
+            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
         else
-            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+            painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
     }
     else
     {
@@ -681,7 +681,7 @@ void MainWindow::DrawPlayerState()
         pPos.setX(pos_1.first);
         pPos.setY(pos_1.second);
 
-        QPoint ptCenter(pPos.x(), pPos.y());
+        QPoint ptCenter(pPos.x(), pPos.y() + this->pMenuBar->height());
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
     else
@@ -690,7 +690,7 @@ void MainWindow::DrawPlayerState()
         pPos.setX(pos_1.first);
         pPos.setY(pos_1.second);
 
-        QPoint ptCenter(pPos.x(), pPos.y());
+        QPoint ptCenter(pPos.x(), pPos.y() + this->pMenuBar->height());
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
 
@@ -704,7 +704,7 @@ void MainWindow::DrawPlayerState()
         pPos.setX(pos_2.first);
         pPos.setY(pos_2.second);
 
-        QPoint ptCenter(pPos.x(), pPos.y());
+        QPoint ptCenter(pPos.x(), pPos.y() + this->pMenuBar->height());
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
     else
@@ -713,7 +713,7 @@ void MainWindow::DrawPlayerState()
         pPos.setX(pos_2.first);
         pPos.setY(pos_2.second);
 
-        QPoint ptCenter(pPos.x(), pPos.y());
+        QPoint ptCenter(pPos.x(), pPos.y() + this->pMenuBar->height());
         painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * 0.25), (int)(RECT_HEIGHT * 0.25));
     }
 }
@@ -815,26 +815,26 @@ void MainWindow::DrawIndication()
         for (size_t i = 0; i < this->mBoard->getBSize().first; i++)
         {
             if (this->pActionXAxisLetter->isChecked() && i < 26)
-                painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(string(1, 'A' + i)));
+                painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5) + this->pMenuBar->height(), 20, 20, Qt::AlignRight, QString::fromStdString(string(1, 'A' + i)));
             else
             {
                 if (this->pActionXAxisStartFrom_1->isChecked())
-                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i + 1)));
+                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5) + this->pMenuBar->height(), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i + 1)));
                 else
-                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
+                    painter.drawText((i + 1) * RECT_WIDTH + 5, (int)(RECT_HEIGHT * 1.5) + this->pMenuBar->height(), 20, 20, Qt::AlignRight, QString::fromStdString(to_string(i)));
             }
         }
 
         for (size_t i = 0; i < this->mBoard->getBSize().second; i++)
         {
             if (this->pActionYAxisLetter->isChecked() && i < 26)
-                painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(string(1, 'A' + i)));
+                painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5 + this->pMenuBar->height(), 20, 20, Qt::AlignBottom, QString::fromStdString(string(1, 'A' + i)));
             else
             {
                 if (this->pActionYAxisStartFrom_1->isChecked())
-                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i + 1)));
+                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5 + this->pMenuBar->height(), 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i + 1)));
                 else
-                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5, 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
+                    painter.drawText((int)(RECT_WIDTH * 0.4), (i + 2) * RECT_HEIGHT + 5 + this->pMenuBar->height(), 20, 20, Qt::AlignBottom, QString::fromStdString(to_string(i)));
             }
         }
     }
@@ -875,7 +875,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 
         QPoint pt;
         pt.setX( (e->pos().x() ) / RECT_WIDTH);
-        pt.setY( (e->pos().y() ) / RECT_HEIGHT);
+        pt.setY( (e->pos().y() - this->pMenuBar->height() ) / RECT_HEIGHT);
 
         if (pt.y() < 2 || pt.x() < 1)
             return;
@@ -1497,7 +1497,7 @@ void MainWindow::OnActionBoardSize()
             int iTmp = i_get;
             pair<int, int> pTmp(iTmp, iTmp);
             if (this->mBoard->setBSize(pTmp))
-                resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
+                resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
 
             this->mBoard->Notify();
 
@@ -1642,7 +1642,7 @@ void MainWindow::OnActionGridSize()
                     this->m_bSkin = true;
             }
 
-            resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + this->pMenuBar->height());
+            resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
         }
     // }
 }
