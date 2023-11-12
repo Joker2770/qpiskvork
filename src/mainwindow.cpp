@@ -232,7 +232,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
     connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
-    connect(this->pRuleActionGroup,SIGNAL(triggered(QAction *)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
+    connect(this->pRuleActionGroup,SIGNAL(triggered(QAction*)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
@@ -1575,7 +1575,7 @@ void MainWindow::OnActionGridSize()
     // if (this->mState != GAME_STATE::PLAYING)
     // {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Grid Size", "Please input grid size:", 36, 25, 50,
+        int i_get = QInputDialog::getInt(this, "Grid Size", "Please input grid size:", 36, 20, 50,
                                          1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
