@@ -41,6 +41,7 @@
 #include "PlayerSettingDialog.h"
 #include "S2BResDialog.h"
 #include "timer.h"
+#include "customs.h"
 
 typedef enum game_state
 {
@@ -174,6 +175,7 @@ private:
     Caro *m_caro;
     Timer *m_T1;
     Timer *m_T2;
+    Customs *m_customs;
     vector<QPixmap> m_images;
     QString m_p1_name;
     QString m_p2_name;

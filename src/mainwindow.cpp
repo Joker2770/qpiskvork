@@ -154,13 +154,20 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(this->pMenuBar);
 #endif
 
+    this->m_customs = new Customs("qpiskvork.ini");
+
     this->setWindowIcon(QIcon(":/icon/icon.jpg"));
-    this->RECT_WIDTH = 36;
-    this->RECT_HEIGHT = 36;
+    QString grid_size;
+    this->m_customs->getCfgValue("Board", "GridSize", grid_size);
+    int i_grid_size = (grid_size.toInt() >= 20 && grid_size.toInt() <= 50) ? grid_size.toInt() : 36;
+    this->RECT_WIDTH = i_grid_size;
+    this->RECT_HEIGHT = i_grid_size;
 
     this->mBoard = new Board();
-    // pair<int, int> pBSize(15, 15);
-    // this->mBoard->setBSize(pBSize);
+    QString q_board_size;
+    this->m_customs->getCfgValue("Board", "size", q_board_size);
+    pair<int, int> pBSize(q_board_size.toInt(), q_board_size.toInt());
+    this->mBoard->setBSize(pBSize);
 
     this->m_p1_name.clear();
     this->m_p2_name.clear();
@@ -243,6 +250,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->m_customs)
+    {
+        delete this->m_customs;
+        this->m_customs = nullptr;
+    }
     if (nullptr != this->m_S2BRes_1)
     {
         delete this->m_S2BRes_1;
@@ -1508,6 +1520,7 @@ void MainWindow::OnActionBoardSize()
 
             this->mState = GAME_STATE::IDLE;
             this->pRuleActionGroup->setEnabled(true);
+            this->m_customs->setCfgValue("Board", "size", i_get);
         }
     }
 }
@@ -1643,6 +1656,7 @@ void MainWindow::OnActionGridSize()
             }
 
             resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+            this->m_customs->setCfgValue("Board", "GridSize", i_get);
         }
     // }
 }
