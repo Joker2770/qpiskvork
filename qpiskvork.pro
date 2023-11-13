@@ -21,6 +21,7 @@ SOURCES += \
     src/PlayerSettingDialog.cpp \
     src/S2BResDialog.cpp \
     src/StandardGomoku.cpp \
+    src/customs.cpp \
     src/renju.cpp \
     src/caro.cpp \
     src/board.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     src/PlayerSettingDialog.h \
     src/S2BResDialog.h \
     src/StandardGomoku.h \
+    src/customs.h \
     src/renju.h \
     src/caro.h \
     src/board.h \
