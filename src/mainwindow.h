@@ -43,6 +43,7 @@
 #include "PlayerSettingDialog.h"
 #include "S2BResDialog.h"
 #include "timer.h"
+#include "customs.h"
 
 typedef enum game_state
 {
@@ -60,6 +61,22 @@ typedef enum game_rule
     RENJU = 4,
     CARO = 8
 } GAME_RULE;
+
+const QString g_szSkins[13] = {
+    ":/skins/bold.bmp",
+    ":/skins/fontanGomo.bmp",
+    ":/skins/gems.bmp",
+    ":/skins/gomoku.bmp",
+    ":/skins/HGarden.bmp",
+    ":/skins/HGarden2.bmp",
+    ":/skins/light.bmp",
+    ":/skins/pisq.bmp",
+    ":/skins/rain.bmp",
+    ":/skins/star.bmp",
+    ":/skins/whitex.bmp",
+    ":/skins/wood.bmp",
+    ":/skins/yellow.bmp"
+};
 
 class MainWindow : public QMainWindow
 {
@@ -178,6 +195,7 @@ private:
     Caro *m_caro;
     Timer *m_T1;
     Timer *m_T2;
+    Customs *m_customs;
     vector<QPixmap> m_images;
     QSoundEffect *m_effect;
     QString m_p1_name;

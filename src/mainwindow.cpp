@@ -154,13 +154,20 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(this->pMenuBar);
 #endif
 
+    this->m_customs = new Customs("qpiskvork");
+
     this->setWindowIcon(QIcon(":/icon/icon.jpg"));
-    this->RECT_WIDTH = 36;
-    this->RECT_HEIGHT = 36;
+    QString grid_size;
+    this->m_customs->getCfgValue("Board", "GridSize", grid_size);
+    int i_grid_size = (grid_size.toInt() >= 20 && grid_size.toInt() <= 50) ? grid_size.toInt() : 36;
+    this->RECT_WIDTH = i_grid_size;
+    this->RECT_HEIGHT = i_grid_size;
 
     this->mBoard = new Board();
-    // pair<int, int> pBSize(15, 15);
-    // this->mBoard->setBSize(pBSize);
+    QString q_board_size;
+    this->m_customs->getCfgValue("Board", "size", q_board_size);
+    pair<int, int> pBSize(q_board_size.toInt(), q_board_size.toInt());
+    this->mBoard->setBSize(pBSize);
 
     this->m_p1_name.clear();
     this->m_p2_name.clear();
@@ -174,14 +181,16 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bSkin = true;
     this->m_bNumOfMove = false;
 
+    QString q_skin_idx;
+    this->m_customs->getCfgValue("View", "skin", q_skin_idx);
+    this->m_cur_skin_idx = (q_skin_idx.toInt() > 0 && q_skin_idx.toInt() < 14) ? q_skin_idx.toInt() : 6;
     QPixmap pm;
-    pm.load(":/skins/HGarden2.bmp");
+    pm.load(g_szSkins[this->m_cur_skin_idx - 1]);
     if (!pm.isNull())
     {
         for (size_t i = 0; i < 5; i++)
             this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
-    this->m_cur_skin_idx = 6;
 
     if (this->m_images.size() != 5)
         this->m_bSkin = false;
@@ -245,10 +254,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (nullptr != this->m_effect)
+    if (nullptr != this->m_customs)
     {
-        delete this->m_effect;
-        this->m_effect = nullptr;
+        delete this->m_customs;
+        this->m_customs = nullptr;
     }
     if (nullptr != this->m_S2BRes_1)
     {
@@ -1537,6 +1546,7 @@ void MainWindow::OnActionBoardSize()
 
             this->mState = GAME_STATE::IDLE;
             this->pRuleActionGroup->setEnabled(true);
+            this->m_customs->setCfgValue("Board", "size", i_get);
         }
     }
 }
@@ -1672,6 +1682,7 @@ void MainWindow::OnActionGridSize()
             }
 
             resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+            this->m_customs->setCfgValue("Board", "GridSize", i_get);
         }
     // }
 }
@@ -1701,67 +1712,67 @@ void MainWindow::OnActionSkin()
 
                 if (QString::compare(s_get, "bold") == 0)
                 {
-                    bLoad = pm.load(":/skins/bold.bmp");
+                    bLoad = pm.load(g_szSkins[0]);
                     this->m_cur_skin_idx = 1;
                 }
                 else if (QString::compare(s_get, "fontanGomo") == 0)
                 {
-                    bLoad = pm.load(":/skins/fontanGomo.bmp");
+                    bLoad = pm.load(g_szSkins[1]);
                     this->m_cur_skin_idx = 2;
                 }
                 else if (QString::compare(s_get, "gems") == 0)
                 {
-                    bLoad = pm.load(":/skins/gems.bmp");
+                    bLoad = pm.load(g_szSkins[2]);
                     this->m_cur_skin_idx = 3;
                 }
                 else if (QString::compare(s_get, "gomoku") == 0)
                 {
-                    bLoad = pm.load(":/skins/gomoku.bmp");
+                    bLoad = pm.load(g_szSkins[3]);
                     this->m_cur_skin_idx = 4;
                 }
                 else if (QString::compare(s_get, "HGarden") == 0)
                 {
-                    bLoad = pm.load(":/skins/HGarden.bmp");
+                    bLoad = pm.load(g_szSkins[4]);
                     this->m_cur_skin_idx = 5;
                 }
                 else if (QString::compare(s_get, "HGarden2") == 0)
                 {
-                    bLoad = pm.load(":/skins/HGarden2.bmp");
+                    bLoad = pm.load(g_szSkins[5]);
                     this->m_cur_skin_idx = 6;
                 }
                 else if (QString::compare(s_get, "light") == 0)
                 {
-                    bLoad = pm.load(":/skins/light.bmp");
+                    bLoad = pm.load(g_szSkins[6]);
                     this->m_cur_skin_idx = 7;
                 }
                 else if (QString::compare(s_get, "pisq") == 0)
                 {
-                    bLoad = pm.load(":/skins/pisq.bmp");
+                    bLoad = pm.load(g_szSkins[7]);
                     this->m_cur_skin_idx = 8;
                 }
                 else if (QString::compare(s_get, "rain") == 0)
                 {
-                    bLoad = pm.load(":/skins/rain.bmp");
+                    bLoad = pm.load(g_szSkins[8]);
                     this->m_cur_skin_idx = 9;
                 }
                 else if (QString::compare(s_get, "star") == 0)
                 {
-                    bLoad = pm.load(":/skins/star.bmp");
+                    bLoad = pm.load(g_szSkins[9]);
                     this->m_cur_skin_idx = 10;
                 }
                 else if (QString::compare(s_get, "whitex") == 0)
                 {
-                    bLoad = pm.load(":/skins/whitex.bmp");
+                    bLoad = pm.load(g_szSkins[10]);
                     this->m_cur_skin_idx = 11;
                 }
                 else if (QString::compare(s_get, "wood") == 0)
                 {
-                    bLoad = pm.load(":/skins/wood.bmp");
+                    bLoad = pm.load(g_szSkins[11]);
                     this->m_cur_skin_idx = 12;
                 }
                 else if (QString::compare(s_get, "yellow") == 0)
                 {
-                    bLoad = pm.load(":/skins/yellow.bmp");
+                    bLoad = pm.load(g_szSkins[12]);
                     this->m_cur_skin_idx = 13;
                 }
 
@@ -1774,6 +1785,8 @@ void MainWindow::OnActionSkin()
                         this->m_bSkin = false;
                     else
                         this->m_bSkin = true;
+
+                    this->m_customs->setCfgValue("View", "skin", this->m_cur_skin_idx);
                 }
             }
         }
@@ -1906,7 +1919,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.47-features\n";
+    const QString strVerNum = "Ver Num: 0.5.60-features\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
