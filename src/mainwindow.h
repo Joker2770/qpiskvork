@@ -60,6 +60,22 @@ typedef enum game_rule
     CARO = 8
 } GAME_RULE;
 
+const QString g_szSkins[13] = {
+    ":/skins/bold.bmp",
+    ":/skins/fontanGomo.bmp",
+    ":/skins/gems.bmp",
+    ":/skins/gomoku.bmp",
+    ":/skins/HGarden.bmp",
+    ":/skins/HGarden2.bmp",
+    ":/skins/light.bmp",
+    ":/skins/pisq.bmp",
+    ":/skins/rain.bmp",
+    ":/skins/star.bmp",
+    ":/skins/whitex.bmp",
+    ":/skins/wood.bmp",
+    ":/skins/yellow.bmp"
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
