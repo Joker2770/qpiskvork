@@ -1895,7 +1895,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.47\n";
+    const QString strVerNum = "Ver Num: 0.5.60\n";
     QString strBuildTime = "Build at ";
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
