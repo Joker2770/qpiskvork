@@ -1914,6 +1914,7 @@ void MainWindow::On_ClickedLanguageActionGroup(QAction *pAction)
         {
             qDebug() << "Choose en_UK!";
             this->m_customs->setCfgValue("View", "language", "en_UK");
+            QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
         }
         else
         {
@@ -1926,6 +1927,7 @@ void MainWindow::On_ClickedLanguageActionGroup(QAction *pAction)
         {
             qDebug() << "chose zh_CN!";
             this->m_customs->setCfgValue("View", "language", "zh_CN");
+            QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
         }
         else
         {
@@ -1936,6 +1938,7 @@ void MainWindow::On_ClickedLanguageActionGroup(QAction *pAction)
     {
         qDebug() << "use en_UK as default!";
         this->m_customs->setCfgValue("View", "language", "en_UK");
+        QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
     }
 }
 
