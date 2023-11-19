@@ -21,10 +21,20 @@
 
 #include <QApplication>
 #include <QTranslator>
+#include "customs.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QTranslator qts;
+    QString q_lang;
+    Customs g_customs("qpiskvork");
+    g_customs.getCfgValue("View", "language", q_lang);
+    if (0 == QString::compare(q_lang, "zh_CN"))
+    {
+        qts.load(":/language/zh_CN.qm");
+        a.installTranslator(&qts);
+    }
     MainWindow w;
     w.show();
     return a.exec();
