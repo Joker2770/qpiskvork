@@ -1105,7 +1105,7 @@ void MainWindow::OnActionStart()
         {
             if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
             {
-                QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
+                QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.") + "\n" + tr("Please check the setting of player 1!"));
                 return;
             }
 
@@ -1266,7 +1266,7 @@ void MainWindow::OnActionContinue()
             {
                 if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
                 {
-                    QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
+                    QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.") + "\n" + tr("Please check the setting of player 1!"));
                     return;
                 }
 
@@ -1805,7 +1805,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
             {
                 qDebug() << "Choose continuous!";
                 this->m_Rule |= GAME_RULE::CONTINUOUS;
-                QMessageBox::information(this, tr("Tips"), tr("It will select the engine of player 1 to begin continuous game!\n1, no turn;\n2, self play continuously.\nPlease check the setting of player 1."));
+                QMessageBox::information(this, tr("Tips"), tr("It will select the engine of player 1 to begin continuous game!") + "\n" + tr("1, no turn;") + "\n" + tr("2, self play continuously.") + "\n" + tr("Please check the setting of player 1."));
             }
             else
             {
@@ -1895,7 +1895,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: 0.5.60\n");
+    const QString strVerNum = tr("Ver Num: 0.5.60") + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");

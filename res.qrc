@@ -14,5 +14,6 @@
         <file>skins/wood.bmp</file>
         <file>skins/yellow.bmp</file>
         <file>skins/whitex.bmp</file>
+        <file>language/zh_CN.qm</file>
     </qresource>
 </RCC>
