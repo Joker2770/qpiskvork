@@ -66,17 +66,17 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->p1_hbl_2->setSpacing(5);
     this->p2_hbl_1->setSpacing(5);
     this->p2_hbl_2->setSpacing(5);
-    this->gb_p1->setTitle("Player1");
-    this->gb_p2->setTitle("Player2");
-    this->p1_rb_1->setText("Human");
-    this->p1_rb_2->setText("AI");
-    this->p2_rb_1->setText("Human");
-    this->p2_rb_2->setText("AI");
+    this->gb_p1->setTitle(tr("Player1"));
+    this->gb_p2->setTitle(tr("Player2"));
+    this->p1_rb_1->setText(tr("Human"));
+    this->p1_rb_2->setText(tr("AI"));
+    this->p2_rb_1->setText(tr("Human"));
+    this->p2_rb_2->setText(tr("AI"));
     this->p1_rb_1->setChecked(true);
     this->p2_rb_1->setChecked(true);
-    this->btn_p1->setText("open");
-    this->btn_p2->setText("open");
-    this->btn_exchange->setText("exchange(Ctrl+X)");
+    this->btn_p1->setText(tr("open"));
+    this->btn_p2->setText(tr("open"));
+    this->btn_exchange->setText(tr("exchange(Ctrl+X)"));
     this->btn_exchange->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
     this->p1_bg->setExclusive(true);
     this->p2_bg->setExclusive(true);
@@ -108,7 +108,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) :
     this->le_p2->setMaxLength(256);
 
     //this->setAttribute(Qt::WA_DeleteOnClose);
-    this->setWindowTitle("Player Setting");
+    this->setWindowTitle(tr("Player Setting"));
     this->setModal(true);
     this->setLayout(this->gl);
     this->resize(450, 300);
@@ -244,7 +244,7 @@ PlayerSettingDialog::~PlayerSettingDialog()
 void PlayerSettingDialog::On_p1_btnOpen_clicked()
 {
     QString curPath=QDir::currentPath();
-    QString dlgTitle="Choose a file";
+    QString dlgTitle=tr("Choose a file");
     //QString filter="executable file(*.exe)";
     QString aFileName=QFileDialog::getOpenFileName(this, dlgTitle, curPath, nullptr);
     if (!aFileName.isEmpty())
@@ -254,7 +254,7 @@ void PlayerSettingDialog::On_p1_btnOpen_clicked()
 void PlayerSettingDialog::On_p2_btnOpen_clicked()
 {
     QString curPath=QDir::currentPath();
-    QString dlgTitle="Choose a file";
+    QString dlgTitle=tr("Choose a file");
     //QString filter="executable file(*.exe)";
     QString aFileName=QFileDialog::getOpenFileName(this, dlgTitle, curPath, nullptr);
     if (!aFileName.isEmpty())

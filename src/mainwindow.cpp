@@ -35,39 +35,39 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuBar = new QMenuBar(this);
 #endif
 
-    this->pMenuGame = new QMenu("Game", this);
-    this->pMenuSetting = new QMenu("Setting", this);
-    this->pMenuPlayer = new QMenu("Player", this);
-    this->pMenuShow = new QMenu("Show", this);
-    this->pMenuAbout = new QMenu("About", this);
-    this->pActionBoardSize = new QAction("Board Size", this);
-    this->pActionTimeoutMatch = new QAction("Match Timeout", this);
-    this->pActionTimeoutTurn = new QAction("Turn Timeout", this);
-    this->pActionMaxMemory = new QAction("Max Memory", this);
-    this->pActionSkin = new QAction("Skin", this);
-    this->pActionSwap2Board = new QAction("Swap2board", this);
-    this->pActionStart = new QAction("Start", this);
-    this->pActionPause = new QAction("Pause", this);
-    this->pActionContinue = new QAction("Continue", this);
-    this->pActionEnd = new QAction("End", this);
-    this->pActionClear = new QAction("Clear", this);
-    this->pActionTakeBack = new QAction("Take Back", this);
-    this->pActionFreeStyleGomoku = new QAction("Free-style Gomoku", this);
-    this->pActionStandardGomoku = new QAction("Standard Gomoku", this);
-    this->pActionContinuous = new QAction("Continuous", this);
-    this->pActionRenju = new QAction("Renju", this);
-    this->pActionCaro = new QAction("Caro", this);
-    this->pActionNumOfMove = new QAction("Number of move", this);
-    this->pActionXAxisLetter = new QAction("X-axis Letter", this);
-    this->pActionYAxisLetter = new QAction("Y-axis Letter", this);
-    this->pActionXAxisStartFrom_1 = new QAction("X-axis start from 1", this);
-    this->pActionYAxisStartFrom_1 = new QAction("Y-axis start from 1", this);
-    this->pActionTimeSecond = new QAction("Countdown With Second", this);
-    this->pActionGridSize = new QAction("Grid Size", this);
-    this->pActionPlayerSetting = new QAction("Setting", this);
-    this->pActionVer = new QAction("Ver Info", this);
-    this->pActionFeedback = new QAction("Feedback", this);
-    this->pActionLicense = new QAction("License", this);
+    this->pMenuGame = new QMenu(tr("Game"), this);
+    this->pMenuSetting = new QMenu(tr("Setting"), this);
+    this->pMenuPlayer = new QMenu(tr("Player"), this);
+    this->pMenuShow = new QMenu(tr("Show"), this);
+    this->pMenuAbout = new QMenu(tr("About"), this);
+    this->pActionBoardSize = new QAction(tr("Board Size"), this);
+    this->pActionTimeoutMatch = new QAction(tr("Match Timeout"), this);
+    this->pActionTimeoutTurn = new QAction(tr("Turn Timeout"), this);
+    this->pActionMaxMemory = new QAction(tr("Max Memory"), this);
+    this->pActionSkin = new QAction(tr("Skin"), this);
+    this->pActionSwap2Board = new QAction(tr("Swap2board"), this);
+    this->pActionStart = new QAction(tr("Start"), this);
+    this->pActionPause = new QAction(tr("Pause"), this);
+    this->pActionContinue = new QAction(tr("Continue"), this);
+    this->pActionEnd = new QAction(tr("End"), this);
+    this->pActionClear = new QAction(tr("Clear"), this);
+    this->pActionTakeBack = new QAction(tr("Take Back"), this);
+    this->pActionFreeStyleGomoku = new QAction(tr("Free-style Gomoku"), this);
+    this->pActionStandardGomoku = new QAction(tr("Standard Gomoku"), this);
+    this->pActionContinuous = new QAction(tr("Continuous"), this);
+    this->pActionRenju = new QAction(tr("Renju"), this);
+    this->pActionCaro = new QAction(tr("Caro"), this);
+    this->pActionNumOfMove = new QAction(tr("Number of move"), this);
+    this->pActionXAxisLetter = new QAction(tr("X-axis Letter"), this);
+    this->pActionYAxisLetter = new QAction(tr("Y-axis Letter"), this);
+    this->pActionXAxisStartFrom_1 = new QAction(tr("X-axis start from 1"), this);
+    this->pActionYAxisStartFrom_1 = new QAction(tr("Y-axis start from 1"), this);
+    this->pActionTimeSecond = new QAction(tr("Countdown With Second"), this);
+    this->pActionGridSize = new QAction(tr("Grid Size"), this);
+    this->pActionPlayerSetting = new QAction(tr("Setting"), this);
+    this->pActionVer = new QAction(tr("Ver Info"), this);
+    this->pActionFeedback = new QAction(tr("Feedback"), this);
+    this->pActionLicense = new QAction(tr("License"), this);
     this->pActionStart->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     this->pActionPause->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
     this->pActionContinue->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_G));
@@ -639,7 +639,7 @@ void MainWindow::DrawTimeLeft()
     if (0 == this->m_time_left_p1)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
-        painter.drawText(50, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, "TIMEOUT");
+        painter.drawText(50, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, tr("TIMEOUT"));
     }
     else if (this->m_timeout_match > this->m_T1->getElapsed())
     {
@@ -659,7 +659,7 @@ void MainWindow::DrawTimeLeft()
     if (0 == this->m_time_left_p2)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
-        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignRight, "TIMEOUT");
+        painter.drawText(this->geometry().width() - 200, (int)(RECT_HEIGHT * 0.8 + this->pMenuBar->height()), 150, 50, Qt::AlignRight, tr("TIMEOUT"));
     }
     else if (this->m_timeout_match > this->m_T2->getElapsed())
     {
@@ -803,16 +803,16 @@ void MainWindow::DrawPlayerName()
     if (!this->m_p1_name.isEmpty())
         painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, this->m_p1_name);
     else if (this->m_manager->m_p1->m_isComputer)
-        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "AI");
+        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, tr("AI"));
     else
-        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, "Human");
+        painter.drawText(this->RECT_WIDTH + 15, this->geometry().height() - 30, 150, 50, Qt::AlignLeft, tr("Human"));
 
     if (!this->m_p2_name.isEmpty())
         painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, this->m_p2_name);
     else if (this->m_manager->m_p2->m_isComputer)
-        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, "AI");
+        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, tr("AI"));
     else
-        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, "Human");
+        painter.drawText((int)(this->geometry().width() - 170 - this->RECT_WIDTH), (int)(this->geometry().height() - 30), 150, 50, Qt::AlignRight, tr("Human"));
 }
 
 void MainWindow::DrawIndication()
@@ -985,7 +985,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Game Over", "Draw!");
+                    QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
                     return;
                 }
             }
@@ -995,7 +995,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Draw!");
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
 
@@ -1039,9 +1039,9 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             this->mState = GAME_STATE::OVER;
             this->pRuleActionGroup->setEnabled(true);
             if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, "game over!", "Black win!");
+                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
-                QMessageBox::information(this, "game over!", "White win!");
+                QMessageBox::information(this, tr("game over!"), tr("White win!"));
             //this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
@@ -1051,22 +1051,22 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
                 this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK! ";
+                QString info = tr("Illegal move from BLACK! ");
                 switch (this->m_renju->getRenjuState())
                 {
                 case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
+                    info.append(tr("OVERLINE"));
                     break;
                 case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
+                    info.append(tr("DOUBLE_FOUR"));
                     break;
                 case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
+                    info.append(tr("DOUBLE_THREE"));
                     break;
                 default:
                     break;
                 }
-                QMessageBox::information(this, "game over!", info);
+                QMessageBox::information(this, tr("game over!"), info);
             }
         }
     }
@@ -1078,7 +1078,7 @@ void MainWindow::OnActionStart()
     {
         if (BOARDSTATUS::BOARDEMPTY != this->mBoard->GetState())
         {
-            if (QMessageBox::information(this, "Tips", "It will clear board and start new game!", QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok)
+            if (QMessageBox::information(this, tr("Tips"), tr("It will clear board and start new game!"), QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok)
                 this->mBoard->clearBoard();
             else
                 return;
@@ -1109,7 +1109,7 @@ void MainWindow::OnActionStart()
         {
             if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
             {
-                QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
+                QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
                 return;
             }
 
@@ -1127,7 +1127,7 @@ void MainWindow::OnActionStart()
             else
             {
                 this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                QMessageBox::information(this, tr("Error!"), tr("Failied to Attach Engine!"));
                 return;
             }
 
@@ -1148,7 +1148,7 @@ void MainWindow::OnActionStart()
                 this->disconnectP1Signals();
 
                 this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to start game!");
+                QMessageBox::information(this, tr("Error!"), tr("Failied to start game!"));
                 return;
             }
 
@@ -1172,7 +1172,7 @@ void MainWindow::OnActionStart()
             else
             {
                 this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                QMessageBox::information(this, tr("Error!"), tr("Failied to Attach Engine!"));
                 return;
             }
 
@@ -1199,7 +1199,7 @@ void MainWindow::OnActionStart()
                 this->disconnectP1Signals();
                 this->disconnectP2Signals();
                 this->m_manager->DetachEngines();
-                QMessageBox::information(this, "Error!", "Failied to start game!");
+                QMessageBox::information(this, tr("Error!"), tr("Failied to start game!"));
                 return;
             }
 
@@ -1280,7 +1280,7 @@ void MainWindow::OnActionContinue()
             {
                 if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
                 {
-                    QMessageBox::information(this, "Error!", "Engine is necessary for continuous game.\nPlease check the setting of player 1!");
+                    QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
                     return;
                 }
 
@@ -1298,7 +1298,7 @@ void MainWindow::OnActionContinue()
                 else
                 {
                     this->m_manager->DetachEngines();
-                    QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                    QMessageBox::information(this, tr("Error!"), tr("Failied to Attach Engine!"));
                     return;
                 }
 
@@ -1319,7 +1319,7 @@ void MainWindow::OnActionContinue()
                 {
                     this->disconnectP1Signals();
                     this->m_manager->DetachEngines();
-                    QMessageBox::information(this, "Error!", "Failied to start game!");
+                    QMessageBox::information(this, tr("Error!"), tr("Failied to start game!"));
                     return;
                 }
 
@@ -1334,7 +1334,7 @@ void MainWindow::OnActionContinue()
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                    QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                     return;
                 }
                 this->m_manager->sendBoard(vRecExpendTmp, true);
@@ -1356,7 +1356,7 @@ void MainWindow::OnActionContinue()
                 else
                 {
                     this->m_manager->DetachEngines();
-                    QMessageBox::information(this, "Error!", "Failied to Attach Engine!");
+                    QMessageBox::information(this, tr("Error!"), tr("Failied to Attach Engine!"));
                     return;
                 }
 
@@ -1383,7 +1383,7 @@ void MainWindow::OnActionContinue()
                     this->disconnectP1Signals();
                     this->disconnectP2Signals();
                     this->m_manager->DetachEngines();
-                    QMessageBox::information(this, "Error!", "Failied to start game!");
+                    QMessageBox::information(this, tr("Error!"), tr("Failied to start game!"));
                     return;
                 }
 
@@ -1402,7 +1402,7 @@ void MainWindow::OnActionContinue()
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                         return;
                     }
                 }
@@ -1417,7 +1417,7 @@ void MainWindow::OnActionContinue()
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                         return;
                     }
                 }
@@ -1511,7 +1511,7 @@ void MainWindow::OnActionTakeBack()
         if (!b_succ)
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Error!", "Failied to take back!");
+            QMessageBox::information(this, tr("Error!"), tr("Failied to take back!"));
             return;
         }
         else
@@ -1528,7 +1528,7 @@ void MainWindow::OnActionBoardSize()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Board Size", "Please input board size:", 15, 8, 25,
+        int i_get = QInputDialog::getInt(this, tr("Board Size"), tr("Please input board size:"), 15, 8, 25,
                                             1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1556,7 +1556,7 @@ void MainWindow::OnActionTimeoutMatch()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Match Timeout", "Please input Match-Timeout(ms):", 900000, 0, 86400000,
+        int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), 900000, 0, 86400000,
                                             1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1586,7 +1586,7 @@ void MainWindow::OnActionTimeoutTurn()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Turn Timeout", "Please input Turn-Timeout(ms):", 30000, 5000, 300000,
+        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 5000, 300000,
                                             1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1600,7 +1600,7 @@ void MainWindow::OnActionMaxMemory()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Max Memory", "Please input Max-Memory(byte):", 1024*1024*1024, 0, (int)((unsigned int)-1>>1),
+        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), 1024*1024*1024, 0, (int)((unsigned int)-1>>1),
                                             1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1614,7 +1614,7 @@ void MainWindow::OnActionGridSize()
     // if (this->mState != GAME_STATE::PLAYING)
     // {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, "Grid Size", "Please input grid size:", 36, 20, 50,
+        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
                                          1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1694,7 +1694,7 @@ void MainWindow::OnActionSkin()
         bool ok = false;
         QStringList s_items;
         s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "whitex" << "wood" << "yellow";
-        QString s_get = QInputDialog::getItem(this, "Skin", "Please choose skin:", s_items, this->m_cur_skin_idx, false,
+        QString s_get = QInputDialog::getItem(this, tr("Skin"), tr("Please choose skin:"), s_items, this->m_cur_skin_idx, false,
                                             &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1829,7 +1829,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
             {
                 qDebug() << "Choose continuous!";
                 this->m_Rule |= GAME_RULE::CONTINUOUS;
-                QMessageBox::information(this, "Tips", "It will select the engine of player 1 to begin continuous game!\n1, no turn;\n2, self play continuously.\nPlease check the setting of player 1.");
+                QMessageBox::information(this, tr("Tips"), tr("It will select the engine of player 1 to begin continuous game!\n1, no turn;\n2, self play continuously.\nPlease check the setting of player 1."));
             }
             else
             {
@@ -1919,12 +1919,12 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = "Ver Num: 0.5.60-features\n";
-    QString strBuildTime = "Build at ";
+    const QString strVerNum = tr("Ver Num: 0.5.60-features\n");
+    QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
     const QString strAll = strVerNum + strBuildTime;
-    QMessageBox::about(this, "Version", strAll);
+    QMessageBox::about(this, tr("Version"), strAll);
 }
 
 void MainWindow::OnActionFeedback()
@@ -1933,7 +1933,7 @@ void MainWindow::OnActionFeedback()
         <a href='https://github.com/Joker2770/qpiskvork.git'>https://github.com/Joker2770/qpiskvork.git</a><br>
         <a href='https://gitee.com/Joker2770/qpiskvork.git'>https://gitee.com/Joker2770/qpiskvork.git</a>
         )";
-    QMessageBox::about(this, "Feedback", strAll);
+    QMessageBox::about(this, tr("Feedback"), strAll);
 }
 
 void MainWindow::OnActionLicense()
@@ -1944,7 +1944,7 @@ void MainWindow::OnActionLicense()
     strAll.append("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\n");
     strAll.append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n");
     strAll.append("You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n");
-    QMessageBox::about(this, "License", strAll);
+    QMessageBox::about(this, tr("License"), strAll);
 }
 
 void MainWindow::OnP1PlaceStone(int x, int y)
@@ -1990,7 +1990,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                         return;
                     }
 
@@ -2016,21 +2016,21 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
+                QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
 
             if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Draw!");
+                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
                 return;
             }
         }
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Draw!");
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
 
@@ -2074,9 +2074,9 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             this->mState = GAME_STATE::OVER;
             this->pRuleActionGroup->setEnabled(true);
             if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, "game over!", "Black win!");
+                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
-                QMessageBox::information(this, "game over!", "White win!");
+                QMessageBox::information(this, tr("game over!"), tr("White win!"));
             //this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
@@ -2086,22 +2086,22 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
                 this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK! ";
+                QString info = tr("Illegal move from BLACK! ");
                 switch (this->m_renju->getRenjuState())
                 {
                 case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
+                    info.append(tr("OVERLINE"));
                     break;
                 case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
+                    info.append(tr("DOUBLE_FOUR"));
                     break;
                 case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
+                    info.append(tr("DOUBLE_THREE"));
                     break;
                 default:
                     break;
                 }
-                QMessageBox::information(this, "game over!", info);
+                QMessageBox::information(this, tr("game over!"), info);
             }
         }
     }
@@ -2150,7 +2150,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                         return;
                     }
 
@@ -2176,21 +2176,21 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Error", "Might be illegal move from player 2!");
+                QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 2!"));
                 return;
             }
 
             if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Draw!");
+                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
                 return;
             }
         }
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Draw!");
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
 
@@ -2234,9 +2234,9 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             this->mState = GAME_STATE::OVER;
             this->pRuleActionGroup->setEnabled(true);
             if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, "game over!", "Black win!");
+                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
-                QMessageBox::information(this, "game over!", "White win!");
+                QMessageBox::information(this, tr("game over!"), tr("White win!"));
             //this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
@@ -2246,22 +2246,22 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
                 this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK! ";
+                QString info = tr("Illegal move from BLACK! ");
                 switch (this->m_renju->getRenjuState())
                 {
                 case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
+                    info.append(tr("OVERLINE"));
                     break;
                 case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
+                    info.append(tr("DOUBLE_FOUR"));
                     break;
                 case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
+                    info.append(tr("DOUBLE_THREE"));
                     break;
                 default:
                     break;
                 }
-                QMessageBox::information(this, "game over!", info);
+                QMessageBox::information(this, tr("game over!"), info);
             }
         }
     }
@@ -2295,28 +2295,28 @@ void MainWindow::OnContinuousPos(int x, int y)
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                    QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                     return;
                 }
             }
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Error", "Might be illegal move from player 1!");
+                QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
 
             if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Draw!");
+                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
                 return;
             }
         }
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Draw!");
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
 
@@ -2360,9 +2360,9 @@ void MainWindow::OnContinuousPos(int x, int y)
             this->mState = GAME_STATE::OVER;
             this->pRuleActionGroup->setEnabled(true);
             if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, "game over!", "Black win!");
+                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
-                QMessageBox::information(this, "game over!", "White win!");
+                QMessageBox::information(this, tr("game over!"), tr("White win!"));
             //this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
@@ -2372,22 +2372,22 @@ void MainWindow::OnContinuousPos(int x, int y)
                 this->OnActionEnd();
                 this->mState = GAME_STATE::OVER;
                 this->pRuleActionGroup->setEnabled(true);
-                QString info = "Illegal move from BLACK! ";
+                QString info = tr("Illegal move from BLACK! ");
                 switch (this->m_renju->getRenjuState())
                 {
                 case PATTERN::OVERLINE:
-                    info.append("OVERLINE");
+                    info.append(tr("OVERLINE"));
                     break;
                 case PATTERN::DOUBLE_FOUR:
-                    info.append("DOUBLE_FOUR");
+                    info.append(tr("DOUBLE_FOUR"));
                     break;
                 case PATTERN::DOUBLE_THREE:
-                    info.append("DOUBLE_THREE");
+                    info.append(tr("DOUBLE_THREE"));
                     break;
                 default:
                     break;
                 }
-                QMessageBox::information(this, "game over!", info);
+                QMessageBox::information(this, tr("game over!"), info);
             }
         }
     }
@@ -2421,7 +2421,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                 this->OnActionClearBoard();
                 return;
             }
@@ -2433,7 +2433,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                 if (this->m_S2BRes_3->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2459,7 +2459,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2472,7 +2472,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2491,7 +2491,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+            QMessageBox::information(this, tr("Error"), tr("Failed to place 2 stones!"));
             this->OnActionClearBoard();
             return;
         }
@@ -2524,7 +2524,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                 this->OnActionClearBoard();
                 return;
             }
@@ -2537,7 +2537,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 if (this->m_S2BRes_2->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2560,7 +2560,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         else
                         {
                             this->OnActionEnd();
-                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                            QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                             this->OnActionClearBoard();
                             return;
                         }
@@ -2582,7 +2582,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                        QMessageBox::information(this, tr("Error"), tr("Failed to place 2 stones!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2609,7 +2609,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2622,7 +2622,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2640,7 +2640,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+            QMessageBox::information(this, tr("Error"), tr("Failed to place 3 stones!"));
             this->OnActionClearBoard();
             return;
         }
@@ -2665,7 +2665,7 @@ void MainWindow::OnP1ResponsedSwap()
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+            QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
             this->OnActionClearBoard();
             return;
         }
@@ -2694,13 +2694,13 @@ void MainWindow::OnP1ResponseOk()
 void MainWindow::OnP1ResponseError()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Player 1 responsed ERROR!");
+    QMessageBox::information(this, tr("game over!"), tr("Player 1 responsed ERROR!"));
 }
 
 void MainWindow::OnP1ResponseUnknown()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Player 1 responsed UNKNOWN!");
+    QMessageBox::information(this, tr("game over!"), tr("Player 1 responsed UNKNOWN!"));
 }
 
 void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
@@ -2731,7 +2731,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                 this->OnActionClearBoard();
                 return;
             }
@@ -2743,7 +2743,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                 if (this->m_S2BRes_3->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2769,7 +2769,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2782,7 +2782,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2801,7 +2801,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+            QMessageBox::information(this, tr("Error"), tr("Failed to place 2 stones!"));
             this->OnActionClearBoard();
             return;
         }
@@ -2834,7 +2834,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             else
             {
                 this->OnActionEnd();
-                QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                 this->OnActionClearBoard();
                 return;
             }
@@ -2847,7 +2847,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 if (this->m_S2BRes_2->isCanceled())
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                    QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2870,7 +2870,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         else
                         {
                             this->OnActionEnd();
-                            QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                            QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                             this->OnActionClearBoard();
                             return;
                         }
@@ -2892,7 +2892,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                        QMessageBox::information(this, tr("Error"), tr("Failed to place 2 stones!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2919,7 +2919,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                        QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -2932,7 +2932,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                 else
                 {
                     this->OnActionEnd();
-                    QMessageBox::information(this, "Error", "Unknown Error!");
+                    QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                     this->OnActionClearBoard();
                     return;
                 }
@@ -2950,7 +2950,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+            QMessageBox::information(this, tr("Error"), tr("Failed to place 3 stones!"));
             this->OnActionClearBoard();
             return;
         }
@@ -2975,7 +2975,7 @@ void MainWindow::OnP2ResponsedSwap()
         else
         {
             this->OnActionEnd();
-            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+            QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
             this->OnActionClearBoard();
             return;
         }
@@ -3004,13 +3004,13 @@ void MainWindow::OnP2ResponseOk()
 void MainWindow::OnP2ResponseError()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Player 2 responsed ERROR!");
+    QMessageBox::information(this, tr("game over!"), tr("Player 2 responsed ERROR!"));
 }
 
 void MainWindow::OnP2ResponseUnknown()
 {
     this->OnActionEnd();
-    QMessageBox::information(this, "game over!", "Player 2 responsed UNKNOWN!");
+    QMessageBox::information(this, tr("game over!"), tr("Player 2 responsed UNKNOWN!"));
 }
 
 void MainWindow::beginSwap2Board()
@@ -3036,7 +3036,7 @@ void MainWindow::beginSwap2Board()
                     if (this->m_S2BRes_1->isCanceled())
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Cancel", "Canceled by user!");
+                        QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                         this->OnActionClearBoard();
                         return;
                     }
@@ -3062,7 +3062,7 @@ void MainWindow::beginSwap2Board()
                             else
                             {
                                 this->OnActionEnd();
-                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                                 this->OnActionClearBoard();
                                 return;
                             }
@@ -3075,7 +3075,7 @@ void MainWindow::beginSwap2Board()
                                 if (this->m_S2BRes_2->isCanceled())
                                 {
                                     this->OnActionEnd();
-                                    QMessageBox::information(this, "Cancel", "Canceled by user!");
+                                    QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                                     this->OnActionClearBoard();
                                     return;
                                 }
@@ -3098,7 +3098,7 @@ void MainWindow::beginSwap2Board()
                                         else
                                         {
                                             this->OnActionEnd();
-                                            QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                            QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                                             this->OnActionClearBoard();
                                             return;
                                         }
@@ -3116,7 +3116,7 @@ void MainWindow::beginSwap2Board()
                                         if (this->m_S2BRes_3->isCanceled())
                                         {
                                             this->OnActionEnd();
-                                            QMessageBox::information(this, "Cancel", "Canceled by user!");
+                                            QMessageBox::information(this, tr("Cancel"), tr("Canceled by user!"));
                                             this->OnActionClearBoard();
                                             return;
                                         }
@@ -3142,7 +3142,7 @@ void MainWindow::beginSwap2Board()
                                             else
                                             {
                                                 this->OnActionEnd();
-                                                QMessageBox::information(this, "Game Over", "Player 2 timeout!");
+                                                QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
                                                 this->OnActionClearBoard();
                                                 return;
                                             }
@@ -3155,7 +3155,7 @@ void MainWindow::beginSwap2Board()
                                         else
                                         {
                                             this->OnActionEnd();
-                                            QMessageBox::information(this, "Error", "Unknown Error!");
+                                            QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                                             this->OnActionClearBoard();
                                             return;
                                         }
@@ -3163,7 +3163,7 @@ void MainWindow::beginSwap2Board()
                                     else
                                     {
                                         this->OnActionEnd();
-                                        QMessageBox::information(this, "Error", "Failed to place 2 stones!");
+                                        QMessageBox::information(this, tr("Error"), tr("Failed to place 2 stones!"));
                                         this->OnActionClearBoard();
                                         return;
                                     }
@@ -3190,7 +3190,7 @@ void MainWindow::beginSwap2Board()
                                     else
                                     {
                                         this->OnActionEnd();
-                                        QMessageBox::information(this, "Game Over", "Player 1 timeout!");
+                                        QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
                                         this->OnActionClearBoard();
                                         return;
                                     }
@@ -3203,7 +3203,7 @@ void MainWindow::beginSwap2Board()
                                 else
                                 {
                                     this->OnActionEnd();
-                                    QMessageBox::information(this, "Error", "Unknown Error!");
+                                    QMessageBox::information(this, tr("Error"), tr("Unknown Error!"));
                                     this->OnActionClearBoard();
                                     return;
                                 }
@@ -3221,7 +3221,7 @@ void MainWindow::beginSwap2Board()
                         else
                         {
                             this->OnActionEnd();
-                            QMessageBox::information(this, "Error", "Failed to place 3 stones!");
+                            QMessageBox::information(this, tr("Error"), tr("Failed to place 3 stones!"));
                             this->OnActionClearBoard();
                             return;
                         }
@@ -3229,7 +3229,7 @@ void MainWindow::beginSwap2Board()
                     else
                     {
                         this->OnActionEnd();
-                        QMessageBox::information(this, "Error", "Illegal pos from input!");
+                        QMessageBox::information(this, tr("Error"), tr("Illegal pos from input!"));
                         this->OnActionClearBoard();
                         return;
                     }
