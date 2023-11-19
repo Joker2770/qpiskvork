@@ -82,7 +82,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c1.addLayout(&(this->hbl_c1), 0, 0);
         this->gl_c1.addWidget(this->dbb_c1, 1, 0);
 
-        this->setWindowTitle("Input 3 Move");
+        this->setWindowTitle(tr("Input 3 Move"));
         //this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c1));
@@ -99,8 +99,8 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
     {
         this->dbb_c2 = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-        this->lb_1_c2.setText("swap");
-        this->lb_2_c2.setText("go on");
+        this->lb_1_c2.setText(tr("swap"));
+        this->lb_2_c2.setText(tr("go on"));
         this->lb_3_c2.setText(",");
         this->lb_4_c2.setText(",");
         this->lb_5_c2.setText(" ");
@@ -139,7 +139,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c2.addLayout(&(this->gl_opts_2), 0, 0);
         this->gl_c2.addWidget(this->dbb_c2, 1, 0);
 
-        this->setWindowTitle("Case 2");
+        this->setWindowTitle(tr("Case 2"));
         //this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c2));
@@ -159,8 +159,8 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
     {
         this->dbb_c3 = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-        this->lb_1_c3.setText("swap");
-        this->lb_2_c3.setText("go on");
+        this->lb_1_c3.setText(tr("swap"));
+        this->lb_2_c3.setText(tr("go on"));
         this->rb_1_c3.setText("1");
         this->rb_2_c3.setText("2");
 
@@ -177,7 +177,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c3.addLayout(&(this->gl_opts_3), 0, 0);
         this->gl_c3.addWidget(this->dbb_c3, 1, 0);
 
-        this->setWindowTitle("Case 3");
+        this->setWindowTitle(tr("Case 3"));
         //this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c3));
