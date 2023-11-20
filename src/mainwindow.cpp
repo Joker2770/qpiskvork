@@ -228,9 +228,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bOK_P2 = false;
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
-    this->m_timeout_match = 15 * 60 * 1000;
-    this->m_timeout_turn = 30 * 1000;
-    this->m_max_memory = 1024 * 1024 * 1024;
+    QString q_timeout_match;
+    this->m_customs->getCfgValue("Time", "match_timeout", q_timeout_match);
+    this->m_timeout_match = (q_timeout_match.toInt() > 0 && q_timeout_match.toInt() < 2147483647) ? q_timeout_match.toInt() : (15 * 60 * 1000);
+    QString q_timeout_turn;
+    this->m_customs->getCfgValue("Time", "turn_timeout", q_timeout_turn);
+    this->m_timeout_turn = (q_timeout_turn.toInt() > 0 && q_timeout_turn.toInt() < this->m_timeout_match) ? q_timeout_turn.toInt() : (30 * 1000);
+    QString q_max_memory;
+    this->m_customs->getCfgValue("Memory", "max_memory", q_max_memory);
+    this->m_max_memory = (q_max_memory.toInt() > 0 && q_max_memory.toInt() < (int)((unsigned int)-1 >> 1)) ? q_max_memory.toInt() : (1024 * 1024 * 1024);
     this->m_time_left_p1 = this->m_timeout_match;
     this->m_time_left_p2 = this->m_timeout_match;
 
@@ -1598,6 +1604,8 @@ void MainWindow::OnActionTimeoutMatch()
                 this->m_T1->stop();
             if (nullptr != this->m_T2)
                 this->m_T2->stop();
+
+            this->m_customs->setCfgValue("Time", "match_timeout", this->m_timeout_match);
         }
     }
 }
@@ -1612,6 +1620,7 @@ void MainWindow::OnActionTimeoutTurn()
         if (ok)
         {
             if (i_get >= 0) this->m_timeout_turn = (unsigned int)i_get;
+            this->m_customs->setCfgValue("Time", "turn_timeout", this->m_timeout_turn);
         }
     }
 }
@@ -1626,6 +1635,7 @@ void MainWindow::OnActionMaxMemory()
         if (ok)
         {
             if (i_get >= 0) this->m_max_memory = (unsigned int)i_get;
+            this->m_customs->setCfgValue("Memory", "max_memory", this->m_max_memory);
         }
     }
 }
