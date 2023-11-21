@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       m_player_setting(new PlayerSettingDialog(this))
 {
+    this->m_customs = new Customs("qpiskvork");
+    
 #ifdef USE_DEFAULT_MENU_BAR
     this->pMenuBar = this->menuBar();
 #else
@@ -40,11 +42,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuPlayer = new QMenu(tr("Player"), this);
     this->pMenuShow = new QMenu(tr("Show"), this);
     this->pMenuAbout = new QMenu(tr("About"), this);
+    this->pSubMenuOfLanguage = new QMenu(tr("LanguageSubMenu"), this);
     this->pActionBoardSize = new QAction(tr("Board Size"), this);
     this->pActionTimeoutMatch = new QAction(tr("Match Timeout"), this);
     this->pActionTimeoutTurn = new QAction(tr("Turn Timeout"), this);
     this->pActionMaxMemory = new QAction(tr("Max Memory"), this);
     this->pActionSkin = new QAction(tr("Skin"), this);
+    this->pActionLanguage = new QAction(tr("Language"), this);
+    this->pActionLangZHCN = new QAction(tr("zh_CN"), this);
+    this->pActionLangENUK = new QAction(tr("EN_UK"), this);
     this->pActionSwap2Board = new QAction(tr("Swap2board"), this);
     this->pActionStart = new QAction(tr("Start"), this);
     this->pActionPause = new QAction(tr("Pause"), this);
@@ -105,6 +111,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTimeSecond->setCheckable(true);
     this->pActionTimeSecond->setChecked(false);
     this->pActionGridSize->setShortcut(QKeySequence(Qt::Key_G));
+    this->pLanguageActionGroup = new QActionGroup(this);
+    this->pLanguageActionGroup->setExclusive(true);
+    this->pActionLangZHCN->setCheckable(true);
+    this->pActionLangENUK->setCheckable(true);
+    this->pSubMenuOfLanguage->addAction(this->pLanguageActionGroup->addAction(this->pActionLangZHCN));
+    this->pSubMenuOfLanguage->addAction(this->pLanguageActionGroup->addAction(this->pActionLangENUK));
+    this->pActionLanguage->setMenu(this->pSubMenuOfLanguage);
     this->pMenuSetting->addAction(this->pActionBoardSize);
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
@@ -124,6 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuShow->addAction(this->pActionTimeSecond);
     this->pMenuShow->addAction(this->pActionGridSize);
     this->pMenuShow->addAction(this->pActionSkin);
+    this->pMenuShow->addAction(this->pActionLanguage);
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
     this->pMenuAbout->addAction(this->pActionLicense);
@@ -154,7 +168,12 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(this->pMenuBar);
 #endif
 
-    this->m_customs = new Customs("qpiskvork");
+    QString q_savedLang;
+    this->m_customs->getCfgValue("View", "language", q_savedLang);
+    if (0 == QString::compare(q_savedLang, "zh_CN"))
+        this->pActionLangZHCN->setChecked(true);
+    else
+        this->pActionLangENUK->setChecked(true);
 
     this->setWindowIcon(QIcon(":/icon/icon.jpg"));
     QString grid_size;
@@ -209,9 +228,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bOK_P2 = false;
     this->m_T1 = new Timer();
     this->m_T2 = new Timer();
-    this->m_timeout_match = 15 * 60 * 1000;
-    this->m_timeout_turn = 30 * 1000;
-    this->m_max_memory = 1024 * 1024 * 1024;
+    QString q_timeout_match;
+    this->m_customs->getCfgValue("Time", "match_timeout", q_timeout_match);
+    this->m_timeout_match = (q_timeout_match.toInt() > 0 && q_timeout_match.toInt() < 2147483647) ? q_timeout_match.toInt() : (15 * 60 * 1000);
+    QString q_timeout_turn;
+    this->m_customs->getCfgValue("Time", "turn_timeout", q_timeout_turn);
+    this->m_timeout_turn = (q_timeout_turn.toInt() > 0 && q_timeout_turn.toInt() < this->m_timeout_match) ? q_timeout_turn.toInt() : (30 * 1000);
+    QString q_max_memory;
+    this->m_customs->getCfgValue("Memory", "max_memory", q_max_memory);
+    this->m_max_memory = (q_max_memory.toInt() > 0 && q_max_memory.toInt() < (int)((unsigned int)-1 >> 1)) ? q_max_memory.toInt() : (1024 * 1024 * 1024);
     this->m_time_left_p1 = this->m_timeout_match;
     this->m_time_left_p2 = this->m_timeout_match;
 
@@ -244,6 +269,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
     connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
     connect(this->pRuleActionGroup,SIGNAL(triggered(QAction*)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
+    connect(this->pLanguageActionGroup,SIGNAL(triggered(QAction*)),this,SLOT(On_ClickedLanguageActionGroup(QAction*)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
@@ -254,6 +280,31 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if (nullptr != this->pLanguageActionGroup)
+    {
+        delete this->pLanguageActionGroup;
+        this->pLanguageActionGroup = nullptr;
+    }
+    if (nullptr != this->pActionLangENUK)
+    {
+        delete this->pActionLangENUK;
+        this->pActionLangENUK;
+    }
+    if (nullptr != this->pActionLangZHCN)
+    {
+        delete this->pActionLangZHCN;
+        this->pActionLangZHCN;
+    }
+    if (nullptr != this->pSubMenuOfLanguage)
+    {
+        delete this->pSubMenuOfLanguage;
+        this->pSubMenuOfLanguage = nullptr;
+    }
+    if (nullptr != this->pActionLanguage)
+    {
+        delete this->pActionLanguage;
+        this->pActionLanguage = nullptr;
+    }
     if (nullptr != this->m_customs)
     {
         delete this->m_customs;
@@ -1109,7 +1160,7 @@ void MainWindow::OnActionStart()
         {
             if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
             {
-                QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
+                QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.") + "\n" + tr("Please check the setting of player 1!"));
                 return;
             }
 
@@ -1280,7 +1331,7 @@ void MainWindow::OnActionContinue()
             {
                 if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
                 {
-                    QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.\nPlease check the setting of player 1!"));
+                    QMessageBox::information(this, tr("Error!"), tr("Engine is necessary for continuous game.") + "\n" + tr("Please check the setting of player 1!"));
                     return;
                 }
 
@@ -1577,6 +1628,8 @@ void MainWindow::OnActionTimeoutMatch()
                 this->m_T1->stop();
             if (nullptr != this->m_T2)
                 this->m_T2->stop();
+
+            this->m_customs->setCfgValue("Time", "match_timeout", this->m_timeout_match);
         }
     }
 }
@@ -1591,6 +1644,7 @@ void MainWindow::OnActionTimeoutTurn()
         if (ok)
         {
             if (i_get >= 0) this->m_timeout_turn = (unsigned int)i_get;
+            this->m_customs->setCfgValue("Time", "turn_timeout", this->m_timeout_turn);
         }
     }
 }
@@ -1605,6 +1659,7 @@ void MainWindow::OnActionMaxMemory()
         if (ok)
         {
             if (i_get >= 0) this->m_max_memory = (unsigned int)i_get;
+            this->m_customs->setCfgValue("Memory", "max_memory", this->m_max_memory);
         }
     }
 }
@@ -1797,7 +1852,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
 {
     if (this->mState == GAME_STATE::OVER || this->mState == GAME_STATE::IDLE)
     {
-        if (pAction->text().compare(this->pActionFreeStyleGomoku->text())==0)
+        if (pAction->text().compare(this->pActionFreeStyleGomoku->text()) == 0)
         {
             if (this->pActionFreeStyleGomoku->isChecked())
             {
@@ -1829,7 +1884,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
             {
                 qDebug() << "Choose continuous!";
                 this->m_Rule |= GAME_RULE::CONTINUOUS;
-                QMessageBox::information(this, tr("Tips"), tr("It will select the engine of player 1 to begin continuous game!\n1, no turn;\n2, self play continuously.\nPlease check the setting of player 1."));
+                QMessageBox::information(this, tr("Tips"), tr("It will select the engine of player 1 to begin continuous game!") + "\n" + tr("1, no turn;") + "\n" + tr("2, self play continuously.") + "\n" + tr("Please check the setting of player 1."));
             }
             else
             {
@@ -1885,6 +1940,42 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
     }
 }
 
+void MainWindow::On_ClickedLanguageActionGroup(QAction *pAction)
+{
+    if (pAction->text().compare(this->pActionLangENUK->text()) == 0)
+    {
+        if (this->pActionLangENUK->isChecked())
+        {
+            qDebug() << "Choose en_UK!";
+            this->m_customs->setCfgValue("View", "language", "en_UK");
+            QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
+        }
+        else
+        {
+            qDebug() << "Cancel en_UK!";
+        }
+    }
+    else if (pAction->text().compare(this->pActionLangZHCN->text()) == 0)
+    {
+        if (this->pActionLangZHCN->isChecked())
+        {
+            qDebug() << "chose zh_CN!";
+            this->m_customs->setCfgValue("View", "language", "zh_CN");
+            QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
+        }
+        else
+        {
+            qDebug() << "Cancel zh_CN!";
+        }
+    }
+    else
+    {
+        qDebug() << "use en_UK as default!";
+        this->m_customs->setCfgValue("View", "language", "en_UK");
+        QMessageBox::information(this, tr("Tips"), tr("Take effect after restart program!"));
+    }
+}
+
 void MainWindow::OnActionPlayerSetting()
 {
     if (this->mState != GAME_STATE::PLAYING)
@@ -1919,11 +2010,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-<<<<<<< HEAD
-    const QString strVerNum = tr("Ver Num: 0.5.60-features\n");
-=======
-    const QString strVerNum = tr("Ver Num: 0.5.60\n");
->>>>>>> dev
+    const QString strVerNum = tr("Ver Num: 0.6.65-features") + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");

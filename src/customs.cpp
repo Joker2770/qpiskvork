@@ -50,6 +50,6 @@ void Customs::setCfgValue(const QString &group, const QString &key, const QVaria
 void Customs::getCfgValue(const QString &group, const QString &key, QString &value)
 {
     this->settings->beginGroup(group);
-    value = this->settings->value(key).toString();
+    value = this->settings->value(key, 0).toString();
     this->settings->endGroup();
 }

@@ -21,5 +21,6 @@
         <file>sounds/leave.wav</file>
         <file>sounds/match.wav</file>
         <file>sounds/stone.wav</file>
+        <file>language/zh_CN.qm</file>
     </qresource>
 </RCC>

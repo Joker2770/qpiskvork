@@ -92,11 +92,15 @@ public:
     QMenu *pMenuPlayer;
     QMenu *pMenuShow;
     QMenu *pMenuAbout;
+    QMenu *pSubMenuOfLanguage;
     QAction *pActionBoardSize;
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
     QAction *pActionSkin;
+    QAction *pActionLanguage;
+    QAction *pActionLangZHCN;
+    QAction *pActionLangENUK;
     QAction *pActionSwap2Board;
     QAction *pActionStart;
     QAction *pActionPause;
@@ -121,6 +125,7 @@ public:
     QAction *pActionFeedback;
     QAction *pActionLicense;
     QActionGroup *pRuleActionGroup;
+    QActionGroup *pLanguageActionGroup;
 
 public slots:
     void OnActionStart();
@@ -136,6 +141,7 @@ public slots:
     void OnActionGridSize();
     void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
+    void On_ClickedLanguageActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionNumOfMove();
     void OnActionVer();
