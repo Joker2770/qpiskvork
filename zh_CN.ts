@@ -36,7 +36,7 @@
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="46"/>
-        <location filename="src/mainwindow.cpp" line="1558"/>
+        <location filename="src/mainwindow.cpp" line="1582"/>
         <source>Board Size</source>
         <translation>棋盘大小</translation>
     </message>
@@ -47,25 +47,25 @@
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="47"/>
-        <location filename="src/mainwindow.cpp" line="1586"/>
+        <location filename="src/mainwindow.cpp" line="1610"/>
         <source>Match Timeout</source>
         <translation>比赛时限</translation>
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="48"/>
-        <location filename="src/mainwindow.cpp" line="1618"/>
+        <location filename="src/mainwindow.cpp" line="1642"/>
         <source>Turn Timeout</source>
         <translation>步时</translation>
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="49"/>
-        <location filename="src/mainwindow.cpp" line="1633"/>
+        <location filename="src/mainwindow.cpp" line="1657"/>
         <source>Max Memory</source>
         <translation>内存上限</translation>
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="50"/>
-        <location filename="src/mainwindow.cpp" line="1728"/>
+        <location filename="src/mainwindow.cpp" line="1752"/>
         <source>Skin</source>
         <translation>皮肤</translation>
     </message>
@@ -171,7 +171,7 @@
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="72"/>
-        <location filename="src/mainwindow.cpp" line="1648"/>
+        <location filename="src/mainwindow.cpp" line="1672"/>
         <source>Grid Size</source>
         <translation>方格大小</translation>
     </message>
@@ -182,299 +182,299 @@
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="75"/>
-        <location filename="src/mainwindow.cpp" line="2003"/>
+        <location filename="src/mainwindow.cpp" line="2027"/>
         <source>Feedback</source>
         <translation>反馈</translation>
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="76"/>
-        <location filename="src/mainwindow.cpp" line="2014"/>
+        <location filename="src/mainwindow.cpp" line="2038"/>
         <source>License</source>
         <translation>许可证</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="691"/>
-        <location filename="src/mainwindow.cpp" line="711"/>
+        <location filename="src/mainwindow.cpp" line="693"/>
+        <location filename="src/mainwindow.cpp" line="713"/>
         <source>TIMEOUT</source>
         <translation>超时</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="855"/>
-        <location filename="src/mainwindow.cpp" line="862"/>
+        <location filename="src/mainwindow.cpp" line="857"/>
+        <location filename="src/mainwindow.cpp" line="864"/>
         <source>AI</source>
         <translation>人工智能</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="857"/>
-        <location filename="src/mainwindow.cpp" line="864"/>
+        <location filename="src/mainwindow.cpp" line="859"/>
+        <location filename="src/mainwindow.cpp" line="866"/>
         <source>Human</source>
         <translation>人类</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1035"/>
-        <location filename="src/mainwindow.cpp" line="1045"/>
-        <location filename="src/mainwindow.cpp" line="1370"/>
-        <location filename="src/mainwindow.cpp" line="1434"/>
-        <location filename="src/mainwindow.cpp" line="1449"/>
-        <location filename="src/mainwindow.cpp" line="2058"/>
-        <location filename="src/mainwindow.cpp" line="2091"/>
-        <location filename="src/mainwindow.cpp" line="2098"/>
-        <location filename="src/mainwindow.cpp" line="2216"/>
-        <location filename="src/mainwindow.cpp" line="2249"/>
-        <location filename="src/mainwindow.cpp" line="2256"/>
-        <location filename="src/mainwindow.cpp" line="2359"/>
-        <location filename="src/mainwindow.cpp" line="2373"/>
-        <location filename="src/mainwindow.cpp" line="2380"/>
-        <location filename="src/mainwindow.cpp" line="2483"/>
-        <location filename="src/mainwindow.cpp" line="2521"/>
-        <location filename="src/mainwindow.cpp" line="2584"/>
-        <location filename="src/mainwindow.cpp" line="2620"/>
-        <location filename="src/mainwindow.cpp" line="2669"/>
-        <location filename="src/mainwindow.cpp" line="2725"/>
-        <location filename="src/mainwindow.cpp" line="2788"/>
-        <location filename="src/mainwindow.cpp" line="2826"/>
-        <location filename="src/mainwindow.cpp" line="2889"/>
-        <location filename="src/mainwindow.cpp" line="2925"/>
-        <location filename="src/mainwindow.cpp" line="2974"/>
-        <location filename="src/mainwindow.cpp" line="3030"/>
-        <location filename="src/mainwindow.cpp" line="3116"/>
-        <location filename="src/mainwindow.cpp" line="3152"/>
-        <location filename="src/mainwindow.cpp" line="3196"/>
-        <location filename="src/mainwindow.cpp" line="3244"/>
+        <location filename="src/mainwindow.cpp" line="1039"/>
+        <location filename="src/mainwindow.cpp" line="1049"/>
+        <location filename="src/mainwindow.cpp" line="1388"/>
+        <location filename="src/mainwindow.cpp" line="1456"/>
+        <location filename="src/mainwindow.cpp" line="1471"/>
+        <location filename="src/mainwindow.cpp" line="2084"/>
+        <location filename="src/mainwindow.cpp" line="2117"/>
+        <location filename="src/mainwindow.cpp" line="2124"/>
+        <location filename="src/mainwindow.cpp" line="2244"/>
+        <location filename="src/mainwindow.cpp" line="2277"/>
+        <location filename="src/mainwindow.cpp" line="2284"/>
+        <location filename="src/mainwindow.cpp" line="2389"/>
+        <location filename="src/mainwindow.cpp" line="2403"/>
+        <location filename="src/mainwindow.cpp" line="2410"/>
+        <location filename="src/mainwindow.cpp" line="2515"/>
+        <location filename="src/mainwindow.cpp" line="2553"/>
+        <location filename="src/mainwindow.cpp" line="2618"/>
+        <location filename="src/mainwindow.cpp" line="2654"/>
+        <location filename="src/mainwindow.cpp" line="2703"/>
+        <location filename="src/mainwindow.cpp" line="2759"/>
+        <location filename="src/mainwindow.cpp" line="2825"/>
+        <location filename="src/mainwindow.cpp" line="2863"/>
+        <location filename="src/mainwindow.cpp" line="2928"/>
+        <location filename="src/mainwindow.cpp" line="2964"/>
+        <location filename="src/mainwindow.cpp" line="3013"/>
+        <location filename="src/mainwindow.cpp" line="3069"/>
+        <location filename="src/mainwindow.cpp" line="3156"/>
+        <location filename="src/mainwindow.cpp" line="3192"/>
+        <location filename="src/mainwindow.cpp" line="3236"/>
+        <location filename="src/mainwindow.cpp" line="3284"/>
         <source>Game Over</source>
         <translation>游戏结束</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1035"/>
-        <location filename="src/mainwindow.cpp" line="1045"/>
-        <location filename="src/mainwindow.cpp" line="2091"/>
-        <location filename="src/mainwindow.cpp" line="2098"/>
-        <location filename="src/mainwindow.cpp" line="2249"/>
-        <location filename="src/mainwindow.cpp" line="2256"/>
-        <location filename="src/mainwindow.cpp" line="2373"/>
-        <location filename="src/mainwindow.cpp" line="2380"/>
+        <location filename="src/mainwindow.cpp" line="1039"/>
+        <location filename="src/mainwindow.cpp" line="1049"/>
+        <location filename="src/mainwindow.cpp" line="2117"/>
+        <location filename="src/mainwindow.cpp" line="2124"/>
+        <location filename="src/mainwindow.cpp" line="2277"/>
+        <location filename="src/mainwindow.cpp" line="2284"/>
+        <location filename="src/mainwindow.cpp" line="2403"/>
+        <location filename="src/mainwindow.cpp" line="2410"/>
         <source>Draw!</source>
         <translation>平局！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1089"/>
-        <location filename="src/mainwindow.cpp" line="1091"/>
-        <location filename="src/mainwindow.cpp" line="1116"/>
-        <location filename="src/mainwindow.cpp" line="2142"/>
-        <location filename="src/mainwindow.cpp" line="2144"/>
-        <location filename="src/mainwindow.cpp" line="2169"/>
-        <location filename="src/mainwindow.cpp" line="2300"/>
-        <location filename="src/mainwindow.cpp" line="2302"/>
-        <location filename="src/mainwindow.cpp" line="2327"/>
-        <location filename="src/mainwindow.cpp" line="2424"/>
-        <location filename="src/mainwindow.cpp" line="2426"/>
-        <location filename="src/mainwindow.cpp" line="2451"/>
-        <location filename="src/mainwindow.cpp" line="2753"/>
-        <location filename="src/mainwindow.cpp" line="2759"/>
-        <location filename="src/mainwindow.cpp" line="3058"/>
-        <location filename="src/mainwindow.cpp" line="3064"/>
+        <location filename="src/mainwindow.cpp" line="1093"/>
+        <location filename="src/mainwindow.cpp" line="1095"/>
+        <location filename="src/mainwindow.cpp" line="1120"/>
+        <location filename="src/mainwindow.cpp" line="2168"/>
+        <location filename="src/mainwindow.cpp" line="2170"/>
+        <location filename="src/mainwindow.cpp" line="2195"/>
+        <location filename="src/mainwindow.cpp" line="2328"/>
+        <location filename="src/mainwindow.cpp" line="2330"/>
+        <location filename="src/mainwindow.cpp" line="2355"/>
+        <location filename="src/mainwindow.cpp" line="2454"/>
+        <location filename="src/mainwindow.cpp" line="2456"/>
+        <location filename="src/mainwindow.cpp" line="2481"/>
+        <location filename="src/mainwindow.cpp" line="2788"/>
+        <location filename="src/mainwindow.cpp" line="2794"/>
+        <location filename="src/mainwindow.cpp" line="3098"/>
+        <location filename="src/mainwindow.cpp" line="3104"/>
         <source>game over!</source>
         <translation>游戏结束！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1089"/>
-        <location filename="src/mainwindow.cpp" line="2142"/>
-        <location filename="src/mainwindow.cpp" line="2300"/>
-        <location filename="src/mainwindow.cpp" line="2424"/>
+        <location filename="src/mainwindow.cpp" line="1093"/>
+        <location filename="src/mainwindow.cpp" line="2168"/>
+        <location filename="src/mainwindow.cpp" line="2328"/>
+        <location filename="src/mainwindow.cpp" line="2454"/>
         <source>Black win!</source>
         <translation>黑方赢！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1091"/>
-        <location filename="src/mainwindow.cpp" line="2144"/>
-        <location filename="src/mainwindow.cpp" line="2302"/>
-        <location filename="src/mainwindow.cpp" line="2426"/>
+        <location filename="src/mainwindow.cpp" line="1095"/>
+        <location filename="src/mainwindow.cpp" line="2170"/>
+        <location filename="src/mainwindow.cpp" line="2330"/>
+        <location filename="src/mainwindow.cpp" line="2456"/>
         <source>White win!</source>
         <translation>白方赢！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1101"/>
-        <location filename="src/mainwindow.cpp" line="2154"/>
-        <location filename="src/mainwindow.cpp" line="2312"/>
-        <location filename="src/mainwindow.cpp" line="2436"/>
+        <location filename="src/mainwindow.cpp" line="1105"/>
+        <location filename="src/mainwindow.cpp" line="2180"/>
+        <location filename="src/mainwindow.cpp" line="2340"/>
+        <location filename="src/mainwindow.cpp" line="2466"/>
         <source>Illegal move from BLACK! </source>
         <translation>来自黑方的非法移动！ </translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1105"/>
-        <location filename="src/mainwindow.cpp" line="2158"/>
-        <location filename="src/mainwindow.cpp" line="2316"/>
-        <location filename="src/mainwindow.cpp" line="2440"/>
+        <location filename="src/mainwindow.cpp" line="1109"/>
+        <location filename="src/mainwindow.cpp" line="2184"/>
+        <location filename="src/mainwindow.cpp" line="2344"/>
+        <location filename="src/mainwindow.cpp" line="2470"/>
         <source>OVERLINE</source>
         <translation>长连</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1108"/>
-        <location filename="src/mainwindow.cpp" line="2161"/>
-        <location filename="src/mainwindow.cpp" line="2319"/>
-        <location filename="src/mainwindow.cpp" line="2443"/>
+        <location filename="src/mainwindow.cpp" line="1112"/>
+        <location filename="src/mainwindow.cpp" line="2187"/>
+        <location filename="src/mainwindow.cpp" line="2347"/>
+        <location filename="src/mainwindow.cpp" line="2473"/>
         <source>DOUBLE_FOUR</source>
         <translation>四四</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1111"/>
-        <location filename="src/mainwindow.cpp" line="2164"/>
-        <location filename="src/mainwindow.cpp" line="2322"/>
-        <location filename="src/mainwindow.cpp" line="2446"/>
+        <location filename="src/mainwindow.cpp" line="1115"/>
+        <location filename="src/mainwindow.cpp" line="2190"/>
+        <location filename="src/mainwindow.cpp" line="2350"/>
+        <location filename="src/mainwindow.cpp" line="2476"/>
         <source>DOUBLE_THREE</source>
         <translation>三三</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1128"/>
-        <location filename="src/mainwindow.cpp" line="1863"/>
-        <location filename="src/mainwindow.cpp" line="1927"/>
-        <location filename="src/mainwindow.cpp" line="1940"/>
+        <location filename="src/mainwindow.cpp" line="1132"/>
+        <location filename="src/mainwindow.cpp" line="1887"/>
         <location filename="src/mainwindow.cpp" line="1951"/>
+        <location filename="src/mainwindow.cpp" line="1964"/>
+        <location filename="src/mainwindow.cpp" line="1975"/>
         <source>Tips</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1128"/>
+        <location filename="src/mainwindow.cpp" line="1132"/>
         <source>It will clear board and start new game!</source>
         <translation>即将清空棋盘并开始新游戏！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1159"/>
-        <location filename="src/mainwindow.cpp" line="1175"/>
-        <location filename="src/mainwindow.cpp" line="1194"/>
-        <location filename="src/mainwindow.cpp" line="1216"/>
-        <location filename="src/mainwindow.cpp" line="1241"/>
-        <location filename="src/mainwindow.cpp" line="1320"/>
-        <location filename="src/mainwindow.cpp" line="1336"/>
-        <location filename="src/mainwindow.cpp" line="1355"/>
-        <location filename="src/mainwindow.cpp" line="1390"/>
-        <location filename="src/mainwindow.cpp" line="1415"/>
-        <location filename="src/mainwindow.cpp" line="1541"/>
+        <location filename="src/mainwindow.cpp" line="1163"/>
+        <location filename="src/mainwindow.cpp" line="1181"/>
+        <location filename="src/mainwindow.cpp" line="1202"/>
+        <location filename="src/mainwindow.cpp" line="1226"/>
+        <location filename="src/mainwindow.cpp" line="1253"/>
+        <location filename="src/mainwindow.cpp" line="1334"/>
+        <location filename="src/mainwindow.cpp" line="1352"/>
+        <location filename="src/mainwindow.cpp" line="1373"/>
+        <location filename="src/mainwindow.cpp" line="1410"/>
+        <location filename="src/mainwindow.cpp" line="1437"/>
+        <location filename="src/mainwindow.cpp" line="1565"/>
         <source>Error!</source>
         <translation>错误！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1159"/>
-        <location filename="src/mainwindow.cpp" line="1320"/>
+        <location filename="src/mainwindow.cpp" line="1163"/>
+        <location filename="src/mainwindow.cpp" line="1334"/>
         <source>Engine is necessary for continuous game.</source>
         <translation>缺少自战引擎。</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1159"/>
-        <location filename="src/mainwindow.cpp" line="1320"/>
+        <location filename="src/mainwindow.cpp" line="1163"/>
+        <location filename="src/mainwindow.cpp" line="1334"/>
         <source>Please check the setting of player 1!</source>
         <translation>请检查玩家1的设置！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1175"/>
-        <location filename="src/mainwindow.cpp" line="1216"/>
-        <location filename="src/mainwindow.cpp" line="1336"/>
-        <location filename="src/mainwindow.cpp" line="1390"/>
+        <location filename="src/mainwindow.cpp" line="1181"/>
+        <location filename="src/mainwindow.cpp" line="1226"/>
+        <location filename="src/mainwindow.cpp" line="1352"/>
+        <location filename="src/mainwindow.cpp" line="1410"/>
         <source>Failied to Attach Engine!</source>
         <translation>连接引擎失败！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1194"/>
-        <location filename="src/mainwindow.cpp" line="1241"/>
-        <location filename="src/mainwindow.cpp" line="1355"/>
-        <location filename="src/mainwindow.cpp" line="1415"/>
+        <location filename="src/mainwindow.cpp" line="1202"/>
+        <location filename="src/mainwindow.cpp" line="1253"/>
+        <location filename="src/mainwindow.cpp" line="1373"/>
+        <location filename="src/mainwindow.cpp" line="1437"/>
         <source>Failied to start game!</source>
         <translation>开启游戏失败！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1370"/>
-        <location filename="src/mainwindow.cpp" line="1434"/>
-        <location filename="src/mainwindow.cpp" line="2216"/>
-        <location filename="src/mainwindow.cpp" line="2359"/>
-        <location filename="src/mainwindow.cpp" line="2521"/>
-        <location filename="src/mainwindow.cpp" line="2620"/>
-        <location filename="src/mainwindow.cpp" line="2669"/>
-        <location filename="src/mainwindow.cpp" line="2788"/>
-        <location filename="src/mainwindow.cpp" line="2889"/>
-        <location filename="src/mainwindow.cpp" line="3030"/>
-        <location filename="src/mainwindow.cpp" line="3152"/>
-        <location filename="src/mainwindow.cpp" line="3244"/>
+        <location filename="src/mainwindow.cpp" line="1388"/>
+        <location filename="src/mainwindow.cpp" line="1456"/>
+        <location filename="src/mainwindow.cpp" line="2244"/>
+        <location filename="src/mainwindow.cpp" line="2389"/>
+        <location filename="src/mainwindow.cpp" line="2553"/>
+        <location filename="src/mainwindow.cpp" line="2654"/>
+        <location filename="src/mainwindow.cpp" line="2703"/>
+        <location filename="src/mainwindow.cpp" line="2825"/>
+        <location filename="src/mainwindow.cpp" line="2928"/>
+        <location filename="src/mainwindow.cpp" line="3069"/>
+        <location filename="src/mainwindow.cpp" line="3192"/>
+        <location filename="src/mainwindow.cpp" line="3284"/>
         <source>Player 1 timeout!</source>
         <translation>玩家1超时！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1449"/>
-        <location filename="src/mainwindow.cpp" line="2058"/>
-        <location filename="src/mainwindow.cpp" line="2483"/>
-        <location filename="src/mainwindow.cpp" line="2584"/>
-        <location filename="src/mainwindow.cpp" line="2725"/>
-        <location filename="src/mainwindow.cpp" line="2826"/>
-        <location filename="src/mainwindow.cpp" line="2925"/>
-        <location filename="src/mainwindow.cpp" line="2974"/>
-        <location filename="src/mainwindow.cpp" line="3116"/>
-        <location filename="src/mainwindow.cpp" line="3196"/>
+        <location filename="src/mainwindow.cpp" line="1471"/>
+        <location filename="src/mainwindow.cpp" line="2084"/>
+        <location filename="src/mainwindow.cpp" line="2515"/>
+        <location filename="src/mainwindow.cpp" line="2618"/>
+        <location filename="src/mainwindow.cpp" line="2759"/>
+        <location filename="src/mainwindow.cpp" line="2863"/>
+        <location filename="src/mainwindow.cpp" line="2964"/>
+        <location filename="src/mainwindow.cpp" line="3013"/>
+        <location filename="src/mainwindow.cpp" line="3156"/>
+        <location filename="src/mainwindow.cpp" line="3236"/>
         <source>Player 2 timeout!</source>
         <translation>玩家2超时！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1541"/>
+        <location filename="src/mainwindow.cpp" line="1565"/>
         <source>Failied to take back!</source>
         <translation>回退失败！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1558"/>
+        <location filename="src/mainwindow.cpp" line="1582"/>
         <source>Please input board size:</source>
         <translation>请输入棋盘大小：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1586"/>
+        <location filename="src/mainwindow.cpp" line="1610"/>
         <source>Please input Match-Timeout(ms):</source>
         <translation>请输入对局时限（ms）：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1618"/>
+        <location filename="src/mainwindow.cpp" line="1642"/>
         <source>Please input Turn-Timeout(ms):</source>
         <translation>请输入步时（ms）：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1633"/>
+        <location filename="src/mainwindow.cpp" line="1657"/>
         <source>Please input Max-Memory(byte):</source>
         <translation>请输入内存上限（byte）：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1648"/>
+        <location filename="src/mainwindow.cpp" line="1672"/>
         <source>Please input grid size:</source>
         <translation>请输入方格大小：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1728"/>
+        <location filename="src/mainwindow.cpp" line="1752"/>
         <source>Please choose skin:</source>
         <translation>请选择皮肤：</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1863"/>
+        <location filename="src/mainwindow.cpp" line="1887"/>
         <source>It will select the engine of player 1 to begin continuous game!</source>
         <translation>即将选择玩家1的引擎来开启自战游戏！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1863"/>
+        <location filename="src/mainwindow.cpp" line="1887"/>
         <source>1, no turn;</source>
         <translation>1、没有行棋交换；</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1863"/>
+        <location filename="src/mainwindow.cpp" line="1887"/>
         <source>2, self play continuously.</source>
         <translation>2、自己互博。</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1863"/>
+        <location filename="src/mainwindow.cpp" line="1887"/>
         <source>Please check the setting of player 1.</source>
         <translation>请检查玩家1的设置。</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1927"/>
-        <location filename="src/mainwindow.cpp" line="1940"/>
         <location filename="src/mainwindow.cpp" line="1951"/>
+        <location filename="src/mainwindow.cpp" line="1964"/>
+        <location filename="src/mainwindow.cpp" line="1975"/>
         <source>Take effect after restart program!</source>
         <translation>重启程序生效！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1989"/>
+        <location filename="src/mainwindow.cpp" line="2013"/>
         <source>Ver Num: </source>
         <oldsource>Ver Num: 0.6.65</oldsource>
         <translation>版本号： </translation>
@@ -486,122 +486,122 @@
         <translation type="vanished">版本号：0.5.60</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1990"/>
+        <location filename="src/mainwindow.cpp" line="2014"/>
         <source>Build at </source>
         <translation>构建于 </translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="1994"/>
+        <location filename="src/mainwindow.cpp" line="2018"/>
         <source>Version</source>
         <translation>版本</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2084"/>
-        <location filename="src/mainwindow.cpp" line="2242"/>
-        <location filename="src/mainwindow.cpp" line="2366"/>
+        <location filename="src/mainwindow.cpp" line="2110"/>
+        <location filename="src/mainwindow.cpp" line="2270"/>
+        <location filename="src/mainwindow.cpp" line="2396"/>
         <source>Game Error</source>
         <translation>游戏错误</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2084"/>
-        <location filename="src/mainwindow.cpp" line="2366"/>
+        <location filename="src/mainwindow.cpp" line="2110"/>
+        <location filename="src/mainwindow.cpp" line="2396"/>
         <source>Might be illegal move from player 1!</source>
         <translation>玩家1可能犯规！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2242"/>
+        <location filename="src/mainwindow.cpp" line="2270"/>
         <source>Might be illegal move from player 2!</source>
         <translation>玩家2可能犯规！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2495"/>
-        <location filename="src/mainwindow.cpp" line="2597"/>
-        <location filename="src/mainwindow.cpp" line="2800"/>
-        <location filename="src/mainwindow.cpp" line="2902"/>
-        <location filename="src/mainwindow.cpp" line="3090"/>
-        <location filename="src/mainwindow.cpp" line="3129"/>
-        <location filename="src/mainwindow.cpp" line="3170"/>
+        <location filename="src/mainwindow.cpp" line="2527"/>
+        <location filename="src/mainwindow.cpp" line="2631"/>
+        <location filename="src/mainwindow.cpp" line="2837"/>
+        <location filename="src/mainwindow.cpp" line="2941"/>
+        <location filename="src/mainwindow.cpp" line="3130"/>
+        <location filename="src/mainwindow.cpp" line="3169"/>
+        <location filename="src/mainwindow.cpp" line="3210"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2495"/>
-        <location filename="src/mainwindow.cpp" line="2597"/>
-        <location filename="src/mainwindow.cpp" line="2800"/>
-        <location filename="src/mainwindow.cpp" line="2902"/>
-        <location filename="src/mainwindow.cpp" line="3090"/>
-        <location filename="src/mainwindow.cpp" line="3129"/>
-        <location filename="src/mainwindow.cpp" line="3170"/>
+        <location filename="src/mainwindow.cpp" line="2527"/>
+        <location filename="src/mainwindow.cpp" line="2631"/>
+        <location filename="src/mainwindow.cpp" line="2837"/>
+        <location filename="src/mainwindow.cpp" line="2941"/>
+        <location filename="src/mainwindow.cpp" line="3130"/>
+        <location filename="src/mainwindow.cpp" line="3169"/>
+        <location filename="src/mainwindow.cpp" line="3210"/>
         <source>Canceled by user!</source>
         <translation>被用户取消！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2534"/>
-        <location filename="src/mainwindow.cpp" line="2553"/>
-        <location filename="src/mainwindow.cpp" line="2642"/>
-        <location filename="src/mainwindow.cpp" line="2682"/>
-        <location filename="src/mainwindow.cpp" line="2700"/>
-        <location filename="src/mainwindow.cpp" line="2839"/>
-        <location filename="src/mainwindow.cpp" line="2858"/>
-        <location filename="src/mainwindow.cpp" line="2947"/>
-        <location filename="src/mainwindow.cpp" line="2987"/>
-        <location filename="src/mainwindow.cpp" line="3005"/>
-        <location filename="src/mainwindow.cpp" line="3209"/>
-        <location filename="src/mainwindow.cpp" line="3217"/>
+        <location filename="src/mainwindow.cpp" line="2566"/>
+        <location filename="src/mainwindow.cpp" line="2585"/>
+        <location filename="src/mainwindow.cpp" line="2676"/>
+        <location filename="src/mainwindow.cpp" line="2716"/>
+        <location filename="src/mainwindow.cpp" line="2734"/>
+        <location filename="src/mainwindow.cpp" line="2876"/>
+        <location filename="src/mainwindow.cpp" line="2895"/>
+        <location filename="src/mainwindow.cpp" line="2986"/>
+        <location filename="src/mainwindow.cpp" line="3026"/>
+        <location filename="src/mainwindow.cpp" line="3044"/>
+        <location filename="src/mainwindow.cpp" line="3249"/>
         <location filename="src/mainwindow.cpp" line="3257"/>
-        <location filename="src/mainwindow.cpp" line="3275"/>
-        <location filename="src/mainwindow.cpp" line="3283"/>
+        <location filename="src/mainwindow.cpp" line="3297"/>
+        <location filename="src/mainwindow.cpp" line="3315"/>
+        <location filename="src/mainwindow.cpp" line="3323"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2534"/>
-        <location filename="src/mainwindow.cpp" line="2682"/>
-        <location filename="src/mainwindow.cpp" line="2839"/>
-        <location filename="src/mainwindow.cpp" line="2987"/>
-        <location filename="src/mainwindow.cpp" line="3209"/>
-        <location filename="src/mainwindow.cpp" line="3257"/>
+        <location filename="src/mainwindow.cpp" line="2566"/>
+        <location filename="src/mainwindow.cpp" line="2716"/>
+        <location filename="src/mainwindow.cpp" line="2876"/>
+        <location filename="src/mainwindow.cpp" line="3026"/>
+        <location filename="src/mainwindow.cpp" line="3249"/>
+        <location filename="src/mainwindow.cpp" line="3297"/>
         <source>Unknown Error!</source>
         <translation>未知错误！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2553"/>
-        <location filename="src/mainwindow.cpp" line="2642"/>
-        <location filename="src/mainwindow.cpp" line="2858"/>
-        <location filename="src/mainwindow.cpp" line="2947"/>
-        <location filename="src/mainwindow.cpp" line="3217"/>
+        <location filename="src/mainwindow.cpp" line="2585"/>
+        <location filename="src/mainwindow.cpp" line="2676"/>
+        <location filename="src/mainwindow.cpp" line="2895"/>
+        <location filename="src/mainwindow.cpp" line="2986"/>
+        <location filename="src/mainwindow.cpp" line="3257"/>
         <source>Failed to place 2 stones!</source>
         <translation>放置2颗棋子失败！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2700"/>
-        <location filename="src/mainwindow.cpp" line="3005"/>
-        <location filename="src/mainwindow.cpp" line="3275"/>
+        <location filename="src/mainwindow.cpp" line="2734"/>
+        <location filename="src/mainwindow.cpp" line="3044"/>
+        <location filename="src/mainwindow.cpp" line="3315"/>
         <source>Failed to place 3 stones!</source>
         <translation>放置3颗棋子失败！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2753"/>
+        <location filename="src/mainwindow.cpp" line="2788"/>
         <source>Player 1 responsed ERROR!</source>
         <translation>玩家1回应错误！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="2759"/>
+        <location filename="src/mainwindow.cpp" line="2794"/>
         <source>Player 1 responsed UNKNOWN!</source>
         <translation>玩家1回应未知！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="3058"/>
+        <location filename="src/mainwindow.cpp" line="3098"/>
         <source>Player 2 responsed ERROR!</source>
         <translation>玩家2回应错误！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="3064"/>
+        <location filename="src/mainwindow.cpp" line="3104"/>
         <source>Player 2 responsed UNKNOWN!</source>
         <translation>玩家2回应未知！</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="3283"/>
+        <location filename="src/mainwindow.cpp" line="3323"/>
         <source>Illegal pos from input!</source>
         <translation>输入了非法坐标！</translation>
     </message>
