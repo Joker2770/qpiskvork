@@ -1658,43 +1658,43 @@ void MainWindow::OnActionGridSize()
             switch (this->m_cur_skin_idx)
             {
             case 1:
-                bLoad = pm.load(":/skins/bold.bmp");
+                bLoad = pm.load(g_szSkins[0]);
                 break;
             case 2:
-                bLoad = pm.load(":/skins/fontanGomo.bmp");
+                bLoad = pm.load(g_szSkins[1]);
                 break;
             case 3:
-                bLoad = pm.load(":/skins/gems.bmp");
+                bLoad = pm.load(g_szSkins[2]);
                 break;
             case 4:
-                bLoad = pm.load(":/skins/gomoku.bmp");
+                bLoad = pm.load(g_szSkins[3]);
                 break;
             case 5:
-                bLoad = pm.load(":/skins/HGarden.bmp");
+                bLoad = pm.load(g_szSkins[4]);
                 break;
             case 6:
-                bLoad = pm.load(":/skins/HGarden2.bmp");
+                bLoad = pm.load(g_szSkins[5]);
                 break;
             case 7:
-                bLoad = pm.load(":/skins/light.bmp");
+                bLoad = pm.load(g_szSkins[6]);
                 break;
             case 8:
-                bLoad = pm.load(":/skins/pisq.bmp");
+                bLoad = pm.load(g_szSkins[7]);
                 break;
             case 9:
-                bLoad = pm.load(":/skins/rain.bmp");
+                bLoad = pm.load(g_szSkins[8]);
                 break;
             case 10:
-                bLoad = pm.load(":/skins/star.bmp");
+                bLoad = pm.load(g_szSkins[9]);
                 break;
             case 11:
-                bLoad = pm.load(":/skins/whitex.bmp");
+                bLoad = pm.load(g_szSkins[10]);
                 break;
             case 12:
-                bLoad = pm.load(":/skins/wood.bmp");
+                bLoad = pm.load(g_szSkins[11]);
                 break;
             case 13:
-                bLoad = pm.load(":/skins/yellow.bmp");
+                bLoad = pm.load(g_szSkins[12]);
                 break;
             default:
                 // bLoad = pm.load(":/skins/HGarden2.bmp");
