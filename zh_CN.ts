@@ -335,6 +335,7 @@
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="1132"/>
+        <location filename="src/mainwindow.cpp" line="1132"/>
         <source>It will clear board and start new game!</source>
         <translation>即将清空棋盘并开始新游戏！</translation>
     </message>

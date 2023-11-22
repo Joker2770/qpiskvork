@@ -202,16 +202,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     QString q_skin_idx;
     this->m_customs->getCfgValue("View", "skin", q_skin_idx);
-    this->m_cur_skin_idx = (q_skin_idx.toInt() > 0 && q_skin_idx.toInt() < 14) ? q_skin_idx.toInt() : 6;
-    QPixmap pm;
-    pm.load(g_szSkins[this->m_cur_skin_idx - 1]);
-    if (!pm.isNull())
+    this->m_cur_skin_idx = (q_skin_idx.toInt() >= 0 && q_skin_idx.toInt() < 14) ? q_skin_idx.toInt() : 0;
+    if (0 != this->m_cur_skin_idx)
     {
-        for (size_t i = 0; i < 5; i++)
-            this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        QPixmap pm;
+        pm.load(g_szSkins[this->m_cur_skin_idx - 1]);
+        if (!pm.isNull())
+        {
+            for (size_t i = 0; i < 5; i++)
+                this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        }
+        if (this->m_images.size() != 5)
+            this->m_bSkin = false;
     }
-
-    if (this->m_images.size() != 5)
+    else
         this->m_bSkin = false;
 
     this->m_freeStyleGomoku = new FreeStyleGomoku();
@@ -1840,10 +1844,9 @@ void MainWindow::OnActionSkin()
                         this->m_bSkin = false;
                     else
                         this->m_bSkin = true;
-
-                    this->m_customs->setCfgValue("View", "skin", this->m_cur_skin_idx);
                 }
             }
+            this->m_customs->setCfgValue("View", "skin", this->m_cur_skin_idx);
         }
     }
 }
