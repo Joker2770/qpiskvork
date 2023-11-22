@@ -571,7 +571,7 @@ void MainWindow::DrawChessboard()
             if (this->m_bSkin && !this->m_images.at(0).isNull())
                 painter.drawPixmap((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(0));
             else
-                painter.drawRect((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT);
+                painter.drawRect((i + 1) * RECT_WIDTH, (j + 2) * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT);
         }
     }
 }
@@ -590,7 +590,7 @@ void MainWindow::DrawMark()
         pMark.setX(last_move_pos.first + 1);
         pMark.setY(last_move_pos.second + 2);
 
-        QPoint ptCenter((pMark.x() + 0.5) * RECT_WIDTH, (pMark.y() + 0.5) * RECT_HEIGHT);
+        QPoint ptCenter((pMark.x() + 0.5) * RECT_WIDTH, (pMark.y() + 0.5) * RECT_HEIGHT + this->pMenuBar->height());
 
         int idx = 3;
         if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
@@ -618,7 +618,7 @@ void MainWindow::DrawItems()
         QPoint p;
         p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first + 1);
         p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + 2);
-        QPoint ptCenter((p.x() + 0.5) * RECT_WIDTH, (p.y() + 0.5) * RECT_HEIGHT);
+        QPoint ptCenter((p.x() + 0.5) * RECT_WIDTH, (p.y() + 0.5) * RECT_HEIGHT + this->pMenuBar->height());
 
         int idx = 1;
         if (this->mBoard->getVRecord().at(i).second == STONECOLOR::BLACK)
