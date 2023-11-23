@@ -544,6 +544,12 @@ MainWindow::~MainWindow()
         delete this->pRuleActionGroup;
         this->pRuleActionGroup = nullptr;
     }
+    if (nullptr != this->m_effect)
+    {
+        delete this->m_effect;
+        this->m_effect = nullptr;
+    }
+    
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)
