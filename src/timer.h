@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: timer.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 18:14:03 2022
  ************************************************************************/
 
@@ -27,30 +27,30 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include<chrono>
-#include<iostream>
+#include <chrono>
+#include <iostream>
 using namespace std;
 
 class Timer
 {
-    public:
-        //Initializes variables
-        Timer();
-        ~Timer();
+public:
+    // Initializes variables
+    Timer();
+    ~Timer();
 
-        //The various clock actions
-        void start();
-        void stop();
-        void pause();
-        void resume();
+    // The various clock actions
+    void start();
+    void stop();
+    void pause();
+    void resume();
 
-        //Gets the timer's time
-        long long getElapsed();
+    // Gets the timer's time
+    long long getElapsed();
 
-    private:
-        bool isRunning;
-        long long elapsed;
-        chrono::time_point<chrono::system_clock> startTime, stopTime;
+private:
+    bool isRunning;
+    long long elapsed;
+    chrono::time_point<chrono::system_clock> startTime, stopTime;
 };
 
 #endif

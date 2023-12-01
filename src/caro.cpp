@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: caro.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Thu Apr  6 18:03:05 2023
  ************************************************************************/
 
@@ -27,10 +27,10 @@
 #include "caro.h"
 
 #include <algorithm>
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-bool Caro::findShap(Board *board,  const pair<int, int>& p_drt)
+bool Caro::findShap(Board *board, const pair<int, int> &p_drt)
 {
     if (board->getVRecord().size() >= 9)
     {

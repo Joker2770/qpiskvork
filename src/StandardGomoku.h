@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: StandardGomoku.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Mon Oct 10 12:58:21 2022
  ************************************************************************/
 
@@ -27,7 +27,7 @@
 #ifndef STANDARDGOMOKU_H
 #define STANDARDGOMOKU_H
 
-#include<iostream>
+#include <iostream>
 #include "rules.h"
 using namespace std;
 
@@ -35,8 +35,9 @@ class StandardGomoku final : public rules
 {
 public:
     bool checkWin(Board *board) override;
+
 private:
-    int countNearStone(Board *board, const pair<int, int>& p_drt);
+    int countNearStone(Board *board, const pair<int, int> &p_drt);
 };
 
 #endif

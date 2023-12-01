@@ -35,6 +35,8 @@ using namespace std;
 class Customs
 {
 public:
+    Customs();
+    Customs(const Customs &customs);
     Customs(const QString &organization);
     ~Customs();
 

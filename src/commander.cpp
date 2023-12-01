@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: commander.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Tue Jan 17 10:13:25 2023
  ************************************************************************/
 
@@ -33,21 +33,20 @@ using namespace std;
 
 Commander::Commander()
 {
-
 }
 
 Commander::~Commander()
 {
-
 }
 
-const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
+const string Commander::info_2_send(INFO_KEY info_key, const char *argv)
 {
     string sInfo;
     sInfo.clear();
     sInfo.append(INFO);
     sInfo.append(" ");
-    switch (info_key) {
+    switch (info_key)
+    {
     case TIMEOUT_TURN:
         sInfo.append(timeout_turn);
         break;
@@ -78,7 +77,7 @@ const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
     }
     sInfo.append(" ");
     sInfo.append(argv);
-    //sInfo.append("\r\n");
+    // sInfo.append("\r\n");
 
     return sInfo;
 }
@@ -86,7 +85,7 @@ const string Commander::info_2_send(INFO_KEY info_key, const char* argv)
 const string Commander::begin_2_send()
 {
     string sBegin = BEGIN;
-    //sBegin.append("\r\n");
+    // sBegin.append("\r\n");
 
     return sBegin;
 }
@@ -96,7 +95,7 @@ const string Commander::start_2_send(int i_size)
     string sStart = START;
     sStart.append(" ");
     sStart.append(to_string(i_size));
-    //sStart.append("\r\n");
+    // sStart.append("\r\n");
 
     return sStart;
 }
@@ -108,7 +107,7 @@ const string Commander::move_2_send(int x, int y)
     turn_move.append(to_string(x));
     turn_move.append(",");
     turn_move.append(to_string(y));
-    //turn_move.append("\r\n");
+    // turn_move.append("\r\n");
 
     return turn_move;
 }
@@ -144,7 +143,7 @@ const string Commander::board_2_send(vector<pair<pair<int, int>, int>> vRecord, 
 const string Commander::end_2_send()
 {
     string sEnd = END;
-    //sEnd.append("\r\n");
+    // sEnd.append("\r\n");
 
     return sEnd;
 }
@@ -152,7 +151,7 @@ const string Commander::end_2_send()
 const string Commander::about_2_send()
 {
     string sAbout = ABOUT;
-    //sAbout.append("\r\n");
+    // sAbout.append("\r\n");
 
     return sAbout;
 }

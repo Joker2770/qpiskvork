@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: renju.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sat Apr  1 14:49:21 2023
  ************************************************************************/
 
@@ -29,7 +29,7 @@
 
 #include "rules.h"
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 typedef enum pattern
@@ -63,24 +63,25 @@ class Renju final : public rules
 {
 public:
     bool checkWin(Board *board) override;
-    //after checkWin
+    // after checkWin
     bool isLegal(Board *board);
     int getRenjuState();
+
 private:
     bool isOverLine(Board *board);
-    //after overline, include 44*
+    // after overline, include 44*
     bool isDoubleFour(Board *board);
-    //after double-four, only 43
+    // after double-four, only 43
     bool isFourThree(Board *board);
-    //after four-three, only 4 and no 3
+    // after four-three, only 4 and no 3
     bool isFour(Board *board);
-    //after four, include 433*, 33*
+    // after four, include 433*, 33*
     bool isDoubleThree(Board *board);
-    //after double-three, only 3
+    // after double-three, only 3
     bool isThree(Board *board);
-    int countA4(Board *board, const pair<int, int>& p_drt);
-    int countA3(Board *board, const pair<int, int>& p_drt);
-    int countNearStone(Board *board, const pair<int, int>& p_drt);
+    int countA4(Board *board, const pair<int, int> &p_drt);
+    int countA3(Board *board, const pair<int, int> &p_drt);
+    int countNearStone(Board *board, const pair<int, int> &p_drt);
 
     int m_renju_state;
 };

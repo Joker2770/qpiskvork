@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: manager.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Fri Sep 30 10:32:27 2022
  ************************************************************************/
 
@@ -37,7 +37,7 @@
 #include <QProcess>
 
 #include <vector>
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 class Manager final : public Observer
@@ -50,13 +50,13 @@ public:
     bool AttachEngines();
     bool DetachEngines();
     bool startMatch(int i_size);
-    bool infoMatch_p1(INFO_KEY key, const char* szValue);
-    bool infoMatch_p2(INFO_KEY key, const char* szValue);
+    bool infoMatch_p1(INFO_KEY key, const char *szValue);
+    bool infoMatch_p2(INFO_KEY key, const char *szValue);
     void beginMatch();
     void turn_2_p1(int i_x, int i_y);
     void turn_2_p2(int i_x, int i_y);
     void sendBoard(const vector<pair<pair<int, int>, int>> &vRecord, bool bContinuous = false);
-    void sendSwap2Board(const vector<pair<int,int>> &vPos);
+    void sendSwap2Board(const vector<pair<int, int>> &vPos);
     void sendAbout();
     void endMatch();
 
@@ -75,4 +75,3 @@ private:
 };
 
 #endif
-

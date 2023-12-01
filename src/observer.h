@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: observer.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 10:03:38 2022
  ************************************************************************/
 
@@ -27,10 +27,11 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-class Observer{
+class Observer
+{
 public:
     virtual void Update(int) = 0;
 };

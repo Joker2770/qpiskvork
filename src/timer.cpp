@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: timer.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 18:14:08 2022
  ************************************************************************/
 
@@ -28,7 +28,7 @@
 
 Timer::Timer()
 {
-    //Initialize the variables
+    // Initialize the variables
     isRunning = false;
     elapsed = 0;
 }
@@ -66,7 +66,7 @@ void Timer::pause()
 
 void Timer::resume()
 {
-    if(!isRunning)
+    if (!isRunning)
     {
         startTime = chrono::system_clock::now();
         isRunning = true;

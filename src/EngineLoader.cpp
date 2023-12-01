@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: EngineLoader.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sat Jan  7 10:56:44 2023
  ************************************************************************/
 
@@ -70,7 +70,7 @@ void EngineLoader::startProgram()
     }
 }
 
-qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int iLen)
+qint64 EngineLoader::sendCommand(const char *s_cmd, unsigned int iLen)
 {
     qDebug() << s_cmd;
     qint64 i_w = 0;
@@ -78,7 +78,8 @@ qint64 EngineLoader::sendCommand(const char* s_cmd, unsigned int iLen)
     {
         i_w = this->mProcess->write(s_cmd, iLen);
         this->mProcess->waitForBytesWritten();
-        if (i_w < 0)    return i_w;
+        if (i_w < 0)
+            return i_w;
         else
         {
             const char szEnd[2] = {0x0d, 0x0a};
@@ -99,15 +100,15 @@ void EngineLoader::onReadData()
     sOutStr = baOut.toStdString();
 
     vector<string> v_strOut;
-    if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') != string::npos )
+    if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') != string::npos)
     {
         v_strOut = split(sOutStr, "\r\n");
     }
-    else if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') == string::npos )
+    else if (sOutStr.find('\r') != string::npos && sOutStr.find('\n') == string::npos)
     {
         v_strOut = split(sOutStr, "\r");
     }
-    else if (sOutStr.find('\r') == string::npos && sOutStr.find('\n') != string::npos )
+    else if (sOutStr.find('\r') == string::npos && sOutStr.find('\n') != string::npos)
     {
         v_strOut = split(sOutStr, "\n");
     }
@@ -124,13 +125,14 @@ vector<string> EngineLoader::split(const string &str, const string &pattern)
     vector<string> result;
     string strs = str + pattern;
     unsigned int size = strs.size();
-    for (unsigned int i = 0; i < size; ++i) {
+    for (unsigned int i = 0; i < size; ++i)
+    {
         pos = strs.find(pattern, i);
         if (pos < size)
         {
             string s = strs.substr(i, pos - i);
             result.push_back(s);
-            i = pos + pattern.size() -1;
+            i = pos + pattern.size() - 1;
         }
     }
     return result;
@@ -142,9 +144,11 @@ vector<int> EngineLoader::split(const string &str, char sep)
 
     int i;
     stringstream ss(str);
-    while (ss >> i) {
+    while (ss >> i)
+    {
         tokens.push_back(i);
-        if (ss.peek() == sep) {
+        if (ss.peek() == sep)
+        {
             ss.ignore();
         }
     }
@@ -196,10 +200,7 @@ void EngineLoader::response_parse(const string &str)
         emit responsed_unknown();
     else if (s_tmp.find_first_of("SWAP") == 0)
         emit responsed_swap();
-    else if ((3 <= this->split(s_tmp, " ").size())
-     && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(','))
-      && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos)
-      && (this->split(s_tmp, " ").at(2).find_first_of(',') != string::npos))
+    else if ((3 <= this->split(s_tmp, " ").size()) && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(',')) && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos) && (this->split(s_tmp, " ").at(2).find_first_of(',') != string::npos))
     {
         vector<string> s_pos = this->split(s_tmp, " ");
         int x[3] = {-1, -1, -1}, y[3] = {-1, -1, -1};
@@ -220,9 +221,7 @@ void EngineLoader::response_parse(const string &str)
         if (x[0] >= 0 && x[1] >= 0 && x[2] >= 0 && y[0] >= 0 && y[1] >= 0 && y[2] >= 0)
             emit responsed_3_pos(x[0], y[0], x[1], y[1], x[2], y[2]);
     }
-    else if ((2 <= this->split(s_tmp, " ").size())
-     && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(','))
-      && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos))
+    else if ((2 <= this->split(s_tmp, " ").size()) && (2 == s_tmp.find_first_of(',') || 1 == s_tmp.find_first_of(',')) && (this->split(s_tmp, " ").at(1).find_first_of(',') != string::npos))
     {
         vector<string> s_pos = this->split(s_tmp, " ");
         int x[2] = {-1, -1}, y[2] = {-1, -1};
@@ -243,8 +242,7 @@ void EngineLoader::response_parse(const string &str)
         if (x[0] >= 0 && x[1] >= 0 && y[0] >= 0 && y[1] >= 0)
             emit responsed_2_pos(x[0], y[0], x[1], y[1]);
     }
-    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1)
-     && (this->split(s_tmp, ',').size() == 2))
+    else if ((s_tmp.find_first_of(',') == 2 || s_tmp.find_first_of(',') == 1) && (this->split(s_tmp, ',').size() == 2))
     {
         vector<int> vPos = this->split(s_tmp, ',');
         emit responsed_pos(vPos[0], vPos[1]);

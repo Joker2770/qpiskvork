@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: S2BResDialog.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Apr  9 09:55:20 2023
  ************************************************************************/
 
@@ -38,7 +38,7 @@
 #include <QButtonGroup>
 #include <QRegExpValidator>
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 class S2BResDialog : public QDialog
@@ -54,7 +54,7 @@ private:
     QDialogButtonBox *dbb_c1, *dbb_c2, *dbb_c3;
     QRegExpValidator *m_RegEV;
 
-    vector<pair<int,int>> m_vPos;
+    vector<pair<int, int>> m_vPos;
     int m_mode;
     int m_option_c2, m_option_c3;
     bool m_bCanceled;
@@ -67,8 +67,8 @@ private slots:
     void OnRB3Triggered();
 
 public:
-    //S2BResDialog(QWidget* parent=nullptr);
-    S2BResDialog(int i_mode, QWidget* parent=nullptr);
+    // S2BResDialog(QWidget* parent=nullptr);
+    S2BResDialog(int i_mode, QWidget *parent = nullptr);
     ~S2BResDialog();
 
     vector<pair<int, int>> getVPos();

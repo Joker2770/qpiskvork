@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
       m_player_setting(new PlayerSettingDialog(this))
 {
     this->m_customs = new Customs("qpiskvork");
-    
+
 #ifdef USE_DEFAULT_MENU_BAR
     this->pMenuBar = this->menuBar();
 #else
@@ -192,7 +192,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_p2_name.clear();
 
     this->resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
-    this->setWindowFlags(this->windowFlags()&~Qt::WindowMaximizeButtonHint);
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
     this->m_bSwap2Board = false;
@@ -270,8 +270,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
     connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
-    connect(this->pRuleActionGroup,SIGNAL(triggered(QAction*)),this,SLOT(On_ClickedRuleActionGroup(QAction*)));
-    connect(this->pLanguageActionGroup,SIGNAL(triggered(QAction*)),this,SLOT(On_ClickedLanguageActionGroup(QAction*)));
+    connect(this->pRuleActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedRuleActionGroup(QAction *)));
+    connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
@@ -354,7 +354,7 @@ MainWindow::~MainWindow()
     }
     if (nullptr != this->m_freeStyleGomoku)
     {
-        delete  this->m_freeStyleGomoku;
+        delete this->m_freeStyleGomoku;
         this->m_freeStyleGomoku = nullptr;
     }
     if (nullptr != this->m_standardGomoku)
@@ -602,7 +602,6 @@ void MainWindow::DrawMark()
         else
             idx = 4;
 
-
         if (this->m_bSkin && !this->m_images.at(idx).isNull())
             painter.drawPixmap(pMark.x() * RECT_WIDTH, pMark.y() * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
@@ -846,7 +845,7 @@ void MainWindow::DrawPlayerName()
     QFont font;
     font.setPixelSize(15);
     font.setUnderline(true);
-    //font.setItalic(true);
+    // font.setItalic(true);
     font.setBold(true);
 
     QPainter painter(this);
@@ -909,9 +908,9 @@ void MainWindow::DrawIndication()
     }
 }
 
-vector<pair<pair<int,int>, int>> MainWindow::record_expand(const vector<pair<int, int>> &vRecord, bool bContinuous)
+vector<pair<pair<int, int>, int>> MainWindow::record_expand(const vector<pair<int, int>> &vRecord, bool bContinuous)
 {
-    vector<pair<pair<int,int>, int>> vRecExpendTmp;
+    vector<pair<pair<int, int>, int>> vRecExpendTmp;
     vRecExpendTmp.clear();
     vector<pair<int, int>> vRecZoom = vRecord;
     vector<pair<int, int>>::iterator iter;
@@ -932,19 +931,16 @@ vector<pair<pair<int,int>, int>> MainWindow::record_expand(const vector<pair<int
     return vRecExpendTmp;
 }
 
-void MainWindow::mousePressEvent(QMouseEvent * e)
+void MainWindow::mousePressEvent(QMouseEvent *e)
 {
     if (this->mState == GAME_STATE::PLAYING)
     {
-        if ((GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
-         || (this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer)
-          || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer)
-          || (this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3))
+        if ((GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS)) || (this->m_manager->m_p1->m_isMyTurn && this->m_manager->m_p1->m_isComputer) || (this->m_manager->m_p2->m_isMyTurn && this->m_manager->m_p2->m_isComputer) || (this->m_bSwap2Board && this->mBoard->getVRecord().size() < 3))
             return;
 
         QPoint pt;
-        pt.setX( (e->pos().x() ) / RECT_WIDTH);
-        pt.setY( (e->pos().y() - this->pMenuBar->height() ) / RECT_HEIGHT);
+        pt.setX((e->pos().x()) / RECT_WIDTH);
+        pt.setY((e->pos().y() - this->pMenuBar->height()) / RECT_HEIGHT);
 
         if (pt.y() < 2 || pt.x() < 1)
             return;
@@ -1050,7 +1046,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             return;
         }
 
-        //if connect five
+        // if connect five
         bool isWin = false;
         int i_win = 0;
         isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
@@ -1061,7 +1057,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             else
                 isWin = false;
         }
-        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
+        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= GAME_RULE::RENJU;
@@ -1093,7 +1089,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
                 QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            //this->mBoard->clearBoard();
+            // this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
         {
@@ -1155,7 +1151,7 @@ void MainWindow::OnActionStart()
 
         bool bStart = false;
         bool bAttach = false;
-        //continuous game
+        // continuous game
         if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
         {
             if (!this->m_manager->m_p1->m_isComputer || this->m_manager->m_p1->m_sPath.isEmpty())
@@ -1350,7 +1346,6 @@ void MainWindow::OnActionContinue()
                     this->m_manager->infoMatch_p1(INFO_KEY::MAX_MEMORY, to_string(this->m_max_memory).c_str());
                     this->m_manager->infoMatch_p1(INFO_KEY::GAME_TYPE, "0");
                     this->m_manager->infoMatch_p1(INFO_KEY::RULE, to_string(this->m_Rule).c_str());
-
                 }
                 else
                 {
@@ -1376,7 +1371,7 @@ void MainWindow::OnActionContinue()
                 }
                 this->m_manager->sendBoard(vRecExpendTmp, true);
             }
-            else    // is not continuous game
+            else // is not continuous game
             {
                 bAttach = this->m_manager->AttachEngines();
                 qDebug() << "AttachFlag: " << bAttach;
@@ -1560,7 +1555,7 @@ void MainWindow::OnActionBoardSize()
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, tr("Board Size"), tr("Please input board size:"), 15, 8, 25,
-                                            1, &ok, Qt::MSWindowsFixedSizeDialogHint);
+                                         1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
             int iTmp = i_get;
@@ -1588,7 +1583,7 @@ void MainWindow::OnActionTimeoutMatch()
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), 900000, 0, 86400000,
-                                            1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
+                                         1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
             if (i_get > 0)
@@ -1620,10 +1615,11 @@ void MainWindow::OnActionTimeoutTurn()
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 5000, 300000,
-                                            1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
+                                         1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
-            if (i_get >= 0) this->m_timeout_turn = (unsigned int)i_get;
+            if (i_get >= 0)
+                this->m_timeout_turn = (unsigned int)i_get;
             this->m_customs->setCfgValue("Time", "turn_timeout", this->m_timeout_turn);
         }
     }
@@ -1634,11 +1630,12 @@ void MainWindow::OnActionMaxMemory()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), 1024*1024*1024, 0, (int)((unsigned int)-1>>1),
-                                            1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), 1024 * 1024 * 1024, 0, (int)((unsigned int)-1 >> 1),
+                                         1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
-            if (i_get >= 0) this->m_max_memory = (unsigned int)i_get;
+            if (i_get >= 0)
+                this->m_max_memory = (unsigned int)i_get;
             this->m_customs->setCfgValue("Memory", "max_memory", this->m_max_memory);
         }
     }
@@ -1648,77 +1645,76 @@ void MainWindow::OnActionGridSize()
 {
     // if (this->mState != GAME_STATE::PLAYING)
     // {
-        bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
-                                         1, &ok, Qt::MSWindowsFixedSizeDialogHint);
-        if (ok)
+    bool ok = false;
+    int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
+                                     1, &ok, Qt::MSWindowsFixedSizeDialogHint);
+    if (ok)
+    {
+        this->RECT_WIDTH = i_get;
+        this->RECT_HEIGHT = i_get;
+        bool bLoad = false;
+        QPixmap pm;
+        this->m_images.clear();
+
+        switch (this->m_cur_skin_idx)
         {
-            this->RECT_WIDTH = i_get;
-            this->RECT_HEIGHT = i_get;
-            bool bLoad = false;
-            QPixmap pm;
-            this->m_images.clear();
-
-            switch (this->m_cur_skin_idx)
-            {
-            case 1:
-                bLoad = pm.load(g_szSkins[0]);
-                break;
-            case 2:
-                bLoad = pm.load(g_szSkins[1]);
-                break;
-            case 3:
-                bLoad = pm.load(g_szSkins[2]);
-                break;
-            case 4:
-                bLoad = pm.load(g_szSkins[3]);
-                break;
-            case 5:
-                bLoad = pm.load(g_szSkins[4]);
-                break;
-            case 6:
-                bLoad = pm.load(g_szSkins[5]);
-                break;
-            case 7:
-                bLoad = pm.load(g_szSkins[6]);
-                break;
-            case 8:
-                bLoad = pm.load(g_szSkins[7]);
-                break;
-            case 9:
-                bLoad = pm.load(g_szSkins[8]);
-                break;
-            case 10:
-                bLoad = pm.load(g_szSkins[9]);
-                break;
-            case 11:
-                bLoad = pm.load(g_szSkins[10]);
-                break;
-            case 12:
-                bLoad = pm.load(g_szSkins[11]);
-                break;
-            case 13:
-                bLoad = pm.load(g_szSkins[12]);
-                break;
-            default:
-                // bLoad = pm.load(":/skins/HGarden2.bmp");
-                break;
-            }
-
-            if (!pm.isNull() && bLoad)
-            {
-                for (size_t i = 0; i < 5; i++)
-                    this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-                if (this->m_images.size() != 5)
-                    this->m_bSkin = false;
-                else
-                    this->m_bSkin = true;
-            }
-
-            resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
-            this->m_customs->setCfgValue("Board", "GridSize", i_get);
+        case 1:
+            bLoad = pm.load(g_szSkins[0]);
+            break;
+        case 2:
+            bLoad = pm.load(g_szSkins[1]);
+            break;
+        case 3:
+            bLoad = pm.load(g_szSkins[2]);
+            break;
+        case 4:
+            bLoad = pm.load(g_szSkins[3]);
+            break;
+        case 5:
+            bLoad = pm.load(g_szSkins[4]);
+            break;
+        case 6:
+            bLoad = pm.load(g_szSkins[5]);
+            break;
+        case 7:
+            bLoad = pm.load(g_szSkins[6]);
+            break;
+        case 8:
+            bLoad = pm.load(g_szSkins[7]);
+            break;
+        case 9:
+            bLoad = pm.load(g_szSkins[8]);
+            break;
+        case 10:
+            bLoad = pm.load(g_szSkins[9]);
+            break;
+        case 11:
+            bLoad = pm.load(g_szSkins[10]);
+            break;
+        case 12:
+            bLoad = pm.load(g_szSkins[11]);
+            break;
+        case 13:
+            bLoad = pm.load(g_szSkins[12]);
+            break;
+        default:
+            break;
         }
+
+        if (!pm.isNull() && bLoad)
+        {
+            for (size_t i = 0; i < 5; i++)
+                this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+            if (this->m_images.size() != 5)
+                this->m_bSkin = false;
+            else
+                this->m_bSkin = true;
+        }
+
+        resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+        this->m_customs->setCfgValue("Board", "GridSize", i_get);
+    }
     // }
 }
 
@@ -1728,9 +1724,22 @@ void MainWindow::OnActionSkin()
     {
         bool ok = false;
         QStringList s_items;
-        s_items << "none" << "bold" << "fontanGomo" << "gems" << "gomoku" << "HGarden" << "HGarden2" << "light" << "pisq" << "rain" << "star" << "whitex" << "wood" << "yellow";
+        s_items << "none"
+                << "bold"
+                << "fontanGomo"
+                << "gems"
+                << "gomoku"
+                << "HGarden"
+                << "HGarden2"
+                << "light"
+                << "pisq"
+                << "rain"
+                << "star"
+                << "whitex"
+                << "wood"
+                << "yellow";
         QString s_get = QInputDialog::getItem(this, tr("Skin"), tr("Please choose skin:"), s_items, this->m_cur_skin_idx, false,
-                                            &ok, Qt::MSWindowsFixedSizeDialogHint);
+                                              &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
             if (QString::compare(s_get, "none") == 0)
@@ -1871,7 +1880,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::CONTINUOUS));
             }
         }
-        else if (pAction->text().compare(this->pActionRenju->text())==0)
+        else if (pAction->text().compare(this->pActionRenju->text()) == 0)
         {
             if (this->pActionRenju->isChecked())
             {
@@ -1884,7 +1893,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::RENJU));
             }
         }
-        else if (pAction->text().compare(this->pActionCaro->text())==0)
+        else if (pAction->text().compare(this->pActionCaro->text()) == 0)
         {
             if (this->pActionCaro->isChecked())
             {
@@ -1897,7 +1906,7 @@ void MainWindow::On_ClickedRuleActionGroup(QAction *pAction)
                 this->m_Rule &= (~(GAME_RULE::CARO));
             }
         }
-        else if (pAction->text().compare(this->pActionSwap2Board->text())==0)
+        else if (pAction->text().compare(this->pActionSwap2Board->text()) == 0)
         {
             if (this->pActionSwap2Board->isChecked())
             {
@@ -1989,7 +1998,7 @@ void MainWindow::OnActionNumOfMove()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: ") + "0.6.65"+ "\n";
+    const QString strVerNum = tr("Ver Num: ") + "0.6.65" + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -2064,14 +2073,14 @@ void MainWindow::OnP1PlaceStone(int x, int y)
 
                     if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = true;
                         this->m_bS2B_over = true;
                     }
                     else if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -2113,7 +2122,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             else
                 isWin = false;
         }
-        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
+        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= GAME_RULE::RENJU;
@@ -2145,7 +2154,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
                 QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            //this->mBoard->clearBoard();
+            // this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
         {
@@ -2222,14 +2231,14 @@ void MainWindow::OnP2PlaceStone(int x, int y)
 
                     if (this->m_bSwap2Board && !(this->m_bS2B_over) && (this->mBoard->getVRecord().size() <= 6))
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = true;
                         this->m_bS2B_over = true;
                     }
                     else if (this->m_bBoard)
                     {
-                        vector<pair<pair<int,int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
+                        vector<pair<pair<int, int>, int>> vRecExpendTmp = this->record_expand(this->mBoard->getVRecord());
                         this->m_manager->sendBoard(vRecExpendTmp);
                         this->m_bBoard = false;
                     }
@@ -2271,7 +2280,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             else
                 isWin = false;
         }
-        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
+        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= GAME_RULE::RENJU;
@@ -2303,7 +2312,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
                 QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            //this->mBoard->clearBoard();
+            // this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
         {
@@ -2395,7 +2404,7 @@ void MainWindow::OnContinuousPos(int x, int y)
             else
                 isWin = false;
         }
-        if (GAME_RULE::RENJU == (this->m_Rule &GAME_RULE::RENJU))
+        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
         {
             if (this->m_renju->checkWin(this->mBoard))
                 i_win |= GAME_RULE::RENJU;
@@ -2427,7 +2436,7 @@ void MainWindow::OnContinuousPos(int x, int y)
                 QMessageBox::information(this, tr("game over!"), tr("Black win!"));
             else
                 QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            //this->mBoard->clearBoard();
+            // this->mBoard->clearBoard();
         }
         else if (0x04 == (this->m_Rule & 0x04))
         {
@@ -3078,7 +3087,7 @@ void MainWindow::beginSwap2Board()
             {
                 if (this->m_manager->m_p1->m_isComputer)
                 {
-                    vector<pair<int, int >> vP;
+                    vector<pair<int, int>> vP;
                     vP.clear();
                     this->m_manager->sendSwap2Board(vP);
                 }

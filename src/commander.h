@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: commander.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Tue Jan 17 10:13:19 2023
  ************************************************************************/
 
@@ -39,7 +39,7 @@ public:
     Commander();
     ~Commander();
 
-    const string info_2_send(INFO_KEY info_key, const char* argv);
+    const string info_2_send(INFO_KEY info_key, const char *argv);
     const string begin_2_send(void);
     const string start_2_send(int i_size);
     const string move_2_send(int x, int y);
@@ -48,7 +48,6 @@ public:
     const string about_2_send(void);
 
     const string swap2board_2_send(vector<pair<int, int>> vPos);
-
 };
 
 #endif

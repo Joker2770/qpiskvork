@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: S2BResDialog.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Apr  9 09:55:26 2023
  ************************************************************************/
 
@@ -26,7 +26,7 @@
 
 #include "S2BResDialog.h"
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 // S2BResDialog::S2BResDialog(QWidget *parent) :
@@ -83,7 +83,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c1.addWidget(this->dbb_c1, 1, 0);
 
         this->setWindowTitle(tr("Input 3 Move"));
-        //this.setAttribute (Qt::WA_DeleteOnClose);
+        // this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c1));
         this->resize(200, 100);
@@ -140,7 +140,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c2.addWidget(this->dbb_c2, 1, 0);
 
         this->setWindowTitle(tr("Case 2"));
-        //this.setAttribute (Qt::WA_DeleteOnClose);
+        // this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c2));
         this->resize(250, 150);
@@ -178,7 +178,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
         this->gl_c3.addWidget(this->dbb_c3, 1, 0);
 
         this->setWindowTitle(tr("Case 3"));
-        //this.setAttribute (Qt::WA_DeleteOnClose);
+        // this.setAttribute (Qt::WA_DeleteOnClose);
         this->setModal(true);
         this->setLayout(&(this->gl_c3));
         this->resize(150, 100);

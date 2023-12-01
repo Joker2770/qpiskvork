@@ -73,8 +73,7 @@ const QString g_szSkins[13] = {
     ":/skins/star.bmp",
     ":/skins/whitex.bmp",
     ":/skins/wood.bmp",
-    ":/skins/yellow.bmp"
-};
+    ":/skins/yellow.bmp"};
 
 class MainWindow : public QMainWindow
 {
