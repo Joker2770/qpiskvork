@@ -31,6 +31,7 @@
 #include <QDialog>
 #include <QSharedPointer>
 #include <QPixmap>
+#include <QCloseEvent>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -166,6 +167,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    void closeEvent(QCloseEvent *event);
 
 private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;

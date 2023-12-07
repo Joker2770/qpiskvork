@@ -3383,3 +3383,14 @@ void MainWindow::disconnectP2Signals()
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
     }
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Tips"), tr("Confirm quit?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+    if(button == QMessageBox::Yes){
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
