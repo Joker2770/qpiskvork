@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: commands.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Thur Oct 20 09:09:01 2022
  ************************************************************************/
 
@@ -42,9 +42,9 @@ typedef enum info_key
     FOLDER
 } INFO_KEY;
 
-//Mandatory commands
-const char START[]  = "START";
-const char TURN[]  = "TURN";
+// Mandatory commands
+const char START[] = "START";
+const char TURN[] = "TURN";
 const char BEGIN[] = "BEGIN";
 const char BOARD[] = "BOARD";
 const char INFO[] = "INFO";

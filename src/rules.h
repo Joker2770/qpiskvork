@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: rules.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Mon Oct 10 12:46:14 2022
  ************************************************************************/
 
@@ -27,7 +27,7 @@
 #ifndef RULES_H
 #define RULES_H
 
-#include<iostream>
+#include <iostream>
 #include "board.h"
 using namespace std;
 

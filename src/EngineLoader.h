@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: EngineLoader.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sat Jan  7 10:56:36 2023
  ************************************************************************/
 
@@ -43,7 +43,7 @@ public:
 
     bool setProgram(const QString &sProgram);
     void startProgram();
-    qint64 sendCommand(const char* sCmd, unsigned int iLen);
+    qint64 sendCommand(const char *sCmd, unsigned int iLen);
 
     vector<string> split(const string &str, const string &pattern);
     vector<int> split(const string &str, char sep);

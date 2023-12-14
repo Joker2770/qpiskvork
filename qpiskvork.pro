@@ -61,4 +61,4 @@ RESOURCES += \
     res.qrc
 
 TRANSLATIONS += \
-    zh_CN.ts
+    language/zh_CN.ts

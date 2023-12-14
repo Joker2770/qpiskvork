@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: PlayerSettingDialog.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Feb  5 15:18:50 2023
  ************************************************************************/
 
@@ -45,7 +45,7 @@ class PlayerSettingDialog : public QDialog
 {
     Q_OBJECT
 public:
-    PlayerSettingDialog(QWidget* parent=nullptr);
+    PlayerSettingDialog(QWidget *parent = nullptr);
     ~PlayerSettingDialog();
 
 public:
@@ -80,4 +80,3 @@ private:
 };
 
 #endif
-

@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: subject.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 10:13:50 2022
  ************************************************************************/
 
@@ -28,10 +28,11 @@
 #define SUBJECT_H
 
 #include "observer.h"
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-class Subject{
+class Subject
+{
 public:
     virtual void Attach(Observer *) = 0;
     virtual void Detach(Observer *) = 0;

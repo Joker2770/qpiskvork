@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: manager.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Fri Sep 30 10:32:33 2022
  ************************************************************************/
 
@@ -29,9 +29,8 @@
 
 #include <QDebug>
 
-#include<iostream>
+#include <iostream>
 using namespace std;
-
 
 Manager::Manager(Subject *pSubject) : m_pSubject(pSubject)
 {
@@ -267,7 +266,7 @@ void Manager::beginMatch()
     }
 }
 
-bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
+bool Manager::infoMatch_p1(INFO_KEY key, const char *szValue)
 {
     bool bSend = false;
     qint64 i_write = 0;
@@ -276,7 +275,8 @@ bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
     {
         string sCmd = this->m_cmd->info_2_send(key, szValue);
         i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send info to engine_1!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send info to engine_1!";
         else
         {
             qDebug() << "(info to p1)";
@@ -287,7 +287,7 @@ bool Manager::infoMatch_p1(INFO_KEY key, const char* szValue)
     return bSend;
 }
 
-bool Manager::infoMatch_p2(INFO_KEY key, const char* szValue)
+bool Manager::infoMatch_p2(INFO_KEY key, const char *szValue)
 {
     bool bSend = false;
     qint64 i_write = 0;
@@ -296,7 +296,8 @@ bool Manager::infoMatch_p2(INFO_KEY key, const char* szValue)
     {
         string sCmd = this->m_cmd->info_2_send(key, szValue);
         i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send info to engine_2!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send info to engine_2!";
         else
         {
             qDebug() << "(info to p2)";
@@ -315,7 +316,8 @@ void Manager::turn_2_p1(int iX, int iY)
     {
         string sCmd = this->m_cmd->move_2_send(iX, iY);
         i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_1!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send turn pos to engine_1!";
     }
 }
 
@@ -327,7 +329,8 @@ void Manager::turn_2_p2(int iX, int iY)
     {
         string sCmd = this->m_cmd->move_2_send(iX, iY);
         i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send turn pos to engine_2!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send turn pos to engine_2!";
     }
 }
 
@@ -393,14 +396,16 @@ void Manager::sendAbout()
     {
         string sCmd = this->m_cmd->about_2_send();
         i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send about to engine_1!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send about to engine_1!";
     }
 
     if (nullptr != this->m_engine_2)
     {
         string sCmd = this->m_cmd->about_2_send();
         i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send about to engine_2!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send about to engine_2!";
     }
 }
 
@@ -412,13 +417,15 @@ void Manager::endMatch()
     {
         string sCmd = this->m_cmd->end_2_send();
         i_write = this->m_engine_1->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send end to engine_1!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send end to engine_1!";
     }
 
     if (nullptr != this->m_engine_2)
     {
         string sCmd = this->m_cmd->end_2_send();
         i_write = this->m_engine_2->sendCommand(sCmd.c_str(), sCmd.length());
-        if (i_write <= 0) qDebug() << "Failed to send end to engine_2!";
+        if (i_write <= 0)
+            qDebug() << "Failed to send end to engine_2!";
     }
 }

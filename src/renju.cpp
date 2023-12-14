@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: renju.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sat Apr  1 14:49:28 2023
  ************************************************************************/
 
@@ -29,13 +29,14 @@
 #include <QDebug>
 
 #include <algorithm>
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-int Renju::countNearStone(Board *board, const pair<int, int>& p_drt)
+int Renju::countNearStone(Board *board, const pair<int, int> &p_drt)
 {
     int i_count = 0;
-    if (board->GetState() == BOARDSTATUS::BOARDEMPTY)    return 0;
+    if (board->GetState() == BOARDSTATUS::BOARDEMPTY)
+        return 0;
 
     pair<int, int> p_last_move = board->getVRecord().back();
     pair<int, int> p_idx = board->coord2idx(p_last_move.first);
@@ -83,7 +84,7 @@ bool Renju::isOverLine(Board *board)
     return false;
 }
 
-int Renju::countA4(Board *board, const pair<int, int>& p_drt)
+int Renju::countA4(Board *board, const pair<int, int> &p_drt)
 {
     int i_count = 0;
     if (board->getVRecord().size() >= 9)
@@ -148,11 +149,7 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
             {
                 for (size_t i = 0; i < 5; ++i)
                 {
-                    if (((A4_SHAPES[i][0]) == (vColor[j]))
-                     && ((A4_SHAPES[i][1]) == (vColor[j+1]))
-                      && ((A4_SHAPES[i][2]) == (vColor[j+2]))
-                       && ((A4_SHAPES[i][3]) == (vColor[j+3]))
-                        && ((A4_SHAPES[i][4]) == (vColor[j+4])))
+                    if (((A4_SHAPES[i][0]) == (vColor[j])) && ((A4_SHAPES[i][1]) == (vColor[j + 1])) && ((A4_SHAPES[i][2]) == (vColor[j + 2])) && ((A4_SHAPES[i][3]) == (vColor[j + 3])) && ((A4_SHAPES[i][4]) == (vColor[j + 4])))
                     {
                         if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, ‘101111101’ at mid, '111010111' at mid, '11110111', '11101111'
                         {
@@ -163,7 +160,7 @@ int Renju::countA4(Board *board, const pair<int, int>& p_drt)
 
                             break;
                         }
-                        else if (i == 2)    //'11011011' at left4 and right4, '11110111', '11101111'
+                        else if (i == 2) //'11011011' at left4 and right4, '11110111', '11101111'
                         {
                             if ((i_flag & 0x04) != 0x04)
                                 i_flag |= 0x04;
@@ -208,7 +205,7 @@ bool Renju::isDoubleFour(Board *board)
     return false;
 }
 
-int Renju::countA3(Board *board, const pair<int, int>& p_drt)
+int Renju::countA3(Board *board, const pair<int, int> &p_drt)
 {
     if (board->getVRecord().size() >= 6)
     {
@@ -264,7 +261,6 @@ int Renju::countA3(Board *board, const pair<int, int>& p_drt)
         //     cout << vColor[i] ;
         // }
         // cout <<endl;
-        
 
         if (vColor.size() >= 6)
         {
@@ -272,16 +268,11 @@ int Renju::countA3(Board *board, const pair<int, int>& p_drt)
             {
                 for (size_t i = 0; i < 4; ++i)
                 {
-                    //qDebug() << "A3_element: " << A3_SHAPES[i][0] << A3_SHAPES[i][1] << A3_SHAPES[i][2] << A3_SHAPES[i][3] << A3_SHAPES[i][4] << A3_SHAPES[i][5];
-                    //qDebug() << "vColor_element: " << vColor[j] << vColor[j + 1] << vColor[j + 2] << vColor[j + 3] << vColor[j + 4] << vColor[j + 5];
-                    if (((A3_SHAPES[i][0]) == (vColor[j]))
-                     && ((A3_SHAPES[i][1]) == (vColor[j+1]))
-                      && ((A3_SHAPES[i][2]) == (vColor[j+2]))
-                       && ((A3_SHAPES[i][3]) == (vColor[j+3]))
-                        && ((A3_SHAPES[i][4]) == (vColor[j+4]))
-                       && ((A3_SHAPES[i][5]) == (vColor[j+5])))
+                    // qDebug() << "A3_element: " << A3_SHAPES[i][0] << A3_SHAPES[i][1] << A3_SHAPES[i][2] << A3_SHAPES[i][3] << A3_SHAPES[i][4] << A3_SHAPES[i][5];
+                    // qDebug() << "vColor_element: " << vColor[j] << vColor[j + 1] << vColor[j + 2] << vColor[j + 3] << vColor[j + 4] << vColor[j + 5];
+                    if (((A3_SHAPES[i][0]) == (vColor[j])) && ((A3_SHAPES[i][1]) == (vColor[j + 1])) && ((A3_SHAPES[i][2]) == (vColor[j + 2])) && ((A3_SHAPES[i][3]) == (vColor[j + 3])) && ((A3_SHAPES[i][4]) == (vColor[j + 4])) && ((A3_SHAPES[i][5]) == (vColor[j + 5])))
                     {
-                        //Never could be a double-three(alive) in one line. ('101101' is not alive)
+                        // Never could be a double-three(alive) in one line. ('101101' is not alive)
 
                         /**
                          * @brief 9.3 A black double-three is allowed if at least one of the following conditions  a)   or  b) is/are fulfilled:
@@ -352,7 +343,7 @@ bool Renju::isFourThree(Board *board)
         {
             if (i_left_3 + i_leftup_3 + i_up_3 == 0) // only four
                 return false;
-            else if (i_left_3 + i_leftup_3 + i_up_3 > 1) //433*
+            else if (i_left_3 + i_leftup_3 + i_up_3 > 1) // 433*
                 return false;
             else if (i_left_3 + i_leftup_3 + i_up_3 == 1)
                 return true;
@@ -521,7 +512,6 @@ bool Renju::isLegal(Board *board)
             this->m_renju_state = PATTERN::THREE;
             return true;
         }
-        
     }
 
     return true;
@@ -534,8 +524,7 @@ int Renju::getRenjuState()
 
 bool Renju::checkWin(Board *board)
 {
-    pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0)
-            , p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
+    pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0), p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
     int i_up = countNearStone(board, p_drt_up);
     int i_down = countNearStone(board, p_drt_down);
     int i_left = countNearStone(board, p_drt_left);
@@ -564,4 +553,3 @@ bool Renju::checkWin(Board *board)
 
     return false;
 }
-

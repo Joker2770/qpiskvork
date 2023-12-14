@@ -31,6 +31,7 @@
 #include <QDialog>
 #include <QSharedPointer>
 #include <QPixmap>
+#include <QCloseEvent>
 #include <QSoundEffect>
 #include <QUrl>
 
@@ -75,8 +76,7 @@ const QString g_szSkins[13] = {
     ":/skins/star.bmp",
     ":/skins/whitex.bmp",
     ":/skins/wood.bmp",
-    ":/skins/yellow.bmp"
-};
+    ":/skins/yellow.bmp"};
 
 class MainWindow : public QMainWindow
 {
@@ -169,6 +169,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    void closeEvent(QCloseEvent *event);
 
 private:
     QSharedPointer<PlayerSettingDialog> m_player_setting;

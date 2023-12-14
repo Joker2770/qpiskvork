@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: player.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 14:02:28 2022
  ************************************************************************/
 
@@ -26,7 +26,7 @@
 
 #include "player.h"
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 Player::Player()
@@ -40,5 +40,3 @@ Player::Player()
 Player::~Player()
 {
 }
-
-

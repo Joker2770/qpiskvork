@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: FreeStyleGomoku.cpp
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Mon Oct 10 12:54:50 2022
  ************************************************************************/
 
@@ -24,14 +24,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include<iostream>
+#include <iostream>
 #include "FreeStyleGomoku.h"
 using namespace std;
 
-int FreeStyleGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
+int FreeStyleGomoku::countNearStone(Board *board, const pair<int, int> &p_drt)
 {
     int i_count = 0;
-    if (board->GetState() == BOARDEMPTY)    return 0;
+    if (board->GetState() == BOARDEMPTY)
+        return 0;
 
     pair<int, int> p_last_move = board->getVRecord().back();
     pair<int, int> p_idx = board->coord2idx(p_last_move.first);
@@ -63,8 +64,7 @@ int FreeStyleGomoku::countNearStone(Board *board, const pair<int, int>& p_drt)
 
 bool FreeStyleGomoku::checkWin(Board *board)
 {
-    pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0)
-            , p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
+    pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0), p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
     int i_up = countNearStone(board, p_drt_up);
     int i_down = countNearStone(board, p_drt_down);
     int i_left = countNearStone(board, p_drt_left);
@@ -79,4 +79,3 @@ bool FreeStyleGomoku::checkWin(Board *board)
 
     return false;
 }
-

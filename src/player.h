@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: player.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Sun Oct  2 14:02:21 2022
  ************************************************************************/
 
@@ -31,7 +31,7 @@
 
 #include <QString>
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 class Player

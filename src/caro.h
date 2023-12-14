@@ -1,7 +1,7 @@
 /*************************************************************************
     > File Name: caro.h
     > Author: Jintao Yang
-    > Mail: 18608842770@163.com 
+    > Mail: 18608842770@163.com
     > Created Time: Thu Apr  6 18:02:58 2023
  ************************************************************************/
 
@@ -29,7 +29,7 @@
 
 #include "rules.h"
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 // 0 - empty, 1 - black, 2 - white, 3 - wall
