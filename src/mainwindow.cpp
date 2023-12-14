@@ -549,7 +549,6 @@ MainWindow::~MainWindow()
         delete this->m_effect;
         this->m_effect = nullptr;
     }
-    
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)
@@ -968,7 +967,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
 
@@ -1174,7 +1173,7 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[5]));
 
                 this->connectP1Signals();
 
@@ -1190,7 +1189,7 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[2]));
 
                 this->m_manager->sendAbout();
 
@@ -1218,7 +1217,7 @@ void MainWindow::OnActionStart()
             qDebug() << "AttachFlag: " << bAttach;
             if (bAttach)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[5]));
 
                 this->connectP1Signals();
                 this->connectP2Signals();
@@ -1235,7 +1234,7 @@ void MainWindow::OnActionStart()
 
             if (bStart)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[2]));
 
                 this->m_manager->sendAbout();
 
@@ -1291,7 +1290,7 @@ void MainWindow::OnActionPause()
     {
         if (nullptr != this->m_manager)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/leave.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[4]));
 
             this->m_manager->endMatch();
             this->disconnectP1Signals();
@@ -1345,7 +1344,7 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
+                    this->playSoundEffect(QUrl(g_szSoundEffect[5]));
 
                     this->connectP1Signals();
 
@@ -1361,7 +1360,7 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
-                    this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
+                    this->playSoundEffect(QUrl(g_szSoundEffect[2]));
 
                     this->m_manager->sendAbout();
 
@@ -1401,7 +1400,7 @@ void MainWindow::OnActionContinue()
                 qDebug() << "AttachFlag: " << bAttach;
                 if (bAttach)
                 {
-                    this->playSoundEffect(QUrl("qrc:/sounds/match.wav"));
+                    this->playSoundEffect(QUrl(g_szSoundEffect[5]));
 
                     this->connectP1Signals();
                     this->connectP2Signals();
@@ -1418,7 +1417,7 @@ void MainWindow::OnActionContinue()
 
                 if (bStart)
                 {
-                    this->playSoundEffect(QUrl("qrc:/sounds/enter.wav"));
+                    this->playSoundEffect(QUrl(g_szSoundEffect[2]));
 
                     this->m_manager->sendAbout();
 
@@ -1502,7 +1501,7 @@ void MainWindow::OnActionEnd()
     {
         if (nullptr != this->m_manager)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/gameend.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[3]));
 
             this->m_manager->endMatch();
             this->disconnectP1Signals();
@@ -2084,7 +2083,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
 
@@ -2244,7 +2243,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
 
@@ -2395,7 +2394,7 @@ void MainWindow::OnContinuousPos(int x, int y)
             }
             if (bSucceed)
             {
-                this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+                this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 if (this->m_time_left_p1 > 0)
                 {
@@ -2518,7 +2517,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2621,7 +2620,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
             this->m_T1->pause();
@@ -2797,7 +2796,7 @@ void MainWindow::OnP1ResponseName(const QString &name)
 void MainWindow::OnP1ResponseOk()
 {
     this->m_bOK_P1 = true;
-    this->playSoundEffect(QUrl("qrc:/sounds/connect.wav"));
+    this->playSoundEffect(QUrl(g_szSoundEffect[1]));
 }
 
 void MainWindow::OnP1ResponseError()
@@ -2828,7 +2827,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
         if (bp_1 && bp_2)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
             this->m_T2->pause();
@@ -2931,7 +2930,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
         if (bp_1 && bp_2 && bp_3)
         {
-            this->playSoundEffect(QUrl("qrc:/sounds/stone.wav"));
+            this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
             this->m_T2->pause();
@@ -3107,7 +3106,7 @@ void MainWindow::OnP2ResponseName(const QString &name)
 void MainWindow::OnP2ResponseOk()
 {
     this->m_bOK_P2 = true;
-    this->playSoundEffect(QUrl("qrc:/sounds/connect.wav"));
+    this->playSoundEffect(QUrl(g_szSoundEffect[1]));
 }
 
 void MainWindow::OnP2ResponseError()
@@ -3434,9 +3433,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("Tips"), tr("Confirm quit?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
-    if(button == QMessageBox::Yes){
+    if (button == QMessageBox::Yes)
+    {
         event->accept();
-    } else {
+    }
+    else
+    {
         event->ignore();
     }
 }

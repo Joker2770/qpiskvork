@@ -78,6 +78,15 @@ const QString g_szSkins[13] = {
     ":/skins/wood.bmp",
     ":/skins/yellow.bmp"};
 
+const QString g_szSoundEffect[7] = {
+    "qrc:/sounds/click.wav",
+    "qrc:/sounds/connect.wav",
+    "qrc:/sounds/enter.wav",
+    "qrc:/sounds/gameend.wav",
+    "qrc:/sounds/leave.wav",
+    "qrc:/sounds/match.wav",
+    "qrc:/sounds/stone.wav"};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
