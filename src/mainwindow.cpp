@@ -3388,9 +3388,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("Tips"), tr("Confirm quit?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
-    if(button == QMessageBox::Yes){
+    if (button == QMessageBox::Yes)
+    {
         event->accept();
-    } else {
+    }
+    else
+    {
         event->ignore();
     }
 }
