@@ -290,12 +290,12 @@ MainWindow::~MainWindow()
     if (nullptr != this->pActionLangENUK)
     {
         delete this->pActionLangENUK;
-        this->pActionLangENUK;
+        this->pActionLangENUK = nullptr;
     }
     if (nullptr != this->pActionLangZHCN)
     {
         delete this->pActionLangZHCN;
-        this->pActionLangZHCN;
+        this->pActionLangZHCN = nullptr;
     }
     if (nullptr != this->pSubMenuOfLanguage)
     {
