@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(qpiskvork VERSION 0.5 LANGUAGES CXX)
 
+# add submodule
+add_subdirectory(libsgfcplusplus)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -76,6 +79,8 @@ else()
         )
     endif()
 endif()
+
+target_link_directories(${PROJECT_NAME} PRIVATE libsgfcplusplus/include)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia)
 
