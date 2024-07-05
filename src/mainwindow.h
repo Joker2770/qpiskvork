@@ -46,6 +46,14 @@
 #include "timer.h"
 #include "customs.h"
 
+#include "ISgfcGame.h"
+#include "ISgfcMovePropertyValue.h"
+#include "ISgfcNumberPropertyValue.h"
+#include "ISgfcPropertyFactory.h"
+#include "ISgfcPropertyValueFactory.h"
+#include "ISgfcTreeBuilder.h"
+#include "SgfcPlusPlusFactory.h"
+
 typedef enum game_state
 {
     IDLE,

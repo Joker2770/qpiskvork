@@ -62,3 +62,16 @@ RESOURCES += \
 
 TRANSLATIONS += \
     language/zh_CN.ts
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_static
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_staticd
+else:unix: LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_static
+
+INCLUDEPATH += $$PWD/build/libsgfcplusplus/src
+DEPENDPATH += $$PWD/build/libsgfcplusplus/src
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_static.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_staticd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/libsgfcplusplus_static.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/libsgfcplusplus_staticd.lib
+else:unix: PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_static.a
