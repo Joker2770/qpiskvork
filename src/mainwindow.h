@@ -45,6 +45,7 @@
 #include "S2BResDialog.h"
 #include "timer.h"
 #include "customs.h"
+#include "SGFOption.h"
 
 typedef enum game_state
 {
@@ -96,12 +97,14 @@ public:
     ~MainWindow();
 
     QMenuBar *pMenuBar;
+    QMenu *pMenuFile;
     QMenu *pMenuGame;
     QMenu *pMenuSetting;
     QMenu *pMenuPlayer;
     QMenu *pMenuShow;
     QMenu *pMenuAbout;
     QMenu *pSubMenuOfLanguage;
+    QAction *pActionExportSgf;
     QAction *pActionBoardSize;
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
@@ -137,6 +140,7 @@ public:
     QActionGroup *pLanguageActionGroup;
 
 public slots:
+    void OnActionExport2SGF();
     void OnActionStart();
     void OnActionPause();
     void OnActionContinue();
@@ -203,6 +207,7 @@ private:
     vector<pair<pair<int, int>, int>> record_expand(const vector<pair<int, int>> &vRecord, bool bContinuous = false);
 
 private:
+    SGFOption *mSgfOpt;
     Board *mBoard;
     Manager *m_manager;
     FreeStyleGomoku *m_freeStyleGomoku;

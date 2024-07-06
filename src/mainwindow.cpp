@@ -1,6 +1,6 @@
 /**
     qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.
-    Copyright (C) 2022-2023  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2022-2024  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QInputDialog>
+#include <QFileDialog>
+#include <QDir>
 #include <QPainterPath>
 
 #include "mainwindow.h"
@@ -37,12 +39,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuBar = new QMenuBar(this);
 #endif
 
+    this->pMenuFile = new QMenu(tr("File"), this);
     this->pMenuGame = new QMenu(tr("Game"), this);
     this->pMenuSetting = new QMenu(tr("Setting"), this);
     this->pMenuPlayer = new QMenu(tr("Player"), this);
     this->pMenuShow = new QMenu(tr("Show"), this);
     this->pMenuAbout = new QMenu(tr("About"), this);
     this->pSubMenuOfLanguage = new QMenu(tr("LanguageSubMenu"), this);
+    this->pActionExportSgf = new QAction(tr("Export to SGF"), this);
     this->pActionBoardSize = new QAction(tr("Board Size"), this);
     this->pActionTimeoutMatch = new QAction(tr("Match Timeout"), this);
     this->pActionTimeoutTurn = new QAction(tr("Turn Timeout"), this);
@@ -74,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionVer = new QAction(tr("Ver Info"), this);
     this->pActionFeedback = new QAction(tr("Feedback"), this);
     this->pActionLicense = new QAction(tr("License"), this);
+    this->pActionExportSgf->setShortcut(QKeySequence(Qt::Key_E));
     this->pActionStart->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     this->pActionPause->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
     this->pActionContinue->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_G));
@@ -122,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
     this->pMenuSetting->addAction(this->pActionMaxMemory);
+    this->pMenuFile->addAction(this->pActionExportSgf);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
     this->pMenuGame->addAction(this->pActionContinue);
@@ -141,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuAbout->addAction(this->pActionVer);
     this->pMenuAbout->addAction(this->pActionFeedback);
     this->pMenuAbout->addAction(this->pActionLicense);
+    this->pMenuBar->addMenu(this->pMenuFile);
     this->pMenuBar->addMenu(this->pMenuGame);
     this->pMenuBar->addMenu(this->pMenuSetting);
     this->pMenuBar->addMenu(this->pMenuPlayer);
@@ -181,6 +188,8 @@ MainWindow::MainWindow(QWidget *parent)
     int i_grid_size = (grid_size.toInt() >= 20 && grid_size.toInt() <= 50) ? grid_size.toInt() : 36;
     this->RECT_WIDTH = i_grid_size;
     this->RECT_HEIGHT = i_grid_size;
+
+    this->mSgfOpt = new SGFOption();
 
     this->mBoard = new Board();
     QString q_board_size;
@@ -261,6 +270,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->m_effect = new QSoundEffect(this);
 
+    connect(this->pActionExportSgf, SIGNAL(triggered()), this, SLOT(OnActionExport2SGF()));
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
     connect(this->pActionContinue, SIGNAL(triggered()), this, SLOT(OnActionContinue()));
@@ -363,6 +373,11 @@ MainWindow::~MainWindow()
     {
         delete this->m_standardGomoku;
         this->m_standardGomoku = nullptr;
+    }
+    if (nullptr != this->mSgfOpt)
+    {
+        delete this->mSgfOpt;
+        this->mSgfOpt = nullptr;
     }
     if (nullptr != this->mBoard)
     {
@@ -508,6 +523,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionVer;
         this->pActionVer = nullptr;
+    }
+    if (nullptr != this->pMenuFile)
+    {
+        delete this->pMenuFile;
+        this->pMenuFile = nullptr;
     }
     if (nullptr != this->pMenuGame)
     {
@@ -3448,4 +3468,15 @@ void MainWindow::playSoundEffect(const QUrl &url)
     this->m_effect->setSource(url);
     this->m_effect->setLoopCount(1);
     this->m_effect->play();
+}
+
+void MainWindow::OnActionExport2SGF()
+{
+    QString curPath = QDir::currentPath();
+    QString dlgTitle = tr("choose to save");
+    QString aFileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, tr("SGF files(*.sgf)"));
+    if (!aFileName.isEmpty())
+    {
+        this->mSgfOpt->record_2_sgf(aFileName.toStdString(), this->mBoard->getVRecord(), this->mBoard->getBSize().first);
+    }
 }
