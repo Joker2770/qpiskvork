@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project(qpiskvork VERSION 0.5 LANGUAGES CXX)
 
 # add submodule
-add_subdirectory(libsgfcplusplus)
+# add_subdirectory(libsgfcplusplus)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -18,6 +18,7 @@ include(GNUInstallDirs)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Multimedia)
+find_package (libsgfcplusplus)
 
 set(PROJECT_SOURCES
 	src/FreeStyleGomoku.cpp
@@ -80,9 +81,10 @@ else()
     endif()
 endif()
 
-target_link_directories(${PROJECT_NAME} PRIVATE libsgfcplusplus/include)
+# add_library(libsgfcplusplus SHARED libsgfcplusplus)
+# target_include_directories(${PROJECT_NAME} PRIVATE libsgfcplusplus/include)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia libsgfcplusplus::libsgfcplusplus_shared)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
