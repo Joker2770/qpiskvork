@@ -46,8 +46,6 @@
 #include "timer.h"
 #include "customs.h"
 
-#include <libsgfcplusplus/SgfcPlusPlusFactory.h>
-
 typedef enum game_state
 {
     IDLE,

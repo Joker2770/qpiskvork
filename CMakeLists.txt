@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
 	src/PlayerSettingDialog.cpp
 	src/S2BResDialog.cpp
 	src/customs.cpp
+	src/SGFOption.cpp
 	src/FreeStyleGomoku.h
 	src/StandardGomoku.h
 	src/renju.h
@@ -54,6 +55,7 @@ set(PROJECT_SOURCES
 	src/PlayerSettingDialog.h
 	src/S2BResDialog.h
 	src/customs.h
+	src/SGFOption.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
