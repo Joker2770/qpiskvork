@@ -65,15 +65,15 @@ RESOURCES += \
 TRANSLATIONS += \
     language/zh_CN.ts
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_static
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_staticd
-else:unix: LIBS += -L$$PWD/build/libsgfcplusplus/src/ -llibsgfcplusplus_static
+win32:CONFIG(release, debug|release): LIBS += -L'C:/Program Files (x86)/libsgfc++/release/' -lliblibsgfcplusplus.dll
+else:win32:CONFIG(debug, debug|release): LIBS += -L'C:/Program Files (x86)/libsgfc++/debug/' -lliblibsgfcplusplus.dll
+else:unix: LIBS += -L'C:/Program Files (x86)/libsgfc++/' -lliblibsgfcplusplus.dll
 
-INCLUDEPATH += $$PWD/build/libsgfcplusplus/src
-DEPENDPATH += $$PWD/build/libsgfcplusplus/src
+INCLUDEPATH += 'C:/Program Files (x86)/libsgfc++/include'
+DEPENDPATH += 'C:/Program Files (x86)/libsgfc++/include'
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_static.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_staticd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/libsgfcplusplus_static.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/libsgfcplusplus_staticd.lib
-else:unix: PRE_TARGETDEPS += $$PWD/build/libsgfcplusplus/src/liblibsgfcplusplus_static.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'C:/Program Files (x86)/libsgfc++/release/liblibsgfcplusplus.dll.a'
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'C:/Program Files (x86)/libsgfc++/debug/liblibsgfcplusplus.dll.a'
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += 'C:/Program Files (x86)/libsgfc++/release/liblibsgfcplusplus.dll.lib'
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += 'C:/Program Files (x86)/libsgfc++/debug/liblibsgfcplusplus.dll.lib'
+else:unix: PRE_TARGETDEPS += 'C:/Program Files (x86)/libsgfc++/liblibsgfcplusplus.dll.a'

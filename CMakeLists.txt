@@ -18,7 +18,13 @@ include(GNUInstallDirs)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Multimedia)
-find_package (libsgfcplusplus)
+if(WIN32)
+	find_package(libsgfcplusplus REQUIRED
+			 PATHS "C:/Program Files (x86)/libsgfc++"
+			 NO_DEFAULT_PATH)
+else()
+	find_package(libsgfcplusplus)
+endif()
 
 set(PROJECT_SOURCES
 	src/FreeStyleGomoku.cpp
