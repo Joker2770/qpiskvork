@@ -3474,7 +3474,7 @@ void MainWindow::OnActionExport2SGF()
 {
     QString curPath = QDir::currentPath();
     QString dlgTitle = tr("choose to save");
-    QString aFileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, tr("SGF files(*.sgf)"));
+    QString aFileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, "SGF files(*.sgf)");
     if (!aFileName.isEmpty())
     {
         this->mSgfOpt->record_2_sgf(aFileName.toStdString(), this->mBoard->getVRecord(), this->mBoard->getBSize().first);

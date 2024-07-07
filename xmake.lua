@@ -27,4 +27,5 @@ target("qpiskvork")
     add_files("res.qrc")
 
     add_packages("libsgfcplusplus")
+    add_ldflags("-llibsgfcplusplus")
     add_frameworks("QtCore", "QtWidgets", "QtGui", "QtMultimedia")
