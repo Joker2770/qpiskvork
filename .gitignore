@@ -51,7 +51,7 @@ compile_commands.json
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
-[Bb]uild/
+[Bb]uild*/
 .vscode/
 .vs/
 .xmake/
