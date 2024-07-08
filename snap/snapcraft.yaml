@@ -114,6 +114,7 @@ parts:
       - gcc
       - g++
       - make
+      - cmake
 
   qpiskvork:
     after: [desktop-qt5, libsgfcplusplus]
