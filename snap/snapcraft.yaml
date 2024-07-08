@@ -99,7 +99,7 @@ apps:
       # QT_QPA_PLATFORMTHEME: gtk3
 
 parts:
-  libsgfcpluscplus:
+  libsgfcplusplus:
     plugin: cmake
     configflags:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
@@ -114,9 +114,10 @@ parts:
       - gcc
       - g++
       - make
+      - cmake
 
   qpiskvork:
-    after: [desktop-qt5, libsgfcpluscplus]
+    after: [desktop-qt5, libsgfcplusplus]
     plugin: cmake
     configflags:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
