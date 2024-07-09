@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuShow = new QMenu(tr("Show"), this);
     this->pMenuAbout = new QMenu(tr("About"), this);
     this->pSubMenuOfLanguage = new QMenu(tr("LanguageSubMenu"), this);
+    this->pActionImportSgf = new QAction(tr("Import from SGF"), this);
     this->pActionExportSgf = new QAction(tr("Export to SGF"), this);
     this->pActionBoardSize = new QAction(tr("Board Size"), this);
     this->pActionTimeoutMatch = new QAction(tr("Match Timeout"), this);
@@ -78,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionVer = new QAction(tr("Ver Info"), this);
     this->pActionFeedback = new QAction(tr("Feedback"), this);
     this->pActionLicense = new QAction(tr("License"), this);
+    this->pActionImportSgf->setShortcut(QKeySequence(Qt::Key_I));
     this->pActionExportSgf->setShortcut(QKeySequence(Qt::Key_E));
     this->pActionStart->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     this->pActionPause->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
@@ -127,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuSetting->addAction(this->pActionTimeoutMatch);
     this->pMenuSetting->addAction(this->pActionTimeoutTurn);
     this->pMenuSetting->addAction(this->pActionMaxMemory);
+    this->pMenuFile->addAction(this->pActionImportSgf);
     this->pMenuFile->addAction(this->pActionExportSgf);
     this->pMenuGame->addAction(this->pActionStart);
     this->pMenuGame->addAction(this->pActionPause);
@@ -270,6 +273,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->m_effect = new QSoundEffect(this);
 
+    connect(this->pActionImportSgf, SIGNAL(triggered()), this, SLOT(OnActionImport2SGF()));
     connect(this->pActionExportSgf, SIGNAL(triggered()), this, SLOT(OnActionExport2SGF()));
     connect(this->pActionStart, SIGNAL(triggered()), this, SLOT(OnActionStart()));
     connect(this->pActionPause, SIGNAL(triggered()), this, SLOT(OnActionPause()));
@@ -523,6 +527,16 @@ MainWindow::~MainWindow()
     {
         delete this->pActionVer;
         this->pActionVer = nullptr;
+    }
+    if (nullptr != this->pActionExportSgf)
+    {
+        delete this->pActionExportSgf;
+        this->pActionExportSgf = nullptr;
+    }
+    if (nullptr != this->pActionImportSgf)
+    {
+        delete this->pActionImportSgf;
+        this->pActionImportSgf = nullptr;
     }
     if (nullptr != this->pMenuFile)
     {
@@ -3478,5 +3492,47 @@ void MainWindow::OnActionExport2SGF()
     if (!aFileName.isEmpty())
     {
         this->mSgfOpt->record_2_sgf(aFileName.toStdString(), this->mBoard->getVRecord(), this->mBoard->getBSize().first);
+    }
+}
+
+void MainWindow::OnActionImport2SGF()
+{
+    QString curPath = QDir::currentPath();
+    QString dlgTitle = tr("Choose a file");
+    // QString filter="executable file(*.exe)";
+    QString aFileName = QFileDialog::getOpenFileName(this, dlgTitle, curPath, "SGF files(*.sgf)");
+    if (!aFileName.isEmpty())
+    {
+        unsigned int b_size = 0;
+        std::vector<pair<int, int>> vRec;
+        this->mSgfOpt->loadSgf(aFileName.toStdString(), vRec, &b_size);
+
+        this->OnActionClearBoard();
+        std::pair<unsigned int, unsigned int> pTmp(b_size, b_size);
+        if (this->mBoard->setBSize(pTmp))
+        {
+            resize((this->mBoard->getBSize().first + 2) * RECT_WIDTH, (this->mBoard->getBSize().second + 3) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+        }
+
+        this->mBoard->Notify();
+
+        if (nullptr != this->m_T1)
+            this->m_T1->stop();
+        if (nullptr != this->m_T2)
+            this->m_T2->stop();
+
+        this->mState = GAME_STATE::IDLE;
+        this->pRuleActionGroup->setEnabled(true);
+        this->m_customs->setCfgValue("Board", "size", b_size);
+
+        if (this->mState == GAME_STATE::IDLE)
+        {
+            for (const auto &v : vRec)
+            {
+                this->mBoard->placeStone(this->mBoard->coord2idx(v.first), (STONECOLOR::BLACK == v.second) ? STONECOLOR::BLACK : STONECOLOR::WHITE);
+            }
+
+            this->mBoard->Notify();
+        }
     }
 }

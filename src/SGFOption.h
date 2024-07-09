@@ -30,7 +30,9 @@
 #include <libsgfcplusplus/SgfcPlusPlusFactory.h>
 #include <libsgfcplusplus/ISgfcArguments.h>
 #include <libsgfcplusplus/ISgfcDocument.h>
+#include <libsgfcplusplus/ISgfcDocumentReader.h>
 #include <libsgfcplusplus/ISgfcDocumentWriter.h>
+#include <libsgfcplusplus/ISgfcDocumentReadResult.h>
 #include <libsgfcplusplus/ISgfcDocumentWriteResult.h>
 #include <libsgfcplusplus/ISgfcGame.h>
 #include <libsgfcplusplus/ISgfcMovePropertyValue.h>
@@ -49,10 +51,13 @@ public:
     SGFOption();
     ~SGFOption();
     std::string idx_2_s(const std::pair<int, int> &idx);
+    std::pair<int, int> s_2_idx(const std::string &propertyValue);
     void PrintMessages(const std::vector<std::shared_ptr<ISgfcMessage>> &messages);
     void PrintDocumentContent(std::shared_ptr<ISgfcDocument> document);
+    std::shared_ptr<ISgfcDocument> ReadDocument(const std::string &inputFilePath, bool printOutput);
     int WriteDocument(std::shared_ptr<ISgfcDocument> document, const std::string &outputFilePath);
     void record_2_sgf(const std::string &outputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int bSize);
+    int loadSgf(const std::string &inputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int *bSize);
 };
 
 #endif

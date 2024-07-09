@@ -54,6 +54,18 @@ std::string SGFOption::idx_2_s(const std::pair<int, int> &idx)
   return sTmp;
 }
 
+std::pair<int, int> SGFOption::s_2_idx(const std::string &StringPropertyValue)
+{
+  std::pair<int, int> idx(-1, -1);
+  if (!StringPropertyValue.empty() && StringPropertyValue.length() == 2)
+  {
+    idx.first = StringPropertyValue.at(0) - 'a';
+    idx.second = StringPropertyValue.at(1) - 'a';
+  }
+
+  return idx;
+}
+
 /// @brief Prints the raw message text of all ISgfcMessage objects in the
 /// supplied collection to standard output.
 ///
@@ -86,6 +98,35 @@ void SGFOption::PrintDocumentContent(std::shared_ptr<ISgfcDocument> document)
     document->DebugPrintToConsole();
 
   std::cout << std::endl;
+}
+
+/// @brief Reads the SGF file @a inputFilePath. If @a printOutput is true also
+/// prints the document content to standard output.
+///
+/// This demonstrates the usage of ISgfcDocumentReader.
+std::shared_ptr<ISgfcDocument> SGFOption::ReadDocument(const std::string &inputFilePath, bool printOutput)
+{
+  std::shared_ptr<ISgfcDocumentReader> documentReader = SgfcPlusPlusFactory::CreateDocumentReader();
+
+  // Uncomment the following to see an invalid command line
+  //  documentReader->GetArguments()->AddArgument(SgfcArgumentType::DeletePropertyType, SgfcPropertyType::BO);
+
+  std::shared_ptr<ISgfcDocumentReadResult> result = documentReader->ReadSgfFile(inputFilePath);
+
+  if (printOutput)
+  {
+    std::cout << "ReadSgfFile sgfcExitCode = " << static_cast<int>(result->GetExitCode()) << std::endl;
+    std::cout << "IsSgfDataValid = " << result->IsSgfDataValid() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Printing parse results..." << std::endl;
+    PrintMessages(result->GetParseResult());
+
+    if (result->GetExitCode() != SgfcExitCode::FatalError)
+      PrintDocumentContent(result->GetDocument());
+  }
+
+  return result->GetDocument();
 }
 
 /// @brief Writes the content of @a document to the SGF file @a outputFilePath.
@@ -169,4 +210,68 @@ void SGFOption::record_2_sgf(const std::string &outputFilePath, std::vector<std:
   PrintDocumentContent(document);
 
   WriteDocument(document, outputFilePath);
+}
+
+int SGFOption::loadSgf(const std::string &inputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int *bSize)
+{
+  int iFlag = -1;
+  Board bTmp;
+  vRecord.clear();
+  std::shared_ptr<ISgfcDocument> document = ReadDocument(inputFilePath, true);
+  if (document->IsEmpty())
+  {
+    return iFlag;
+  }
+
+  std::shared_ptr<ISgfcGame> game = document->GetGame();
+  if (SgfcGameType::GomokuAndRenju != game->GetGameType())
+  {
+    return iFlag;
+  }
+
+  std::shared_ptr<ISgfcNode> rootNode = game->GetRootNode();
+  if (nullptr != rootNode)
+  {
+    if (rootNode->HasProperties())
+    {
+      std::shared_ptr<ISgfcProperty> property;
+      property = rootNode->GetProperty(SgfcPropertyType::SZ);
+      if (nullptr != property && property->HasPropertyValues())
+      {
+        std::string s_size = property->GetPropertyValue()->ToSingleValue()->GetRawValue();
+        *bSize = (unsigned int)std::stoi(s_size);
+      }
+    }
+    std::shared_ptr<ISgfcNode> currentNode;
+    currentNode = rootNode;
+
+    while (currentNode->HasChildren())
+    {
+      currentNode = currentNode->GetFirstChild();
+      if (currentNode->HasProperties())
+      {
+        std::shared_ptr<ISgfcProperty> property;
+        property = currentNode->GetProperty(SgfcPropertyType::W);
+        if (nullptr == property)
+        {
+          property = currentNode->GetProperty(SgfcPropertyType::B);
+        }
+        if (nullptr != property && property->HasPropertyValues())
+        {
+          std::string sTmp = property->GetPropertyValue()->ToSingleValue()->GetRawValue();
+          int coord = bTmp.idx2Coord((s_2_idx(sTmp)));
+          int color = SgfcPropertyType::B == property->GetPropertyType() ? STONECOLOR::BLACK : STONECOLOR::WHITE;
+          std::pair pTmp(coord, color);
+          vRecord.push_back(pTmp);
+        }
+      }
+    }
+  }
+  else
+  {
+    return iFlag;
+  }
+  iFlag = 0;
+
+  return iFlag;
 }

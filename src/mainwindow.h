@@ -104,6 +104,7 @@ public:
     QMenu *pMenuShow;
     QMenu *pMenuAbout;
     QMenu *pSubMenuOfLanguage;
+    QAction *pActionImportSgf;
     QAction *pActionExportSgf;
     QAction *pActionBoardSize;
     QAction *pActionTimeoutMatch;
@@ -140,6 +141,7 @@ public:
     QActionGroup *pLanguageActionGroup;
 
 public slots:
+    void OnActionImport2SGF();
     void OnActionExport2SGF();
     void OnActionStart();
     void OnActionPause();
