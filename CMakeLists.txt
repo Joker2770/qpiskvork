@@ -24,7 +24,7 @@ if(WIN32)
 			 NO_DEFAULT_PATH)
 else()
 	find_package(libsgfcplusplus REQUIRED
-			PATHS "/usr/local/lib/libsgfcplusplus"
+			PATHS "/usr/local/lib/libsgfcplusplus" "/build/qpiskvork/parts/libsgfcplusplus/install/usr/local/lib/libsgfcplusplus"
 			NO_DEFAULT_PATH)
 endif()
 
