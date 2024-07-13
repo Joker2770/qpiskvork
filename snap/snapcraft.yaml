@@ -60,6 +60,8 @@ layout:
     bind: $SNAP/etc/fonts
   /etc/pulse:
     bind: $SNAP/etc/pulse
+  /usr/local/lib:
+    bind: $SNAP/usr/local/lib
   /usr/local/share:
     bind: $SNAP/usr/local/share
   /usr/share/X11:
