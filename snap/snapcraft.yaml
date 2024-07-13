@@ -104,6 +104,8 @@ parts:
     cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
       - "-DCMAKE_BUILD_TYPE=Release"
+      - "-DENABLE_DEFAULT=NO"
+      - "-DENABLE_SHARED_LIBRARY=YES"
       - "-DENABLE_TESTING=OFF"
       - "-DBUILD_TESTING=OFF"
       - "-DCMAKE_C_COMPILER=/usr/bin/gcc"
