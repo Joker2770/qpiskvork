@@ -23,7 +23,9 @@ if(WIN32)
 			 PATHS "C:/Program Files (x86)/libsgfc++"
 			 NO_DEFAULT_PATH)
 else()
-	find_package(libsgfcplusplus)
+	find_package(libsgfcplusplus REQUIRED
+			PATHS "/usr/local/lib/libsgfcplusplus"
+			NO_DEFAULT_PATH)
 endif()
 
 set(PROJECT_SOURCES

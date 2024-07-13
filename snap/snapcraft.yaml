@@ -36,7 +36,7 @@ description: |
 
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
-base: core18
+base: core20
 license: 'GPL-2.0+'
 
 plugs:
@@ -101,7 +101,7 @@ apps:
 parts:
   libsgfcplusplus:
     plugin: cmake
-    configflags:
+    cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
       - "-DCMAKE_BUILD_TYPE=Release"
       - "-DENABLE_TESTING=OFF"
@@ -121,7 +121,7 @@ parts:
   qpiskvork:
     after: [desktop-qt5, libsgfcplusplus]
     plugin: cmake
-    configflags:
+    cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
       - "-DCMAKE_BUILD_TYPE=Release"
       - "-DENABLE_TESTING=OFF"
@@ -153,7 +153,7 @@ parts:
         - dpkg-dev
       stage-packages:
         - libxkbcommon0
-        - ttf-ubuntu-font-family
+        # - ttf-ubuntu-font-family
         - dmz-cursor-theme
         - light-themes
         - adwaita-icon-theme
@@ -163,7 +163,7 @@ parts:
         - libgdk-pixbuf2.0-0
         - libgtk2.0-0
         - libqt5svg5 # for loading icon themes which are svg
-        - try: [appmenu-qt5] # not available on core18
+        # - try: [appmenu-qt5] # not available on core18
         - locales-all
 
   # qt5-gtk-platform:
