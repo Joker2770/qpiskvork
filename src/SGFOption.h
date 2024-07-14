@@ -34,9 +34,13 @@
 #include <libsgfcplusplus/ISgfcDocumentWriter.h>
 #include <libsgfcplusplus/ISgfcDocumentReadResult.h>
 #include <libsgfcplusplus/ISgfcDocumentWriteResult.h>
+#include <libsgfcplusplus/SgfcDate.h>
+#include <libsgfcplusplus/ISgfcNode.h>
 #include <libsgfcplusplus/ISgfcGame.h>
+#include <libsgfcplusplus/ISgfcGameInfo.h>
 #include <libsgfcplusplus/ISgfcMovePropertyValue.h>
 #include <libsgfcplusplus/ISgfcNumberPropertyValue.h>
+#include <libsgfcplusplus/ISgfcSimpleTextPropertyValue.h>
 #include <libsgfcplusplus/ISgfcPropertyFactory.h>
 #include <libsgfcplusplus/ISgfcPropertyValueFactory.h>
 #include <libsgfcplusplus/ISgfcTreeBuilder.h>
@@ -56,7 +60,7 @@ public:
     void PrintDocumentContent(std::shared_ptr<ISgfcDocument> document);
     std::shared_ptr<ISgfcDocument> ReadDocument(const std::string &inputFilePath, bool printOutput);
     int WriteDocument(std::shared_ptr<ISgfcDocument> document, const std::string &outputFilePath);
-    void record_2_sgf(const std::string &outputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int bSize);
+    void record_2_sgf(const std::string &outputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int bSize, const std::string &sDate, const std::string &sBName, const std::string &sWName);
     int loadSgf(const std::string &inputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int *bSize);
 };
 

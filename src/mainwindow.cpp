@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QPainterPath>
+#include <QDate>
 
 #include "mainwindow.h"
 #include "EngineLoader.h"
@@ -3491,7 +3492,16 @@ void MainWindow::OnActionExport2SGF()
     QString aFileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, "SGF files(*.sgf)");
     if (!aFileName.isEmpty())
     {
-        this->mSgfOpt->record_2_sgf(aFileName.toStdString(), this->mBoard->getVRecord(), this->mBoard->getBSize().first);
+        QDate qDt = QDate::currentDate();
+        this->mSgfOpt->record_2_sgf(aFileName.toStdString(),
+                                    this->mBoard->getVRecord(),
+                                    this->mBoard->getBSize().first,
+                                    qDt.toString("yyyy-MM-dd").toStdString(),
+                                    this->m_p1_name.toStdString(),
+                                    this->m_p2_name.toStdString());
+        // qDebug() << "date: " << qDt.toString("yyyy-MM-dd");
+        // qDebug() << "p1 name: " << this->m_p1_name;
+        // qDebug() << "p2 name: " << this->m_p2_name;
     }
 }
 
