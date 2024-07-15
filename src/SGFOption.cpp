@@ -156,26 +156,42 @@ int SGFOption::WriteDocument(std::shared_ptr<ISgfcDocument> document, const std:
   return 0;
 }
 
-void SGFOption::record_2_sgf(const std::string &outputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int bSize)
+void SGFOption::record_2_sgf(const std::string &outputFilePath, std::vector<std::pair<int, int>> &vRecord, unsigned int bSize, const std::string &sDate, const std::string &sBName, const std::string &sWName)
 {
   Board bTmp;
   std::shared_ptr<ISgfcDocument> document = SgfcPlusPlusFactory::CreateDocument();
   std::shared_ptr<ISgfcGame> game = document->GetGame();
+
   std::shared_ptr<ISgfcNode> rootNode = game->GetRootNode();
+
+  // std::shared_ptr<ISgfcGameInfo> gameInfo = game->CreateGameInfo();
+  // SgfcSimpleText PW = sWName;
+  // SgfcSimpleText PB = sBName;
+  // SgfcSimpleText DT = sDate.empty()?"":sDate;
+  // gameInfo->SetWhitePlayerName(PW);
+  // gameInfo->SetBlackPlayerName(PB);
+  // gameInfo->SetGameDates(SgfcDate::FromPropertyValue(DT));
+  // game->GetRootNode()->WriteGameInfo(gameInfo);
 
   std::shared_ptr<ISgfcNode> node[vRecord.size()];
 
   auto builder = game->GetTreeBuilder();
 
   auto propertyValueFactory = SgfcPlusPlusFactory::CreatePropertyValueFactory();
-  auto propertyValueGM = propertyValueFactory->CreateNumberPropertyValue(4);
-  auto propertyValueSZ = propertyValueFactory->CreateNumberPropertyValue(bSize);
+  std::shared_ptr<ISgfcPropertyValue> propertyValueGM = propertyValueFactory->CreateNumberPropertyValue(4);
+  std::shared_ptr<ISgfcPropertyValue> propertyValueSZ = propertyValueFactory->CreateNumberPropertyValue(bSize);
+  auto propertyValueDT = propertyValueFactory->CreateSimpleTextPropertyValue(sDate.empty()?"":sDate);
+  auto propertyValuePB = propertyValueFactory->CreateSimpleTextPropertyValue(sBName);
+  auto propertyValuePW = propertyValueFactory->CreateSimpleTextPropertyValue(sWName);
 
   auto propertyFactory = SgfcPlusPlusFactory::CreatePropertyFactory();
   std::shared_ptr<ISgfcProperty> propertyGM = propertyFactory->CreateProperty(SgfcPropertyType::GM, propertyValueGM);
   std::shared_ptr<ISgfcProperty> propertySZ = propertyFactory->CreateProperty(SgfcPropertyType::SZ, propertyValueSZ);
+  std::shared_ptr<ISgfcProperty> propertyDT = propertyFactory->CreateProperty(SgfcPropertyType::DT, propertyValueDT);
+  std::shared_ptr<ISgfcProperty> propertyPB = propertyFactory->CreateProperty(SgfcPropertyType::PB, propertyValuePB);
+  std::shared_ptr<ISgfcProperty> propertyPW = propertyFactory->CreateProperty(SgfcPropertyType::PW, propertyValuePW);
 
-  rootNode->SetProperties(std::vector<std::shared_ptr<ISgfcProperty>>{propertyGM, propertySZ});
+  rootNode->SetProperties(std::vector<std::shared_ptr<ISgfcProperty>>{propertyGM, propertySZ, propertyDT, propertyPB, propertyPW});
 
   for (size_t i = 0; i < vRecord.size(); i++)
   {
