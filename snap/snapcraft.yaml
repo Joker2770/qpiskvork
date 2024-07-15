@@ -93,6 +93,7 @@ apps:
       - system-observe
       - system-trace
     environment:
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
       DISABLE_WAYLAND: 1
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
       # Use GTK3 cursor theme, icon theme and open/save file dialogs.
