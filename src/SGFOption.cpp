@@ -277,7 +277,7 @@ int SGFOption::loadSgf(const std::string &inputFilePath, std::vector<std::pair<i
           std::string sTmp = property->GetPropertyValue()->ToSingleValue()->GetRawValue();
           int coord = bTmp.idx2Coord((s_2_idx(sTmp)));
           int color = SgfcPropertyType::B == property->GetPropertyType() ? STONECOLOR::BLACK : STONECOLOR::WHITE;
-          std::pair pTmp(coord, color);
+          std::pair<int, int> pTmp(coord, color);
           vRecord.push_back(pTmp);
         }
       }
