@@ -145,22 +145,30 @@ int Renju::countA4(Board *board, const pair<int, int> &p_drt)
         if (vColor.size() >= 5)
         {
             int i_flag = 0;
+            bool b_1_before_3 = false;
             for (size_t j = 0; j <= vColor.size() - 5; ++j)
             {
                 for (size_t i = 0; i < 5; ++i)
                 {
                     if (((A4_SHAPES[i][0]) == (vColor[j])) && ((A4_SHAPES[i][1]) == (vColor[j + 1])) && ((A4_SHAPES[i][2]) == (vColor[j + 2])) && ((A4_SHAPES[i][3]) == (vColor[j + 3])) && ((A4_SHAPES[i][4]) == (vColor[j + 4])))
                     {
-                        if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, ‘101111101’ at mid, '111010111' at mid, '11110111', '11101111'
+                        if ((i == 1 || i == 3)) //'1011101' at left3 to right3, '10111101' at left4 and right4, ‘101111101’ at mid, '111010111' at mid, '11110111', '11101111', '111011101', '101110111'
                         {
                             if (i == 1)
                                 i_flag |= 0x01;
                             else if (i == 3)
+                            {
+                                // if already have 1
+                                if ((i_flag & 0x01) == 0x01)
+                                {
+                                    b_1_before_3 = true;
+                                }
                                 i_flag |= 0x02;
+                            }
 
                             break;
                         }
-                        else if (i == 2) //'11011011' at left4 and right4, '11110111', '11101111'
+                        else if (i == 2) //'11011011' at left4 and right4, '11110111', '11101111', '111011101', '101110111'
                         {
                             if ((i_flag & 0x04) != 0x04)
                                 i_flag |= 0x04;
@@ -177,8 +185,13 @@ int Renju::countA4(Board *board, const pair<int, int> &p_drt)
 
             if ((i_flag & 0x0F) == 0x0F) // '110111011'
                 i_count = 2;
-            else if ((i_flag & 0x07) == 0x07) //'11101111' or '11110111'
-                i_count = 1;
+            else if ((i_flag & 0x07) == 0x07) // '11011101', '10111011', '111011101', '101110111', '11101111' or '11110111'
+            {
+                if (b_1_before_3)
+                    i_count = 2;
+                else
+                    i_count = 1;
+            }
             else if ((i_flag & 0x03) == 0x03) //'1011101', '10111101'
                 i_count = 2;
             else if ((i_flag & (0x04 | 0x08)) == (0x04 | 0x08)) //'11011011'
