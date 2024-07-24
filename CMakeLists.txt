@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qpiskvork VERSION 0.5 LANGUAGES CXX)
+project(qpiskvork VERSION 0.9 LANGUAGES CXX)
 
 # add submodule
 # add_subdirectory(libsgfcplusplus)
