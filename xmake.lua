@@ -14,3 +14,4 @@ target("qpiskvork")
 
     add_files("res.qrc")
     add_frameworks("QtCore", "QtWidgets", "QtGui")
+    add_rpathdirs("@loader_path", "@loader_path/lib", "@executable_path", "@executable_path/lib")
