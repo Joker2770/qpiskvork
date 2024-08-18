@@ -7,7 +7,7 @@
 
 /**
     qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.
-    Copyright (C) 2023  Jintao Yang <yjt950840@outlook.com>
+    Copyright (C) 2023-2024  Jintao Yang <yjt950840@outlook.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,12 +50,12 @@ bool Caro::findShap(Board *board, const pair<int, int> &p_drt)
 
         while (true)
         {
-            if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
+            if (board->isPosOutOfBoard(p_drt_idx))
+                vColor.push_back(3);
+            else if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(1);
             else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(2);
-            else if (board->isPosOutOfBoard(p_drt_idx))
-                vColor.push_back(3);
             else
                 vColor.push_back(0);
 
@@ -70,12 +70,12 @@ bool Caro::findShap(Board *board, const pair<int, int> &p_drt)
         p_drt_idx.second = p_idx.second - p_drt.second;
         while (true)
         {
-            if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
+            if (board->isPosOutOfBoard(p_drt_idx))
+                vColor.push_back(3);
+            else if (STONECOLOR::BLACK == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(1);
             else if (STONECOLOR::WHITE == board->getIdxStoneColor(p_drt_idx))
                 vColor.push_back(2);
-            else if (board->isPosOutOfBoard(p_drt_idx))
-                vColor.push_back(3);
             else
                 vColor.push_back(0);
 
