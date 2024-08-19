@@ -93,9 +93,10 @@ bool Caro::findShap(Board *board, const pair<int, int> &p_drt)
 
         if (vColor.size() >= 7)
         {
+            size_t win_shape_size = sizeof(WIN_SHAPES) / sizeof(WIN_SHAPES[0]);
             for (size_t j = 0; j <= vColor.size() - 7; ++j)
             {
-                for (size_t i = 0; i < 46; ++i)
+                for (size_t i = 0; i < win_shape_size; ++i)
                 {
                     if (((WIN_SHAPES[i][0]) == (vColor[j])) &&
                         ((WIN_SHAPES[i][1]) == (vColor[j + 1])) &&
