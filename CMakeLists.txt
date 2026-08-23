@@ -16,8 +16,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Multimedia)
+# Prefer Qt6, but fall back to Qt5 if the Multimedia component is unavailable.
+find_package(Qt6 QUIET COMPONENTS Core Gui Widgets Multimedia)
+if(Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+else()
+    find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
+    set(QT_VERSION_MAJOR 5)
+endif()
 if(WIN32)
 	find_package(libsgfcplusplus REQUIRED
 			 PATHS "C:/Program Files (x86)/libsgfc++"
