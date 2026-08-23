@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju = new QAction(tr("Renju"), this);
     this->pActionCaro = new QAction(tr("Caro"), this);
     this->pActionNumOfMove = new QAction(tr("Number of move"), this);
+    this->pActionToggleOpenMind = new QAction(tr("Display AI Mind"), this);
     this->pActionXAxisLetter = new QAction(tr("X-axis Letter"), this);
     this->pActionYAxisLetter = new QAction(tr("Y-axis Letter"), this);
     this->pActionXAxisStartFrom_1 = new QAction(tr("X-axis start from 1"), this);
@@ -95,6 +96,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
     this->pActionNumOfMove->setCheckable(true);
     this->pActionNumOfMove->setChecked(false);
+    this->pActionToggleOpenMind->setShortcut(QKeySequence(Qt::Key_A));
+    this->pActionToggleOpenMind->setCheckable(true);
+    this->pActionToggleOpenMind->setChecked(false);
     this->pActionXAxisLetter->setShortcut(QKeySequence(Qt::Key_X));
     this->pActionXAxisLetter->setCheckable(true);
     this->pActionXAxisLetter->setChecked(false);
@@ -129,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
+    this->pMenuShow->addAction(this->pActionToggleOpenMind);
     this->pMenuShow->addAction(this->pActionNumOfMove);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
@@ -200,6 +205,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bS2B_over = false;
     this->m_bSkin = true;
     this->m_bNumOfMove = false;
+    this->m_bOpenMind = false;
 
     QString q_skin_idx;
     this->m_customs->getCfgValue("View", "skin", q_skin_idx);
@@ -275,6 +281,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
+    connect(this->pActionToggleOpenMind, SIGNAL(triggered()), this, SLOT(OnActionToggleOpenMind()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
@@ -462,6 +469,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionNumOfMove;
         this->pActionNumOfMove = nullptr;
+    }
+    if (nullptr != this->pActionToggleOpenMind)
+    {
+        delete this->pActionToggleOpenMind;
+        this->pActionToggleOpenMind = nullptr;
     }
     if (nullptr != pActionXAxisLetter)
     {
@@ -2000,6 +2012,20 @@ void MainWindow::OnActionNumOfMove()
     {
         qDebug() << "Cancel number of move.";
         this->m_bNumOfMove = false;
+    }
+}
+
+void MainWindow::OnActionToggleOpenMind()
+{
+    if (this->pActionToggleOpenMind->isChecked())
+    {
+        qDebug() << "Show mind of AI.";
+        this->m_bOpenMind = true;
+    }
+    else
+    {
+        qDebug() << "Cancel mind of AI.";
+        this->m_bOpenMind = false;
     }
 }
 
