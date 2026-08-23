@@ -36,7 +36,7 @@
 #include <QRadioButton>
 #include <QDialogButtonBox>
 #include <QButtonGroup>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 
 #include <iostream>
 using namespace std;
@@ -52,7 +52,7 @@ private:
     QLineEdit le_1_c1, le_2_c1, le_3_c1, le_4_c1, le_5_c1, le_6_c1, le_1_c2, le_2_c2, le_3_c2, le_4_c2;
     QButtonGroup bg_c2, bg_c3;
     QDialogButtonBox *dbb_c1, *dbb_c2, *dbb_c3;
-    QRegExpValidator *m_RegEV;
+    QRegularExpressionValidator *m_RegEV;
 
     vector<pair<int, int>> m_vPos;
     int m_mode;

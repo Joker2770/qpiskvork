@@ -41,7 +41,7 @@ S2BResDialog::S2BResDialog(int i_mode, QWidget *parent) : QDialog(parent, Qt::Wi
     this->dbb_c3 = nullptr;
     this->m_RegEV = nullptr;
 
-    this->m_RegEV = new QRegExpValidator(QRegExp("[0-9]+$"));
+    this->m_RegEV = new QRegularExpressionValidator(QRegularExpression("[0-9]+$"));
 
     this->m_option_c2 = -1;
     this->m_option_c3 = -1;
