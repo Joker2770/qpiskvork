@@ -64,6 +64,43 @@ typedef enum game_rule
     CARO = 8
 } GAME_RULE;
 
+// 棋盘绘制布局常量：棋盘绘制中使用的各种偏移量统一在此管理，调整布局时只需修改这里。
+namespace BoardLayout
+{
+    // ---- 棋盘网格整体布局（单位：格）----
+    constexpr int LEFT_MARGIN_CELLS = 1;   // 棋盘左侧留白格数
+    constexpr int RIGHT_MARGIN_CELLS = 1;  // 棋盘右侧留白格数
+    constexpr int TOP_MARGIN_CELLS = 2;    // 棋盘顶部留白格数（第 1 格计时/状态，第 2 格 X 轴标注）
+    constexpr int BOTTOM_MARGIN_CELLS = 1; // 棋盘底部留白格数（底部为玩家棋子/名字信息区）
+    constexpr double CELL_CENTER = 0.5;    // 格内中心偏移（半格）
+
+    // ---- 棋子与标记尺寸（占格宽/格高的比例）----
+    constexpr double STONE_RADIUS_RATIO = 0.5;      // 棋子半径
+    constexpr double MARK_RADIUS_RATIO = 0.25;      // 最后一手标记半径
+    constexpr double STATE_DOT_RADIUS_RATIO = 0.25; // 玩家状态圆点半径
+    constexpr double STATE_DOT_X_RATIO = 0.8;       // 玩家状态圆点横向位置
+
+    // ---- 坐标轴标注 ----
+    constexpr double Y_AXIS_LABEL_X_RATIO = 0.4;                             // Y 轴标注横向位置（占格宽比例）
+    constexpr double X_AXIS_LABEL_Y_RATIO = TOP_MARGIN_CELLS - CELL_CENTER;  // X 轴标注纵向位置（占格高比例，居中于标注行）
+    constexpr int AXIS_LABEL_PAD = 5;                                        // 标注文字与格线的像素间距
+
+    // ---- 底部玩家信息区 ----
+    constexpr double PLAYER_STONE_CORNER_X_RATIO = 0.25;      // 左侧棋子贴图左上角横向位置（占格宽比例）
+    constexpr double PLAYER_STONE_CORNER_Y_RATIO = 1.25;      // 棋子贴图左上角距窗口底边（占格高比例）
+    constexpr double PLAYER_STONE_CENTER_X_RATIO = 0.75;      // 棋子中心横向位置（占格宽比例）
+    constexpr double PLAYER_STONE_CENTER_Y_RATIO = 0.75;      // 棋子中心距窗口底边（占格高比例）
+    constexpr double PLAYER_STONE_RIGHT_MARGIN_RATIO = 1.25;  // 右侧棋子贴图距窗口右边缘（占格宽比例）
+    constexpr int TEXT_MARGIN = 15;       // 文字距棋盘左右两侧的像素间距
+    constexpr int TEXT_RIGHT_SPACE = 170; // 右侧文字距窗口右边缘的像素间距
+    constexpr int NAME_TEXT_BOTTOM = 30;  // 玩家名文字距窗口底边的像素距离
+
+    // ---- 计时文字 ----
+    constexpr double TIME_TEXT_Y_RATIO = 0.8; // 剩余时间文字纵向位置（占格高比例）
+    constexpr int TIME_TEXT_LEFT_X = 50;      // 左侧 "TIMEOUT" 文字 x 坐标
+    constexpr int TIME_TEXT_RIGHT_X = 200;    // 右侧 "TIMEOUT" 文字距窗口右边缘的像素间距
+}
+
 const QString g_szSkins[13] = {
     ":/skins/bold.bmp",
     ":/skins/fontanGomo.bmp",
