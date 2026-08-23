@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     g_customs.getCfgValue("View", "language", q_lang);
     if (0 == QString::compare(q_lang, "zh_CN"))
     {
-        qts.load(":/language/zh_CN.qm");
+        (void)qts.load(":/language/zh_CN.qm");
         a.installTranslator(&qts);
     }
     MainWindow w;

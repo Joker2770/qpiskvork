@@ -82,12 +82,12 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionLicense = new QAction(tr("License"), this);
     this->pActionImportSgf->setShortcut(QKeySequence(Qt::Key_I));
     this->pActionExportSgf->setShortcut(QKeySequence(Qt::Key_E));
-    this->pActionStart->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
-    this->pActionPause->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
-    this->pActionContinue->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_G));
-    this->pActionEnd->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
-    this->pActionClear->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_C));
-    this->pActionTakeBack->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+    this->pActionStart->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_S));
+    this->pActionPause->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_P));
+    this->pActionContinue->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_G));
+    this->pActionEnd->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_E));
+    this->pActionClear->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_C));
+    this->pActionTakeBack->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_T));
     this->pActionBoardSize->setShortcut(QKeySequence(Qt::Key_B));
     this->pActionTimeoutMatch->setShortcut(QKeySequence(Qt::Key_M));
     this->pActionTimeoutTurn->setShortcut(QKeySequence(Qt::Key_T));
@@ -109,10 +109,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionYAxisLetter->setShortcut(QKeySequence(Qt::Key_Y));
     this->pActionYAxisLetter->setCheckable(true);
     this->pActionYAxisLetter->setChecked(false);
-    this->pActionXAxisStartFrom_1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
+    this->pActionXAxisStartFrom_1->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_X));
     this->pActionXAxisStartFrom_1->setCheckable(true);
     this->pActionXAxisStartFrom_1->setChecked(false);
-    this->pActionYAxisStartFrom_1->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Y));
+    this->pActionYAxisStartFrom_1->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_Y));
     this->pActionYAxisStartFrom_1->setCheckable(true);
     this->pActionYAxisStartFrom_1->setChecked(false);
     this->pActionTimeSecond->setShortcut(QKeySequence(Qt::Key_Z));
@@ -706,7 +706,11 @@ void MainWindow::DrawStepNum()
             QString s_idx = QString::number(i + 1, 10);
 
             QFontMetricsF fm(painter.font());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+            double textWidth = fm.horizontalAdvance(s_idx);
+#else
             double textWidth = fm.width(s_idx);
+#endif
             double textHeight = fm.height();
 
             QPainterPath path;

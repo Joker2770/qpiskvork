@@ -76,7 +76,7 @@ PlayerSettingDialog::PlayerSettingDialog(QWidget *parent) : QDialog(parent, Qt::
     this->btn_p1->setText(tr("open"));
     this->btn_p2->setText(tr("open"));
     this->btn_exchange->setText(tr("exchange(Ctrl+X)"));
-    this->btn_exchange->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
+    this->btn_exchange->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_X));
     this->p1_bg->setExclusive(true);
     this->p2_bg->setExclusive(true);
     this->p1_bg->addButton(this->p1_rb_1);

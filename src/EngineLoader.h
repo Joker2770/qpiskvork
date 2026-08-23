@@ -38,7 +38,8 @@ class EngineLoader : public QObject
     Q_OBJECT
 public:
     EngineLoader();
-    EngineLoader(const EngineLoader &);
+    EngineLoader(const EngineLoader &) = delete;
+    EngineLoader(EngineLoader &&) = delete;
     virtual ~EngineLoader();
 
     bool setProgram(const QString &sProgram);
