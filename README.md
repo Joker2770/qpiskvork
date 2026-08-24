@@ -11,6 +11,29 @@ Another gomoku or renju manager adapting to Windows and Linux systems.
 
 This program aims to become a gomoku or renju manager with the [protocol](https://plastovicka.github.io/protocl2en.htm).
 
+## features
+
+### Visualize the AI thinking (MCTS visit distribution)
+
+When `Show -> Display AI Mind` (shortcut `A`) is enabled, while it is a computer player's turn the manager watches the engine's pipe for data groups polled in the form:
+
+```
+DEBUG thinking x1,y1,visits1 x2,y2,visits2 ...
+```
+
+Each received data group is processed as follows:
+
+1. **Validation** - a data group is accepted only if:
+   - it starts with the `DEBUG thinking` header and every item is a valid `x,y,visits` triple with non-negative integer visits;
+   - the number of items does not exceed the number of free positions left on the board;
+   - none of the coordinates is already occupied;
+   - none of the coordinates is out of the board;
+   - no coordinate is duplicated inside the group;
+   - the sum of all visits in the group is greater than zero.
+2. **Conversion** - the raw MCTS `visits` are turned into decision probabilities with a numerically stabilized softmax followed by normalization.
+3. **Rendering** - the coordinate-to-probability data is drawn on the board as a heatmap: more likely moves get bigger, more opaque red blobs, less likely ones blue blobs, and the top candidates are labeled with their percentages.
+4. **Live update** - the engine may poll new data groups while it is thinking; the display is refreshed every time a valid group is collected, until the AI actually makes its move.
+
 ## dependencies
 
 dependencies of compiling.

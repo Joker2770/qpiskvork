@@ -28,6 +28,9 @@
 #include "mainwindow.h"
 #include "EngineLoader.h"
 
+#include <algorithm>
+#include <cmath>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       m_player_setting(new PlayerSettingDialog(this))
@@ -70,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju = new QAction(tr("Renju"), this);
     this->pActionCaro = new QAction(tr("Caro"), this);
     this->pActionNumOfMove = new QAction(tr("Number of move"), this);
+    this->pActionToggleOpenMind = new QAction(tr("Display AI Mind"), this);
     this->pActionXAxisLetter = new QAction(tr("X-axis Letter"), this);
     this->pActionYAxisLetter = new QAction(tr("Y-axis Letter"), this);
     this->pActionXAxisStartFrom_1 = new QAction(tr("X-axis start from 1"), this);
@@ -103,6 +107,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
     this->pActionNumOfMove->setCheckable(true);
     this->pActionNumOfMove->setChecked(false);
+    this->pActionToggleOpenMind->setShortcut(QKeySequence(Qt::Key_A));
+    this->pActionToggleOpenMind->setCheckable(true);
+    this->pActionToggleOpenMind->setChecked(false);
     this->pActionXAxisLetter->setShortcut(QKeySequence(Qt::Key_X));
     this->pActionXAxisLetter->setCheckable(true);
     this->pActionXAxisLetter->setChecked(false);
@@ -139,6 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuGame->addAction(this->pActionClear);
     this->pMenuGame->addAction(this->pActionTakeBack);
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
+    this->pMenuShow->addAction(this->pActionToggleOpenMind);
     this->pMenuShow->addAction(this->pActionNumOfMove);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
@@ -213,6 +221,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bS2B_over = false;
     this->m_bSkin = true;
     this->m_bNumOfMove = false;
+    this->m_bOpenMind = false;
 
     QString q_skin_idx;
     this->m_customs->getCfgValue("View", "skin", q_skin_idx);
@@ -292,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
+    connect(this->pActionToggleOpenMind, SIGNAL(triggered()), this, SLOT(OnActionToggleOpenMind()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
@@ -485,6 +495,11 @@ MainWindow::~MainWindow()
         delete this->pActionNumOfMove;
         this->pActionNumOfMove = nullptr;
     }
+    if (nullptr != this->pActionToggleOpenMind)
+    {
+        delete this->pActionToggleOpenMind;
+        this->pActionToggleOpenMind = nullptr;
+    }
     if (nullptr != pActionXAxisLetter)
     {
         delete this->pActionXAxisLetter;
@@ -598,6 +613,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawPlayerName();
     DrawIndication();
     DrawItems();
+    DrawOpenMind();
     DrawStepNum();
     DrawMark();
 
@@ -1010,6 +1026,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
+                this->m_openMindData.clear();
 
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
@@ -1172,6 +1189,8 @@ void MainWindow::OnActionStart()
 {
     if (GAME_STATE::PLAYING != this->mState)
     {
+        this->m_openMindData.clear();
+
         if (BOARDSTATUS::BOARDEMPTY != this->mBoard->GetState())
         {
             if (QMessageBox::information(this, tr("Tips"), tr("It will clear board and start new game!"), QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok)
@@ -1328,6 +1347,8 @@ void MainWindow::OnActionPause()
 {
     if (GAME_STATE::PLAYING == this->mState)
     {
+        this->m_openMindData.clear();
+
         if (nullptr != this->m_manager)
         {
             this->playSoundEffect(QUrl(g_szSoundEffect[4]));
@@ -1539,6 +1560,8 @@ void MainWindow::OnActionEnd()
 {
     if (GAME_STATE::PLAYING == this->mState)
     {
+        this->m_openMindData.clear();
+
         if (nullptr != this->m_manager)
         {
             this->playSoundEffect(QUrl(g_szSoundEffect[3]));
@@ -1578,6 +1601,8 @@ void MainWindow::OnActionClearBoard()
 {
     if (this->mState != GAME_STATE::PLAYING)
     {
+        this->m_openMindData.clear();
+
         this->mBoard->clearBoard();
 
         this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
@@ -2067,6 +2092,21 @@ void MainWindow::OnActionNumOfMove()
     }
 }
 
+void MainWindow::OnActionToggleOpenMind()
+{
+    if (this->pActionToggleOpenMind->isChecked())
+    {
+        qDebug() << "Show mind of AI.";
+        this->m_bOpenMind = true;
+    }
+    else
+    {
+        qDebug() << "Cancel mind of AI.";
+        this->m_bOpenMind = false;
+        this->m_openMindData.clear();
+    }
+}
+
 void MainWindow::OnActionVer()
 {
     const QString strVerNum = tr("Ver Num: ") + "0.9.99-features" + "\n";
@@ -2128,6 +2168,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
+                this->m_openMindData.clear();
 
                 if (this->m_manager->m_p2->m_isMyTurn)
                 {
@@ -2288,6 +2329,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
                 this->mBoard->Notify();
+                this->m_openMindData.clear();
 
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
@@ -2438,6 +2480,8 @@ void MainWindow::OnContinuousPos(int x, int y)
             {
                 this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
+                this->m_openMindData.clear();
+
                 if (this->m_time_left_p1 > 0)
                 {
                     this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
@@ -2562,6 +2606,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
             this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
+            this->m_openMindData.clear();
             this->m_T1->pause();
             this->m_T2->resume();
             if (this->m_time_left_p2 > 0)
@@ -2665,6 +2710,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
+            this->m_openMindData.clear();
             this->m_T1->pause();
             this->m_T2->start();
             if (this->m_time_left_p2 > 0)
@@ -2806,6 +2852,7 @@ void MainWindow::OnP1ResponsedSwap()
         this->m_manager->m_p2->m_color = cTmp;
 
         this->mBoard->Notify();
+        this->m_openMindData.clear();
         this->m_T1->pause();
         this->m_T2->resume();
         if (this->m_time_left_p2 > 0)
@@ -2872,6 +2919,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
             this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
+            this->m_openMindData.clear();
             this->m_T2->pause();
             this->m_T1->resume();
             if (this->m_time_left_p1 > 0)
@@ -2975,6 +3023,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->playSoundEffect(QUrl(g_szSoundEffect[6]));
 
             this->mBoard->Notify();
+            this->m_openMindData.clear();
             this->m_T2->pause();
             this->m_T1->start();
             if (this->m_time_left_p1 > 0)
@@ -3116,6 +3165,7 @@ void MainWindow::OnP2ResponsedSwap()
         this->m_manager->m_p2->m_color = cTmp;
 
         this->mBoard->Notify();
+        this->m_openMindData.clear();
         this->m_T2->pause();
         this->m_T1->resume();
         if (this->m_time_left_p1 > 0)
@@ -3161,6 +3211,214 @@ void MainWindow::OnP2ResponseUnknown()
 {
     this->OnActionEnd();
     QMessageBox::information(this, tr("game over!"), tr("Player 2 responsed UNKNOWN!"));
+}
+
+void MainWindow::OnP1Thinking(const QString &sData)
+{
+    if (nullptr == this->m_manager || !this->m_manager->m_p1->m_isComputer)
+        return;
+    // 连续模式下玩家 1 是唯一引擎；其余模式仅在轮到玩家 1 时处理其思考数据
+    if (!(GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS)) && !this->m_manager->m_p1->m_isMyTurn)
+        return;
+
+    this->updateOpenMindData(sData);
+}
+
+void MainWindow::OnP2Thinking(const QString &sData)
+{
+    if (nullptr == this->m_manager || !this->m_manager->m_p2->m_isComputer || !this->m_manager->m_p2->m_isMyTurn)
+        return;
+
+    this->updateOpenMindData(sData);
+}
+
+void MainWindow::updateOpenMindData(const QString &sData)
+{
+    // 仅当开启"显示 AI 思维"且对局进行中时收集数据
+    if (!this->m_bOpenMind || nullptr == this->mBoard || GAME_STATE::PLAYING != this->mState)
+        return;
+
+    const QString sBody = sData.trimmed();
+    if (sBody.isEmpty())
+        return;
+
+    // 1. 解析 "x,y,visits x,y,visits ..." 数据组，并检查数据合法性
+    const QStringList vTokens = sBody.split(' ', Qt::SkipEmptyParts);
+    if (vTokens.isEmpty())
+        return;
+
+    vector<pair<pair<int, int>, long long>> vRaw;
+    vRaw.reserve(vTokens.size());
+
+    vector<pair<int, int>> vSeen;
+    vSeen.reserve(vTokens.size());
+
+    bool bValid = true;
+    long long iVisitsSum = 0;
+    for (const QString &sToken : vTokens)
+    {
+        const QStringList vParts = sToken.split(',');
+        if (3 != vParts.size())
+        {
+            bValid = false;
+            break;
+        }
+
+        bool bOkX = false, bOkY = false, bOkV = false;
+        const int x = vParts.at(0).toInt(&bOkX);
+        const int y = vParts.at(1).toInt(&bOkY);
+        const long long visits = vParts.at(2).toLongLong(&bOkV);
+        if (!bOkX || !bOkY || !bOkV || visits < 0)
+        {
+            bValid = false;
+            break;
+        }
+
+        const pair<int, int> idx(x, y);
+
+        // 坐标不能越界
+        if (this->mBoard->isPosOutOfBoard(idx))
+        {
+            bValid = false;
+            break;
+        }
+
+        // 坐标不能是当前棋局已落子位置（getIdxStoneColor: -1 越界, 0 空位, 1/2 已有棋子）
+        if (0 != this->mBoard->getIdxStoneColor(idx))
+        {
+            bValid = false;
+            break;
+        }
+
+        // 数据组内各坐标不能相互重叠
+        if (vSeen.end() != std::find(vSeen.begin(), vSeen.end(), idx))
+        {
+            bValid = false;
+            break;
+        }
+        vSeen.push_back(idx);
+
+        vRaw.push_back(make_pair(idx, visits));
+        iVisitsSum += visits;
+    }
+
+    // visits 总和不能为 0，否则 softmax 转化得到的决策概率无意义
+    if (!bValid || vRaw.empty() || iVisitsSum <= 0)
+        return;
+
+    // 数据组所包含数据个数不能超过棋盘当前可以落子位置数
+    const long long iAvail = static_cast<long long>(this->mBoard->getMaxRecordSize()) -
+                             static_cast<long long>(this->mBoard->getVRecord().size());
+    if (static_cast<long long>(vRaw.size()) > iAvail)
+        return;
+
+    // 2. visits -> softmax 决策概率（含归一化处理）
+    long long iMaxVisits = vRaw.front().second;
+    for (const auto &item : vRaw)
+    {
+        if (item.second > iMaxVisits)
+            iMaxVisits = item.second;
+    }
+
+    double dSum = 0.0;
+    vector<pair<pair<int, int>, double>> vProb;
+    vProb.reserve(vRaw.size());
+    for (const auto &item : vRaw)
+    {
+        const double dP = std::exp(static_cast<double>(item.second - iMaxVisits));
+        dSum += dP;
+        vProb.push_back(make_pair(item.first, dP));
+    }
+
+    if (dSum <= 0.0)
+        return;
+
+    for (auto &item : vProb)
+        item.second /= dSum;
+
+    // 按概率降序排列，便于渲染时优先突出高概率选点
+    std::sort(vProb.begin(), vProb.end(),
+              [](const pair<pair<int, int>, double> &a, const pair<pair<int, int>, double> &b) {
+                  return a.second > b.second;
+              });
+
+    this->m_openMindData = vProb;
+}
+
+void MainWindow::DrawOpenMind()
+{
+    if (!this->m_bOpenMind || this->m_openMindData.empty() || nullptr == this->mBoard || nullptr == this->m_manager)
+        return;
+
+    if (GAME_STATE::PLAYING != this->mState)
+        return;
+
+    // 仅当当前落子方是电脑时渲染思考数据
+    bool bComputerTurn = false;
+    if (GAME_RULE::CONTINUOUS == (this->m_Rule & GAME_RULE::CONTINUOUS))
+        bComputerTurn = this->m_manager->m_p1->m_isComputer;
+    else if (this->m_manager->m_p1->m_isMyTurn)
+        bComputerTurn = this->m_manager->m_p1->m_isComputer;
+    else
+        bComputerTurn = this->m_manager->m_p2->m_isComputer;
+
+    if (!bComputerTurn)
+        return;
+
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing, true);
+    painter.setRenderHints(QPainter::TextAntialiasing, true);
+
+    const double dMaxProb = this->m_openMindData.front().second;
+
+    for (size_t i = 0; i < this->m_openMindData.size(); ++i)
+    {
+        const pair<pair<int, int>, double> &item = this->m_openMindData.at(i);
+        const int x = item.first.first;
+        const int y = item.first.second;
+        const double prob = item.second;
+        const double ratio = (dMaxProb > 0.0) ? (prob / dMaxProb) : 0.0;
+
+        const int px = (x + BoardLayout::LEFT_MARGIN_CELLS) * RECT_WIDTH;
+        const int py = (y + BoardLayout::TOP_MARGIN_CELLS) * RECT_HEIGHT + this->pMenuBar->height();
+
+        // 3. 热力图渲染：概率越高颜色越红（hue 0），越低越蓝（hue 240），且圆斑越大、越不透明
+        const int iHue = static_cast<int>(240.0 * (1.0 - ratio));
+        const QColor cHeat = QColor::fromHsv(iHue, 255, 230, 70 + static_cast<int>(150.0 * ratio));
+        painter.setBrush(cHeat);
+        painter.setPen(QPen(QColor(255, 255, 255, 90), 1));
+
+        const int iRadius = static_cast<int>(RECT_WIDTH * (0.12 + 0.38 * ratio));
+        painter.drawEllipse(QPointF(px + RECT_WIDTH * BoardLayout::CELL_CENTER,
+                                    py + RECT_HEIGHT * BoardLayout::CELL_CENTER),
+                            iRadius, iRadius);
+
+        // 给概率较高的选点标注百分比
+        if (i < 10)
+        {
+            QFont font;
+            font.setPixelSize(qMax(9, RECT_WIDTH / 4));
+            font.setBold(true);
+            painter.setFont(font);
+
+            const QString sText = QString::number(prob * 100.0, 'f', 1) + "%";
+
+            QFontMetricsF fm(painter.font());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+            const double dTextWidth = fm.horizontalAdvance(sText);
+#else
+            const double dTextWidth = fm.width(sText);
+#endif
+            const double dTextHeight = fm.height();
+            const QPointF ptText(px + RECT_WIDTH * BoardLayout::CELL_CENTER - dTextWidth / 2.0,
+                                 py + RECT_HEIGHT * BoardLayout::CELL_CENTER + dTextHeight * 0.35);
+
+            painter.setPen(QPen(QColor(0, 0, 0, 190), 2));
+            painter.drawText(ptText + QPointF(1.0, 1.0), sText);
+            painter.setPen(QPen(QColor(Qt::white), 1));
+            painter.drawText(ptText, sText);
+        }
+    }
 }
 
 void MainWindow::beginSwap2Board()
@@ -3408,6 +3666,7 @@ void MainWindow::connectP1Signals()
         connect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
         connect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
         connect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        connect(this->m_manager->m_engine_1, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP1Thinking(QString)));
     }
 }
 
@@ -3427,6 +3686,7 @@ void MainWindow::connectP2Signals()
         connect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
         connect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
         connect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        connect(this->m_manager->m_engine_2, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP2Thinking(QString)));
     }
 }
 
@@ -3449,6 +3709,7 @@ void MainWindow::disconnectP1Signals()
         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_ok()), this, SLOT(OnP1ResponseOk()));
         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_error()), this, SLOT(OnP1ResponseError()));
         disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_unknown()), this, SLOT(OnP1ResponseUnknown()));
+        disconnect(this->m_manager->m_engine_1, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP1Thinking(QString)));
     }
 }
 
@@ -3468,6 +3729,7 @@ void MainWindow::disconnectP2Signals()
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_ok()), this, SLOT(OnP2ResponseOk()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
+        disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP2Thinking(QString)));
     }
 }
 

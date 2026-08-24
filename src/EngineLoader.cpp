@@ -30,6 +30,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <string>
 using namespace std;
 
 EngineLoader::EngineLoader()
@@ -192,7 +193,14 @@ void EngineLoader::response_parse(const string &str)
     string s_tmp = str;
     if (s_tmp.empty())
         return;
-    if (s_tmp.find_first_of("OK") == 0)
+    if (0 == s_tmp.find("DEBUG thinking"))
+    {
+        const string sHeader = "DEBUG thinking";
+        QString sData = QString::fromStdString(s_tmp.substr(sHeader.size()));
+        sData = sData.trimmed();
+        emit responsed_thinking(sData);
+    }
+    else if (s_tmp.find_first_of("OK") == 0)
         emit responsed_ok();
     else if (s_tmp.find_first_of("ERROR ") == 0)
         emit responsed_error();

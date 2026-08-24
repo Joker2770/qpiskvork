@@ -164,6 +164,7 @@ public:
     QAction *pActionRenju;
     QAction *pActionCaro;
     QAction *pActionNumOfMove;
+    QAction *pActionToggleOpenMind;
     QAction *pActionXAxisLetter;
     QAction *pActionYAxisLetter;
     QAction *pActionXAxisStartFrom_1;
@@ -196,6 +197,7 @@ public slots:
     void On_ClickedLanguageActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionNumOfMove();
+    void OnActionToggleOpenMind();
     void OnActionVer();
     void OnActionFeedback();
     void OnActionLicense();
@@ -216,6 +218,8 @@ public slots:
     void OnP2ResponseOk();
     void OnP2ResponseError();
     void OnP2ResponseUnknown();
+    void OnP1Thinking(const QString &sData);
+    void OnP2Thinking(const QString &sData);
     void beginSwap2Board();
 
 protected:
@@ -235,6 +239,8 @@ private:
     void DrawPlayerStone();
     void DrawPlayerName();
     void DrawIndication();
+    void DrawOpenMind();
+    void updateOpenMindData(const QString &sData);
 
     void connectP1Signals();
     void connectP2Signals();
@@ -275,7 +281,9 @@ private:
     bool m_bS2B_over;
     bool m_bSkin;
     bool m_bNumOfMove;
+    bool m_bOpenMind;
     bool m_bOK_P1;
     bool m_bOK_P2;
+    vector<pair<pair<int, int>, double>> m_openMindData;
 };
 #endif // MAINWINDOW_H

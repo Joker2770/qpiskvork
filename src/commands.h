@@ -39,7 +39,7 @@ typedef enum info_key
     GAME_TYPE,
     RULE,
     EVALUATE,
-    FOLDER
+    FOLDER,
 } INFO_KEY;
 
 // Mandatory commands
