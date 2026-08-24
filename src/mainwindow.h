@@ -201,6 +201,8 @@ public slots:
     void OnP2ResponseOk();
     void OnP2ResponseError();
     void OnP2ResponseUnknown();
+    void OnP1Thinking(const QString &sData);
+    void OnP2Thinking(const QString &sData);
     void beginSwap2Board();
 
 protected:
@@ -220,6 +222,8 @@ private:
     void DrawPlayerStone();
     void DrawPlayerName();
     void DrawIndication();
+    void DrawOpenMind();
+    void updateOpenMindData(const QString &sData);
 
     void connectP1Signals();
     void connectP2Signals();
@@ -259,5 +263,6 @@ private:
     bool m_bOpenMind;
     bool m_bOK_P1;
     bool m_bOK_P2;
+    vector<pair<pair<int, int>, double>> m_openMindData;
 };
 #endif // MAINWINDOW_H
