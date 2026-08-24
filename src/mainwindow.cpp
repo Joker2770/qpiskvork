@@ -611,7 +611,7 @@ void MainWindow::DrawMark()
         pMark.setX(last_move_pos.first + BoardLayout::LEFT_MARGIN_CELLS);
         pMark.setY(last_move_pos.second + BoardLayout::TOP_MARGIN_CELLS);
 
-        QPoint ptCenter((pMark.x() + BoardLayout::CELL_CENTER) * RECT_WIDTH, (pMark.y() + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
+        QPointF ptCenter((pMark.x() + BoardLayout::CELL_CENTER) * RECT_WIDTH, (pMark.y() + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
 
         int idx = 3;
         if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
@@ -622,7 +622,7 @@ void MainWindow::DrawMark()
         if (this->m_bSkin && !this->m_images.at(idx).isNull())
             painter.drawPixmap(pMark.x() * RECT_WIDTH, pMark.y() * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
-            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * BoardLayout::MARK_RADIUS_RATIO), (int)(RECT_HEIGHT * BoardLayout::MARK_RADIUS_RATIO));
+            painter.drawEllipse(ptCenter, RECT_WIDTH * BoardLayout::MARK_RADIUS_RATIO, RECT_HEIGHT * BoardLayout::MARK_RADIUS_RATIO);
     }
 }
 
@@ -638,7 +638,7 @@ void MainWindow::DrawItems()
         QPoint p;
         p.setX(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).first + BoardLayout::LEFT_MARGIN_CELLS);
         p.setY(this->mBoard->coord2idx(this->mBoard->getVRecord().at(i).first).second + BoardLayout::TOP_MARGIN_CELLS);
-        QPoint ptCenter((p.x() + BoardLayout::CELL_CENTER) * RECT_WIDTH, (p.y() + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
+        QPointF ptCenter((p.x() + BoardLayout::CELL_CENTER) * RECT_WIDTH, (p.y() + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
 
         int idx = 1;
         if (this->mBoard->getVRecord().at(i).second == STONECOLOR::BLACK)
@@ -655,7 +655,7 @@ void MainWindow::DrawItems()
         if (this->m_bSkin && !this->m_images.at(idx).isNull())
             painter.drawPixmap(p.x() * RECT_WIDTH, p.y() * RECT_HEIGHT + this->pMenuBar->height(), RECT_WIDTH, RECT_HEIGHT, this->m_images.at(idx));
         else
-            painter.drawEllipse(ptCenter, (int)(RECT_WIDTH * BoardLayout::STONE_RADIUS_RATIO), (int)(RECT_HEIGHT * BoardLayout::STONE_RADIUS_RATIO));
+            painter.drawEllipse(ptCenter, RECT_WIDTH * BoardLayout::STONE_RADIUS_RATIO, RECT_HEIGHT * BoardLayout::STONE_RADIUS_RATIO);
     }
 }
 
