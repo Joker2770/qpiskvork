@@ -3164,7 +3164,8 @@ void MainWindow::updateOpenMindData(const QString &sData)
 
     // 1. 解析 "x,y,visits x,y,visits ..." 数据组，并检查数据合法性
     const QStringList vTokens = sBody.split(' ', Qt::SkipEmptyParts);
-    if (vTokens.isEmpty())
+    // 数据组内至少要包含 1 个数据项（DEBUG thinking 之后不能为空）
+    if (vTokens.size() < 1)
         return;
 
     vector<pair<pair<int, int>, long long>> vRaw;
