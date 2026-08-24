@@ -75,7 +75,7 @@ namespace BoardLayout
     constexpr double CELL_CENTER = 0.5;    // 格内中心偏移（半格）
 
     // ---- 棋子与标记尺寸（占格宽/格高的比例）----
-    constexpr double STONE_RADIUS_RATIO = 0.5;      // 棋子半径
+    constexpr double STONE_RADIUS_RATIO = 0.46;      // 棋子半径
     constexpr double MARK_RADIUS_RATIO = 0.25;      // 最后一手标记半径
     constexpr double STATE_DOT_RADIUS_RATIO = 0.25; // 玩家状态圆点半径
     constexpr double STATE_DOT_X_RATIO = 0.8;       // 玩家状态圆点横向位置
