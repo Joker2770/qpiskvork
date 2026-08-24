@@ -289,6 +289,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
     connect(this->pActionFeedback, SIGNAL(triggered()), this, SLOT(OnActionFeedback()));
     connect(this->pActionLicense, SIGNAL(triggered()), this, SLOT(OnActionLicense()));
+
+    this->m_repaintTimer = new QTimer(this);
+    this->m_repaintTimer->setInterval(100);
+    connect(this->m_repaintTimer, SIGNAL(timeout()), this, SLOT(onRepaintTimerTimeout()));
+    this->m_repaintTimer->start();
 }
 
 MainWindow::~MainWindow()
@@ -574,8 +579,28 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawOpenMind();
     DrawStepNum();
     DrawMark();
+}
 
-    update();
+void MainWindow::onRepaintTimerTimeout()
+{
+    if (GAME_STATE::PLAYING == this->mState)
+    {
+        bool bTimeout = false;
+        if (0 != this->m_time_left_p1 && this->m_timeout_match <= this->m_T1->getElapsed())
+        {
+            this->m_time_left_p1 = 0;
+            bTimeout = true;
+        }
+        if (0 != this->m_time_left_p2 && this->m_timeout_match <= this->m_T2->getElapsed())
+        {
+            this->m_time_left_p2 = 0;
+            bTimeout = true;
+        }
+        if (bTimeout)
+            this->OnActionEnd();
+    }
+
+    this->update();
 }
 
 void MainWindow::DrawChessboard()
@@ -709,44 +734,42 @@ void MainWindow::DrawTimeLeft()
     QPainter painter(this);
     painter.setFont(font);
 
+    if (0 != this->m_time_left_p1 && this->m_timeout_match > this->m_T1->getElapsed())
+        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
+    else if (0 != this->m_time_left_p1)
+        this->m_time_left_p1 = 0;
+
     if (0 == this->m_time_left_p1)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
         painter.drawText(BoardLayout::TIME_TEXT_LEFT_X, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, tr("TIMEOUT"));
     }
-    else if (this->m_timeout_match > this->m_T1->getElapsed())
+    else
     {
-        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
             painter.drawText(this->RECT_WIDTH + BoardLayout::TEXT_MARGIN, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
         else
             painter.drawText(this->RECT_WIDTH + BoardLayout::TEXT_MARGIN, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
     }
-    else
-    {
-        this->m_time_left_p1 = 0;
-        this->OnActionEnd();
-    }
+
+    if (0 != this->m_time_left_p2 && this->m_timeout_match > this->m_T2->getElapsed())
+        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
+    else if (0 != this->m_time_left_p2)
+        this->m_time_left_p2 = 0;
 
     if (0 == this->m_time_left_p2)
     {
         painter.setPen(QPen(QColor(Qt::red), 2));
         painter.drawText(this->geometry().width() - BoardLayout::TIME_TEXT_RIGHT_X, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, tr("TIMEOUT"));
     }
-    else if (this->m_timeout_match > this->m_T2->getElapsed())
+    else
     {
-        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
         painter.setPen(QPen(QColor(Qt::black), 2));
         if (this->pActionTimeSecond->isChecked())
             painter.drawText((int)(this->geometry().width() - BoardLayout::TEXT_RIGHT_SPACE - this->RECT_WIDTH), (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
         else
             painter.drawText((int)(this->geometry().width() - BoardLayout::TEXT_RIGHT_SPACE - this->RECT_WIDTH), (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
-    }
-    else
-    {
-        this->m_time_left_p2 = 0;
-        this->OnActionEnd();
     }
 }
 

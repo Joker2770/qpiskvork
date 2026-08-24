@@ -32,6 +32,7 @@
 #include <QSharedPointer>
 #include <QPixmap>
 #include <QCloseEvent>
+#include <QTimer>
 
 #include "board.h"
 #include "FreeStyleGomoku.h"
@@ -204,6 +205,7 @@ public slots:
     void OnP1Thinking(const QString &sData);
     void OnP2Thinking(const QString &sData);
     void beginSwap2Board();
+    void onRepaintTimerTimeout();
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -241,6 +243,7 @@ private:
     Caro *m_caro;
     Timer *m_T1;
     Timer *m_T2;
+    QTimer *m_repaintTimer;
     Customs *m_customs;
     vector<QPixmap> m_images;
     QString m_p1_name;
