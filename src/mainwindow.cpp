@@ -3833,9 +3833,79 @@ void MainWindow::OnActionImport2SGF()
             for (const auto &v : vRec)
             {
                 this->mBoard->placeStone(this->mBoard->coord2idx(v.first), (STONECOLOR::BLACK == v.second) ? STONECOLOR::BLACK : STONECOLOR::WHITE);
-            }
+                this->mBoard->Notify();
 
-            this->mBoard->Notify();
+                // if connect five
+                bool isWin = false;
+                int i_win = 0;
+                isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
+                if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
+                {
+                    if (this->m_standardGomoku->checkWin(this->mBoard))
+                        i_win |= GAME_RULE::STANDARDGOMOKU;
+                    else
+                        isWin = false;
+                }
+                if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
+                {
+                    if (this->m_renju->checkWin(this->mBoard))
+                        i_win |= GAME_RULE::RENJU;
+                    else
+                        isWin = false;
+                }
+                if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
+                {
+                    if (this->m_caro->checkWin(this->mBoard))
+                        i_win |= GAME_RULE::CARO;
+                    else
+                        isWin = false;
+                }
+
+                if (0 != i_win)
+                {
+                    if ((this->m_Rule & i_win) == this->m_Rule)
+                        isWin = true;
+                    else
+                        isWin = false;
+                }
+
+                if (isWin)
+                {
+                    this->OnActionEnd();
+                    this->mState = GAME_STATE::OVER;
+                    this->pRuleActionGroup->setEnabled(true);
+                    if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
+                        QMessageBox::information(this, tr("game over!"), tr("Black win!"));
+                    else
+                        QMessageBox::information(this, tr("game over!"), tr("White win!"));
+                    // this->mBoard->clearBoard();
+                }
+                else if (0x04 == (this->m_Rule & 0x04))
+                {
+                    if (!this->m_renju->isLegal(this->mBoard))
+                    {
+                        this->OnActionEnd();
+                        this->mState = GAME_STATE::OVER;
+                        this->pRuleActionGroup->setEnabled(true);
+                        QString info = tr("Illegal move from BLACK! ");
+                        switch (this->m_renju->getRenjuState())
+                        {
+                        case PATTERN::OVERLINE:
+                            info.append(tr("OVERLINE"));
+                            break;
+                        case PATTERN::DOUBLE_FOUR:
+                            info.append(tr("DOUBLE_FOUR"));
+                            break;
+                        case PATTERN::DOUBLE_THREE:
+                            info.append(tr("DOUBLE_THREE"));
+                            break;
+                        default:
+                            break;
+                        }
+                        QMessageBox::information(this, tr("game over!"), info);
+                    }
+                }
+            }
         }
     }
 }
