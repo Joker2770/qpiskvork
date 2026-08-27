@@ -247,7 +247,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_timeout_match = (q_timeout_match.toInt() > 0 && q_timeout_match.toInt() < 2147483647) ? q_timeout_match.toInt() : (15 * 60 * 1000);
     QString q_timeout_turn;
     this->m_customs->getCfgValue("Time", "turn_timeout", q_timeout_turn);
-    this->m_timeout_turn = (q_timeout_turn.toInt() > 0 && q_timeout_turn.toInt() < this->m_timeout_match) ? q_timeout_turn.toInt() : (30 * 1000);
+    this->m_timeout_turn = (q_timeout_turn.toInt() >= 0 && q_timeout_turn.toInt() < this->m_timeout_match) ? q_timeout_turn.toInt() : (30 * 1000);
     QString q_max_memory;
     this->m_customs->getCfgValue("Memory", "max_memory", q_max_memory);
     this->m_max_memory = (q_max_memory.toInt() > 0 && q_max_memory.toInt() < (int)((unsigned int)-1 >> 1)) ? q_max_memory.toInt() : (1024 * 1024 * 1024);
