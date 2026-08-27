@@ -1668,7 +1668,7 @@ void MainWindow::OnActionTimeoutTurn()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 5000, 300000,
+        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 0, 600000,
                                          1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
