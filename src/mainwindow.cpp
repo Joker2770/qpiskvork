@@ -2160,6 +2160,82 @@ void MainWindow::OnActionLicense()
     QMessageBox::about(this, tr("License"), strAll);
 }
 
+namespace {
+// Check whether the game is over due to a connect-five win or an illegal
+// renju move; if so, report the result through the onGameOver callback.
+template <typename TBoard, typename TFreeStyle, typename TStandard, typename TRenju, typename TCaro, typename TOnGameOver>
+void CheckConnectFiveAndFinish(TBoard *board,
+                               TFreeStyle *freeStyle,
+                               TStandard *standard,
+                               TRenju *renju,
+                               TCaro *caro,
+                               int rule,
+                               TOnGameOver onGameOver)
+{
+    bool isWin = freeStyle->checkWin(board);
+    int i_win = 0;
+    if (GAME_RULE::STANDARDGOMOKU == (rule & GAME_RULE::STANDARDGOMOKU))
+    {
+        if (standard->checkWin(board))
+            i_win |= GAME_RULE::STANDARDGOMOKU;
+        else
+            isWin = false;
+    }
+    if (GAME_RULE::RENJU == (rule & GAME_RULE::RENJU))
+    {
+        if (renju->checkWin(board))
+            i_win |= GAME_RULE::RENJU;
+        else
+            isWin = false;
+    }
+    if (GAME_RULE::CARO == (rule & GAME_RULE::CARO))
+    {
+        if (caro->checkWin(board))
+            i_win |= GAME_RULE::CARO;
+        else
+            isWin = false;
+    }
+
+    if (0 != i_win)
+    {
+        if ((rule & i_win) == rule)
+            isWin = true;
+        else
+            isWin = false;
+    }
+
+    if (isWin)
+    {
+        onGameOver(QObject::tr("game over!"),
+                   (board->getVRecord().back().second == STONECOLOR::BLACK)
+                       ? QObject::tr("Black win!")
+                       : QObject::tr("White win!"));
+    }
+    else if (0x04 == (rule & 0x04))
+    {
+        if (!renju->isLegal(board))
+        {
+            QString info = QObject::tr("Illegal move from BLACK! ");
+            switch (renju->getRenjuState())
+            {
+            case PATTERN::OVERLINE:
+                info.append(QObject::tr("OVERLINE"));
+                break;
+            case PATTERN::DOUBLE_FOUR:
+                info.append(QObject::tr("DOUBLE_FOUR"));
+                break;
+            case PATTERN::DOUBLE_THREE:
+                info.append(QObject::tr("DOUBLE_THREE"));
+                break;
+            default:
+                break;
+            }
+            onGameOver(QObject::tr("game over!"), info);
+        }
+    }
+}
+} // namespace
+
 void MainWindow::OnP1PlaceStone(int x, int y)
 {
     if (this->mState == GAME_STATE::PLAYING)
@@ -2249,75 +2325,13 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         }
 
         // if connect five
-        bool isWin = false;
-        int i_win = 0;
-        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
-        {
-            if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= GAME_RULE::STANDARDGOMOKU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
-        {
-            if (this->m_renju->checkWin(this->mBoard))
-                i_win |= GAME_RULE::RENJU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
-        {
-            if (this->m_caro->checkWin(this->mBoard))
-                i_win |= GAME_RULE::CARO;
-            else
-                isWin = false;
-        }
-
-        if (0 != i_win)
-        {
-            if ((this->m_Rule & i_win) == this->m_Rule)
-                isWin = true;
-            else
-                isWin = false;
-        }
-
-        if (isWin)
-        {
-            this->OnActionEnd();
-            this->mState = GAME_STATE::OVER;
-            this->pRuleActionGroup->setEnabled(true);
-            if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
-            else
-                QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            // this->mBoard->clearBoard();
-        }
-        else if (0x04 == (this->m_Rule & 0x04))
-        {
-            if (!this->m_renju->isLegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = tr("Illegal move from BLACK! ");
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append(tr("OVERLINE"));
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append(tr("DOUBLE_FOUR"));
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append(tr("DOUBLE_THREE"));
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, tr("game over!"), info);
-            }
-        }
+        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                  [this](const QString &sTitle, const QString &sMsg) {
+                                      this->OnActionEnd();
+                                      this->mState = GAME_STATE::OVER;
+                                      this->pRuleActionGroup->setEnabled(true);
+                                      QMessageBox::information(this, sTitle, sMsg);
+                                  });
     }
 }
 
@@ -2410,75 +2424,13 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         }
 
         // if connect five
-        bool isWin = false;
-        int i_win = 0;
-        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
-        {
-            if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= GAME_RULE::STANDARDGOMOKU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
-        {
-            if (this->m_renju->checkWin(this->mBoard))
-                i_win |= GAME_RULE::RENJU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
-        {
-            if (this->m_caro->checkWin(this->mBoard))
-                i_win |= GAME_RULE::CARO;
-            else
-                isWin = false;
-        }
-
-        if (0 != i_win)
-        {
-            if ((this->m_Rule & i_win) == this->m_Rule)
-                isWin = true;
-            else
-                isWin = false;
-        }
-
-        if (isWin)
-        {
-            this->OnActionEnd();
-            this->mState = GAME_STATE::OVER;
-            this->pRuleActionGroup->setEnabled(true);
-            if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
-            else
-                QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            // this->mBoard->clearBoard();
-        }
-        else if (0x04 == (this->m_Rule & 0x04))
-        {
-            if (!this->m_renju->isLegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = tr("Illegal move from BLACK! ");
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append(tr("OVERLINE"));
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append(tr("DOUBLE_FOUR"));
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append(tr("DOUBLE_THREE"));
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, tr("game over!"), info);
-            }
-        }
+        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                  [this](const QString &sTitle, const QString &sMsg) {
+                                      this->OnActionEnd();
+                                      this->mState = GAME_STATE::OVER;
+                                      this->pRuleActionGroup->setEnabled(true);
+                                      QMessageBox::information(this, sTitle, sMsg);
+                                  });
     }
 }
 
@@ -2538,75 +2490,13 @@ void MainWindow::OnContinuousPos(int x, int y)
         }
 
         // if connect five
-        bool isWin = false;
-        int i_win = 0;
-        isWin = this->m_freeStyleGomoku->checkWin(this->mBoard);
-        if (GAME_RULE::STANDARDGOMOKU == (this->m_Rule & GAME_RULE::STANDARDGOMOKU))
-        {
-            if (this->m_standardGomoku->checkWin(this->mBoard))
-                i_win |= GAME_RULE::STANDARDGOMOKU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::RENJU == (this->m_Rule & GAME_RULE::RENJU))
-        {
-            if (this->m_renju->checkWin(this->mBoard))
-                i_win |= GAME_RULE::RENJU;
-            else
-                isWin = false;
-        }
-        if (GAME_RULE::CARO == (this->m_Rule & GAME_RULE::CARO))
-        {
-            if (this->m_caro->checkWin(this->mBoard))
-                i_win |= GAME_RULE::CARO;
-            else
-                isWin = false;
-        }
-
-        if (0 != i_win)
-        {
-            if ((this->m_Rule & i_win) == this->m_Rule)
-                isWin = true;
-            else
-                isWin = false;
-        }
-
-        if (isWin)
-        {
-            this->OnActionEnd();
-            this->mState = GAME_STATE::OVER;
-            this->pRuleActionGroup->setEnabled(true);
-            if (this->mBoard->getVRecord().back().second == STONECOLOR::BLACK)
-                QMessageBox::information(this, tr("game over!"), tr("Black win!"));
-            else
-                QMessageBox::information(this, tr("game over!"), tr("White win!"));
-            // this->mBoard->clearBoard();
-        }
-        else if (0x04 == (this->m_Rule & 0x04))
-        {
-            if (!this->m_renju->isLegal(this->mBoard))
-            {
-                this->OnActionEnd();
-                this->mState = GAME_STATE::OVER;
-                this->pRuleActionGroup->setEnabled(true);
-                QString info = tr("Illegal move from BLACK! ");
-                switch (this->m_renju->getRenjuState())
-                {
-                case PATTERN::OVERLINE:
-                    info.append(tr("OVERLINE"));
-                    break;
-                case PATTERN::DOUBLE_FOUR:
-                    info.append(tr("DOUBLE_FOUR"));
-                    break;
-                case PATTERN::DOUBLE_THREE:
-                    info.append(tr("DOUBLE_THREE"));
-                    break;
-                default:
-                    break;
-                }
-                QMessageBox::information(this, tr("game over!"), info);
-            }
-        }
+        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                  [this](const QString &sTitle, const QString &sMsg) {
+                                      this->OnActionEnd();
+                                      this->mState = GAME_STATE::OVER;
+                                      this->pRuleActionGroup->setEnabled(true);
+                                      QMessageBox::information(this, sTitle, sMsg);
+                                  });
     }
 }
 
