@@ -2068,7 +2068,7 @@ void MainWindow::OnActionToggleOpenMind()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: ") + "0.9.99" + "\n";
+    const QString strVerNum = tr("Ver Num: ") + "0.10.01" + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
