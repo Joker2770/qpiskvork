@@ -2132,7 +2132,7 @@ void MainWindow::OnActionToggleOpenMind()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: ") + "0.9.99-features" + "\n";
+    const QString strVerNum = tr("Ver Num: ") + "0.10.01-features" + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -2153,7 +2153,7 @@ void MainWindow::OnActionLicense()
 {
     QString strAll = nullptr;
     strAll.append("qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.\n");
-    strAll.append("Copyright (C) 2022-2024  Jintao Yang <yjt950840@outlook.com>\n\n");
+    strAll.append("Copyright (C) 2022-2026 Jintao Yang <yjt950840@outlook.com>\n\n");
     strAll.append("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\n");
     strAll.append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n");
     strAll.append("You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.\n");
