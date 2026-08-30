@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux
+            os: ubuntu-latest
+          - name: windows
+            os: windows-latest
+          - name: macos
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Qt6 应用在 Linux 上编译所需的基础依赖
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.3'
+          cache: true
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Install
+        run: cmake --install build --config Release --prefix dist
+
+      # ---------- Linux: AppImage ----------
+      - name: Package (Linux AppImage)
+        if: runner.os == 'Linux'
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+        run: |
+          set -eux
+          # 组装 AppDir
+          mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
+          cp -r dist/* AppDir/usr/
+          sed 's|^Icon=.*|Icon=qpiskvork|' snap/gui/qpiskvork.desktop > AppDir/usr/share/applications/qpiskvork.desktop
+          cp snap/gui/qpiskvork.png AppDir/usr/share/icons/hicolor/256x256/apps/qpiskvork.png
+          # 下载 linuxdeploy 及其 Qt 插件
+          wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+          # 指向安装的 Qt
+          export PATH="$Qt6_DIR/bin:$PATH"
+          export QMAKE="$Qt6_DIR/bin/qmake"
+          export LD_LIBRARY_PATH="$Qt6_DIR/lib:$LD_LIBRARY_PATH"
+          # 生成 AppImage
+          ./linuxdeploy --appdir AppDir --plugin qt --output appimage
+          mv qpiskvork-*.AppImage "qpiskvork-${{ github.ref_name }}-linux-x86_64.AppImage"
+
+      # ---------- Windows: zip ----------
+      - name: Package (Windows zip)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          windeployqt --release --no-translations "dist\bin\qpiskvork.exe"
+          Compress-Archive -Path "dist\bin\*" -DestinationPath "qpiskvork-${{ github.ref_name }}-windows-x64.zip"
+
+      # ---------- macOS: dmg ----------
+      - name: Package (macOS dmg)
+        if: runner.os == 'macOS'
+        run: |
+          macdeployqt "dist/bin/qpiskvork.app"
+          hdiutil create -volname qpiskvork -srcfolder "dist/bin/qpiskvork.app" -ov -format UDZO "qpiskvork-${{ github.ref_name }}-macos.dmg"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qpiskvork-${{ matrix.name }}
+          path: |
+            qpiskvork-*.AppImage
+            qpiskvork-*.zip
+            qpiskvork-*.dmg
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten artifacts
+        run: |
+          mkdir -p release
+          find artifacts -type f -exec cp {} release/ \;
+          ls -la release
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
