@@ -1,5 +1,5 @@
 #    qpiskvork is another gomoku or renju manager adapting to Windows and Linux systems.
-#    Copyright (C) 2023-2024  Jintao Yang <yjt950840@outlook.com>
+#    Copyright (C) 2023-2026 Jintao Yang <yjt950840@outlook.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 name: qpiskvork # you probably want to 'snapcraft register <name>'
-version: '0.9.99' # just for humans, typically '1.2+git' or '1.3.2'
+version: '0.10.01' # just for humans, typically '1.2+git' or '1.3.2'
 summary: Another gomoku or renju manager adapting to Windows and Linux systems. # 79 char long summary
 description: |
   This program aims to become a gomoku or renju manager with the protocol
@@ -36,70 +36,40 @@ description: |
 
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
-base: core20
-license: 'GPL-2.0+'
-
-plugs:
-  # Support for common GTK themes
-  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
+base: core22
+license: 'GPL-2.0-or-later'
 
 layout:
   /etc/fonts:
     bind: $SNAP/etc/fonts
-  /etc/pulse:
-    bind: $SNAP/etc/pulse
   /usr/local/lib:
     bind: $SNAP/usr/local/lib
   /usr/local/share:
     bind: $SNAP/usr/local/share
   /usr/share/X11:
     bind: $SNAP/usr/share/X11
-  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules:
-    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gtk-2.0/modules
 
 apps:
   qpiskvork:
     command: usr/local/bin/qpiskvork
-    command-chain:
-      - bin/desktop-launch
     plugs:
       - home
       - desktop
       - desktop-legacy
       - audio-playback
-      - wayland
       - unity7
       - x11
       - opengl
       - removable-media
       - gsettings
       - network
-      - network-bind
-      - network-manager
-      - network-manager-observe
       - process-control
-      - hardware-observe
-      - mount-observe
       - system-observe
       - system-trace
     environment:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
-      DISABLE_WAYLAND: 1
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
-      # Use GTK3 cursor theme, icon theme and open/save file dialogs.
-      # QT_QPA_PLATFORMTHEME: gtk3
+      QT_QPA_PLATFORM: xcb
 
 parts:
   libsgfcplusplus:
@@ -122,7 +92,7 @@ parts:
       - cmake
 
   qpiskvork:
-    after: [desktop-qt5, libsgfcplusplus]
+    after: [libsgfcplusplus]
     plugin: cmake
     cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
@@ -137,41 +107,19 @@ parts:
       - gcc
       - g++
       - make
+      - qtbase5-dev
       - qtmultimedia5-dev
     stage-packages:
       - libglu1-mesa
       - libqt5core5a
+      - libqt5gui5
       - libqt5widgets5
+      - libqt5svg5
       - libqt5multimedia5
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
-
-  desktop-qt5:
-      source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-      source-subdir: qt
-      plugin: make
-      make-parameters: ["FLAVOR=qt5"]
-      build-packages:
-        - qtbase5-dev
-        - dpkg-dev
-      stage-packages:
-        - libxkbcommon0
-        # - ttf-ubuntu-font-family
-        - dmz-cursor-theme
-        - light-themes
-        - adwaita-icon-theme
-        - gnome-themes-standard
-        - shared-mime-info
-        - libqt5gui5
-        - libgdk-pixbuf2.0-0
-        - libgtk2.0-0
-        - libqt5svg5 # for loading icon themes which are svg
-        # - try: [appmenu-qt5] # not available on core18
-        - locales-all
-
-  # qt5-gtk-platform:
-    # plugin: nil
-    # stage-packages:
-      # - qt5-gtk-platformtheme
-      # - libcanberra-gtk-module
+      - libxkbcommon0
+      - xkb-data
+      - fontconfig
+      - fonts-dejavu-core
 
