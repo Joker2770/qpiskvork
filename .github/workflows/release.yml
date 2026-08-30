@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: features
 
       # Qt6 应用在 Linux 上编译所需的基础依赖
       - name: Install Linux build dependencies
