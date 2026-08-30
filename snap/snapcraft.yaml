@@ -38,6 +38,11 @@ grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 base: core22
 license: 'GPL-2.0-or-later'
+title: qpiskvork
+contact: yjt950840@outlook.com
+issues: https://github.com/Joker2770/qpiskvork/issues
+source-code: https://github.com/Joker2770/qpiskvork
+website: https://github.com/Joker2770/qpiskvork
 
 layout:
   /etc/fonts:
@@ -67,7 +72,7 @@ apps:
       - system-observe
       - system-trace
     environment:
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
       QT_QPA_PLATFORM: xcb
 
@@ -115,7 +120,6 @@ parts:
       - qtbase5-dev
       - qtmultimedia5-dev
     stage-packages:
-      - libglu1-mesa
       - libqt5core5a
       - libqt5gui5
       - libqt5widgets5
@@ -123,6 +127,7 @@ parts:
       - libqt5multimedia5
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
+      - libpulse0
       - libxkbcommon0
       - xkb-data
       - fontconfig
