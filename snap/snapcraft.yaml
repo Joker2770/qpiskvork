@@ -105,6 +105,7 @@ parts:
     source-type: git
     source-branch: features
     source-depth: 1
+    source-submodules: []
     build-packages:
       - gcc
       - g++
