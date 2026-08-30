@@ -72,7 +72,7 @@ apps:
       - system-observe
       - system-trace
     environment:
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
       QT_QPA_PLATFORM: xcb
 
@@ -127,6 +127,7 @@ parts:
       - libqt5multimedia5
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
+      - libpulse0
       - libxkbcommon0
       - xkb-data
       - fontconfig
