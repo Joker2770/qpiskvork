@@ -124,8 +124,13 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           macdeployqt "dist/bin/qpiskvork.app"
-          cp /usr/local/lib/libsgfcplusplus.dylib "dist/bin/qpiskvork.app/Contents/Frameworks/"
-          install_name_tool -change /usr/local/lib/libsgfcplusplus.dylib @executable_path/../Frameworks/libsgfcplusplus.dylib "dist/bin/qpiskvork.app/Contents/MacOS/qpiskvork"
+          # Copy libsgfcplusplus dylibs (versioned + symlinks)
+          cp -a /usr/local/lib/libsgfcplusplus.3.dylib /usr/local/lib/libsgfcplusplus.3.0.0.dylib "dist/bin/qpiskvork.app/Contents/Frameworks/" 2>/dev/null || true
+          # Resolve the actual install name referenced by the executable and re-point it
+          OLD_ID=$(otool -L "dist/bin/qpiskvork.app/Contents/MacOS/qpiskvork" | grep -o '/usr/local/lib/libsgfcplusplus[^ ]*' | head -1)
+          if [ -n "$OLD_ID" ]; then
+            install_name_tool -change "$OLD_ID" "@executable_path/../Frameworks/$(basename "$OLD_ID")" "dist/bin/qpiskvork.app/Contents/MacOS/qpiskvork"
+          fi
           codesign --force --sign - "dist/bin/qpiskvork.app"
           hdiutil create -volname qpiskvork -srcfolder "dist/bin/qpiskvork.app" -ov -format UDZO "qpiskvork-${{ github.ref_name }}-macos.dmg"
 
