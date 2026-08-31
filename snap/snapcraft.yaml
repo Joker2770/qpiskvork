@@ -74,6 +74,7 @@ apps:
     environment:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       QT_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/plugins"
+      GST_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gstreamer-1.0"
       XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
       QT_QPA_PLATFORM: xcb
 
@@ -128,6 +129,9 @@ parts:
       - libqt5multimedia5
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
+      - gstreamer1.0-plugins-base
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-pulseaudio
       - libpulse0
       - libxcb-cursor0
       - libxkbcommon0
