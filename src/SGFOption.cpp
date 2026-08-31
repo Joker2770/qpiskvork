@@ -173,7 +173,7 @@ void SGFOption::record_2_sgf(const std::string &outputFilePath, std::vector<std:
   // gameInfo->SetGameDates(SgfcDate::FromPropertyValue(DT));
   // game->GetRootNode()->WriteGameInfo(gameInfo);
 
-  std::shared_ptr<ISgfcNode> node[vRecord.size()];
+  std::vector<std::shared_ptr<ISgfcNode>> node(vRecord.size());
 
   auto builder = game->GetTreeBuilder();
 
