@@ -40,7 +40,35 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.7.3'
+          modules: 'qtmultimedia'
           cache: true
+
+      # features 分支的 SGF 棋谱功能依赖 libsgfcplusplus，需先构建安装
+      - name: Build libsgfcplusplus
+        shell: bash
+        run: |
+          set -eux
+          git clone --depth 1 --branch develop https://github.com/herzbube/libsgfcplusplus.git
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            PREFIX="C:/Program Files (x86)/libsgfc++"
+          else
+            PREFIX="/usr/local"
+          fi
+          cmake -S libsgfcplusplus -B libsgfcplusplus/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+            -DENABLE_SHARED_LIBRARY=YES \
+            -DENABLE_STATIC_LIBRARY=NO \
+            -DENABLE_SHARED_FRAMEWORK=NO \
+            -DENABLE_STATIC_FRAMEWORK=NO \
+            -DENABLE_TESTS=NO \
+            -DENABLE_EXAMPLES=NO
+          cmake --build libsgfcplusplus/build --config Release --parallel
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cmake --install libsgfcplusplus/build --config Release
+          else
+            sudo cmake --install libsgfcplusplus/build --config Release
+          fi
 
       - name: Configure
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
@@ -70,7 +98,7 @@ jobs:
           # 指向安装的 Qt
           export PATH="$Qt6_DIR/bin:$PATH"
           export QMAKE="$Qt6_DIR/bin/qmake"
-          export LD_LIBRARY_PATH="$Qt6_DIR/lib:$LD_LIBRARY_PATH"
+          export LD_LIBRARY_PATH="$Qt6_DIR/lib:/usr/local/lib:$LD_LIBRARY_PATH"
           # 生成 AppImage
           ./linuxdeploy --appdir AppDir --plugin qt --output appimage
           mv qpiskvork-*.AppImage "qpiskvork-${{ github.ref_name }}-linux-x86_64.AppImage"
@@ -81,6 +109,7 @@ jobs:
         shell: pwsh
         run: |
           windeployqt --release --no-translations "dist\bin\qpiskvork.exe"
+          Copy-Item "C:\Program Files (x86)\libsgfc++\bin\libsgfcplusplus.dll" "dist\bin\"
           Compress-Archive -Path "dist\bin\*" -DestinationPath "qpiskvork-${{ github.ref_name }}-windows-x64.zip"
 
       # ---------- macOS: dmg ----------
@@ -88,6 +117,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           macdeployqt "dist/bin/qpiskvork.app"
+          cp /usr/local/lib/libsgfcplusplus.dylib "dist/bin/qpiskvork.app/Contents/Frameworks/"
+          install_name_tool -change /usr/local/lib/libsgfcplusplus.dylib @executable_path/../Frameworks/libsgfcplusplus.dylib "dist/bin/qpiskvork.app/Contents/MacOS/qpiskvork"
+          codesign --force --sign - "dist/bin/qpiskvork.app"
           hdiutil create -volname qpiskvork -srcfolder "dist/bin/qpiskvork.app" -ov -format UDZO "qpiskvork-${{ github.ref_name }}-macos.dmg"
 
       - name: Upload artifact
