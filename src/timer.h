@@ -49,7 +49,7 @@ public:
 
 private:
     bool isRunning;
-    long long elapsed;
+    long long elapsed; // 纳秒（内部累计），getElapsed() 返回毫秒
     chrono::time_point<chrono::system_clock> startTime, stopTime;
 };
 
