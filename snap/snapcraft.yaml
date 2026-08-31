@@ -129,6 +129,7 @@ parts:
       - libqt5multimediawidgets5
       - libqt5multimedia5-plugins
       - libpulse0
+      - libxcb-cursor0
       - libxkbcommon0
       - xkb-data
       - fontconfig
