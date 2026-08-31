@@ -29,7 +29,7 @@ jobs:
         with:
           ref: features
 
-      # Qt6 应用在 Linux 上编译所需的基础依赖
+      # Base dependencies required to build the Qt6 app on Linux
       - name: Install Linux build dependencies
         if: runner.os == 'Linux'
         run: |
@@ -43,7 +43,7 @@ jobs:
           modules: 'qtmultimedia'
           cache: true
 
-      # features 分支的 SGF 棋谱功能依赖 libsgfcplusplus，需先构建安装
+      # The SGF feature on the features branch depends on libsgfcplusplus; build and install it first
       - name: Build libsgfcplusplus
         shell: bash
         run: |
@@ -86,20 +86,20 @@ jobs:
           APPIMAGE_EXTRACT_AND_RUN: '1'
         run: |
           set -eux
-          # 组装 AppDir
+          # Assemble the AppDir
           mkdir -p AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp -r dist/* AppDir/usr/
           sed 's|^Icon=.*|Icon=qpiskvork|' snap/gui/qpiskvork.desktop > AppDir/usr/share/applications/qpiskvork.desktop
           cp snap/gui/qpiskvork.png AppDir/usr/share/icons/hicolor/256x256/apps/qpiskvork.png
-          # 下载 linuxdeploy 及其 Qt 插件
+          # Download linuxdeploy and its Qt plugin
           wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
           chmod +x linuxdeploy linuxdeploy-plugin-qt
-          # 指向安装的 Qt
+          # Point to the installed Qt
           export PATH="$Qt6_DIR/bin:$PATH"
           export QMAKE="$Qt6_DIR/bin/qmake"
           export LD_LIBRARY_PATH="$Qt6_DIR/lib:/usr/local/lib:$LD_LIBRARY_PATH"
-          # 生成 AppImage
+          # Generate the AppImage
           ./linuxdeploy --appdir AppDir --plugin qt --output appimage
           mv qpiskvork-*.AppImage "qpiskvork-${{ github.ref_name }}-linux-x86_64.AppImage"
 
