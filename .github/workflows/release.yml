@@ -49,6 +49,13 @@ jobs:
         run: |
           set -eux
           git clone --depth 1 --branch develop https://github.com/herzbube/libsgfcplusplus.git
+          cd libsgfcplusplus
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            git submodule update --init sgfc win-iconv
+          else
+            git submodule update --init sgfc
+          fi
+          cd ..
           if [ "$RUNNER_OS" = "Windows" ]; then
             PREFIX="C:/Program Files (x86)/libsgfc++"
           else
