@@ -103,9 +103,9 @@ jobs:
           wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
           chmod +x linuxdeploy linuxdeploy-plugin-qt
           # Point to the installed Qt
-          export PATH="$Qt6_DIR/bin:$PATH"
-          export QMAKE="$Qt6_DIR/bin/qmake"
-          export LD_LIBRARY_PATH="$Qt6_DIR/lib:/usr/local/lib:$LD_LIBRARY_PATH"
+          export PATH="$QT_ROOT_DIR/bin:$PATH"
+          export QMAKE="$QT_ROOT_DIR/bin/qmake"
+          export LD_LIBRARY_PATH="$QT_ROOT_DIR/lib:/usr/local/lib:$LD_LIBRARY_PATH"
           # Generate the AppImage
           ./linuxdeploy --appdir AppDir --plugin qt --output appimage
           mv qpiskvork-*.AppImage "qpiskvork-${{ github.ref_name }}-linux-x86_64.AppImage"
