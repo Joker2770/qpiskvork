@@ -2132,7 +2132,7 @@ void MainWindow::OnActionToggleOpenMind()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: ") + "0.10.01-features" + "\n";
+    const QString strVerNum = tr("Ver Num: ") + "0.10.10" + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");

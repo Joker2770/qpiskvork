@@ -59,7 +59,7 @@ void Timer::pause()
     if (isRunning)
     {
         stopTime = chrono::system_clock::now();
-        elapsed += chrono::duration_cast<chrono::milliseconds>(stopTime - startTime).count();
+        elapsed += chrono::duration_cast<chrono::nanoseconds>(stopTime - startTime).count();
         isRunning = false;
     }
 }
@@ -78,10 +78,10 @@ long long Timer::getElapsed()
     if (isRunning)
     {
         chrono::time_point<chrono::system_clock> now = chrono::system_clock::now();
-        return elapsed + chrono::duration_cast<chrono::milliseconds>(now - startTime).count();
+        return (elapsed + chrono::duration_cast<chrono::nanoseconds>(now - startTime).count()) / 1000000;
     }
     else
     {
-        return elapsed;
+        return elapsed / 1000000;
     }
 }
