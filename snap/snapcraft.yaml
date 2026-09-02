@@ -73,6 +73,7 @@ apps:
       - gsettings
       - network
       - process-control
+      - pulseaudio
       - system-observe
       - system-trace
     environment:
