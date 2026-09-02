@@ -73,13 +73,16 @@ apps:
       - gsettings
       - network
       - process-control
+      - pulseaudio
       - system-observe
       - system-trace
     environment:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
       QT_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/plugins"
       GST_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gstreamer-1.0"
-      XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
+      XDG_DATA_DIRS: $SNAP/share:$SNAP/usr/share:$XDG_DATA_DIRS
+      # Let gdk-pixbuf (used by yad's dialog) find its image loaders in the snap
+      GDK_PIXBUF_MODULEDIR: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0/2.10.0/loaders"
       QT_QPA_PLATFORM: xcb
 
 parts:
@@ -149,16 +152,35 @@ parts:
     source-subdir: snapcraft-assets
     build-packages:
       - libasound2-dev
-    # Note: do NOT stage `yad` here. yad is a GTK3 dialog helper that the
-    # alsa-launch script only uses when the app ships a GTK runtime. qpiskvork
-    # is a Qt app and GTK3 is not staged, so a staged yad would crash with
-    # "libgtk-3.so.0: cannot open shared object file". Without yad the script
-    # falls back to its built-in text prompt / "use PulseAudio" path.
+    # yad is the GTK3 dialog helper used by alsa-launch to ask about the alsa
+    # plug / PulseAudio. It must ship its whole GTK3 runtime (shared libs +
+    # gdk-pixbuf loaders + icon theme + mime db) or it crashes at runtime with:
+    #   yad: error while loading shared libraries: libgtk-3.so.0 ...
+    # Note: libpulse0 is already staged by the qpiskvork part below; the
+    # pulseaudio override dir used by alsa-launch is still listed in `stage`.
     stage-packages:
       - libasound2
       - libasound2-plugins
+      - yad
+      - libgtk-3-0
+      - libgdk-pixbuf-2.0-0
+      - adwaita-icon-theme
+      - shared-mime-info
     stage:
       - etc/asound.conf
       - snap/command-chain/alsa-launch
+      - usr/bin/yad*
+      # ALSA plugin dir + PulseAudio override dir used by alsa-launch
       - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
-      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasound*
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
+      # gdk-pixbuf image loaders (needed to render the yad dialog icon)
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0
+      # All shared libs pulled in by the stage-packages above: ALSA, PulseAudio
+      # and the full GTK3 dependency chain yad needs (glib, gdk-pixbuf, pango,
+      # cairo, atk, harfbuzz, fontconfig, X11, wayland, codecs, ...). A broad
+      # glob is intentional so a missing .so can never break yad again.
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lib*
+      # GTK data: icon theme, mime database, glib schemas
+      - usr/share/icons
+      - usr/share/mime
+      - usr/share/glib-2.0
