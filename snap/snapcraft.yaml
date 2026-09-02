@@ -53,15 +53,19 @@ layout:
     bind: $SNAP/usr/local/share
   /usr/share/X11:
     bind: $SNAP/usr/share/X11
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
 
 apps:
   qpiskvork:
+    command-chain: ["snap/command-chain/alsa-launch"]
     command: usr/local/bin/qpiskvork
     plugs:
       - home
       - desktop
       - desktop-legacy
       - audio-playback
+      - alsa
       - unity7
       - x11
       - opengl
@@ -103,7 +107,7 @@ parts:
       - cmake
 
   qpiskvork:
-    after: [libsgfcplusplus]
+    after: [libsgfcplusplus, alsa-mixin]
     plugin: cmake
     cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
@@ -139,3 +143,22 @@ parts:
       - fontconfig
       - fonts-dejavu-core
 
+  alsa-mixin:
+    plugin: dump
+    source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-subdir: snapcraft-assets
+    build-packages:
+      - libasound2-dev
+    # Note: do NOT stage `yad` here. yad is a GTK3 dialog helper that the
+    # alsa-launch script only uses when the app ships a GTK runtime. qpiskvork
+    # is a Qt app and GTK3 is not staged, so a staged yad would crash with
+    # "libgtk-3.so.0: cannot open shared object file". Without yad the script
+    # falls back to its built-in text prompt / "use PulseAudio" path.
+    stage-packages:
+      - libasound2
+      - libasound2-plugins
+    stage:
+      - etc/asound.conf
+      - snap/command-chain/alsa-launch
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libasound*
