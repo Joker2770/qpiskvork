@@ -102,6 +102,12 @@ namespace BoardLayout
     constexpr int TIME_TEXT_RIGHT_X = 200;    // 右侧 "TIMEOUT" 文字距窗口右边缘的像素间距
 }
 
+namespace TimeControl
+{
+    constexpr int OVERTIME_TURN_COUNT = 3;
+    constexpr int OVERTIME_FLASH_INTERVAL_MS = 500;
+}
+
 const QString g_szSkins[13] = {
     ":/skins/bold.bmp",
     ":/skins/fontanGomo.bmp",
@@ -243,6 +249,8 @@ private:
     void DrawIndication();
     void DrawOpenMind();
     void updateOpenMindData(const QString &sData);
+    // 更新一名玩家的计时状态（常规阶段/加时阶段）；若加时机会耗尽则返回 true
+    bool updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed);
 
     void connectP1Signals();
     void connectP2Signals();
@@ -274,6 +282,11 @@ private:
     long long m_max_memory;
     long long m_time_left_p1;
     long long m_time_left_p2;
+    long long m_turn_start_elapsed_p1; // 加时阶段当前步时起点（累计毫秒），-1 表示尚未进入加时
+    long long m_turn_start_elapsed_p2;
+    int m_overtime_used_p1;            // 已消耗的加时步时机会数
+    int m_overtime_used_p2;
+    bool m_prev_p1_turn;               // 上一帧是否为 P1 行棋（用于检测落子切换）
     unsigned int m_cur_skin_idx;
     int m_Rule;
     int RECT_WIDTH;
