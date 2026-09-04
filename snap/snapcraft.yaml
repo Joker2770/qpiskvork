@@ -53,12 +53,9 @@ layout:
     bind: $SNAP/usr/local/share
   /usr/share/X11:
     bind: $SNAP/usr/share/X11
-  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
-    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
 
 apps:
   qpiskvork:
-    command-chain: ["snap/command-chain/alsa-launch"]
     command: usr/local/bin/qpiskvork
     plugs:
       - home
@@ -73,16 +70,22 @@ apps:
       - gsettings
       - network
       - process-control
-      - pulseaudio
       - system-observe
       - system-trace
     environment:
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
       QT_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/plugins"
+      # --- GStreamer (Qt Multimedia audio backend) ---
+      # Only use plugins bundled inside the snap; never scan host paths
       GST_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gstreamer-1.0"
-      XDG_DATA_DIRS: $SNAP/share:$SNAP/usr/share:$XDG_DATA_DIRS
-      # Let gdk-pixbuf (used by yad's dialog) find its image loaders in the snap
-      GDK_PIXBUF_MODULEDIR: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0/2.10.0/loaders"
+      GST_PLUGIN_SYSTEM_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gstreamer-1.0"
+      # Keep the plugin registry in writable snap data (faster, deterministic start)
+      GST_REGISTRY: "$SNAP_USER_DATA/.cache/gstreamer-1.0/registry.bin"
+      # --- PulseAudio / PipeWire ---
+      # In a snap XDG_RUNTIME_DIR is the snap-private /run/user/<uid>/snap.<name>,
+      # so ../pulse/native resolves to the real per-user pulse socket.
+      PULSE_SERVER: "unix:$XDG_RUNTIME_DIR/../pulse/native"
+      XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
       QT_QPA_PLATFORM: xcb
 
 parts:
@@ -110,7 +113,7 @@ parts:
       - cmake
 
   qpiskvork:
-    after: [libsgfcplusplus, alsa-mixin]
+    after: [libsgfcplusplus]
     plugin: cmake
     cmake-parameters:
       - "-DCMAKE_INSTALL_PREFIX=/usr/local"
@@ -139,48 +142,12 @@ parts:
       - gstreamer1.0-plugins-base
       - gstreamer1.0-plugins-good
       - gstreamer1.0-pulseaudio
+      # libasound2 (ALSA) is normally pulled in transitively, listed explicitly
+      # so alsasink (gstreamer-plugins-base) keeps working if deps change
+      - libasound2
       - libpulse0
       - libxcb-cursor0
       - libxkbcommon0
       - xkb-data
       - fontconfig
       - fonts-dejavu-core
-
-  alsa-mixin:
-    plugin: dump
-    source: https://github.com/diddlesnaps/snapcraft-alsa.git
-    source-subdir: snapcraft-assets
-    build-packages:
-      - libasound2-dev
-    # yad is the GTK3 dialog helper used by alsa-launch to ask about the alsa
-    # plug / PulseAudio. It must ship its whole GTK3 runtime (shared libs +
-    # gdk-pixbuf loaders + icon theme + mime db) or it crashes at runtime with:
-    #   yad: error while loading shared libraries: libgtk-3.so.0 ...
-    # Note: libpulse0 is already staged by the qpiskvork part below; the
-    # pulseaudio override dir used by alsa-launch is still listed in `stage`.
-    stage-packages:
-      - libasound2
-      - libasound2-plugins
-      - yad
-      - libgtk-3-0
-      - libgdk-pixbuf-2.0-0
-      - adwaita-icon-theme
-      - shared-mime-info
-    stage:
-      - etc/asound.conf
-      - snap/command-chain/alsa-launch
-      - usr/bin/yad*
-      # ALSA plugin dir + PulseAudio override dir used by alsa-launch
-      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
-      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
-      # gdk-pixbuf image loaders (needed to render the yad dialog icon)
-      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0
-      # All shared libs pulled in by the stage-packages above: ALSA, PulseAudio
-      # and the full GTK3 dependency chain yad needs (glib, gdk-pixbuf, pango,
-      # cairo, atk, harfbuzz, fontconfig, X11, wayland, codecs, ...). A broad
-      # glob is intentional so a missing .so can never break yad again.
-      - usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lib*
-      # GTK data: icon theme, mime database, glib schemas
-      - usr/share/icons
-      - usr/share/mime
-      - usr/share/glib-2.0

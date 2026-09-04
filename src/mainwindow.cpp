@@ -266,6 +266,11 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_max_memory = (q_max_memory.toInt() > 0 && q_max_memory.toInt() < (int)((unsigned int)-1 >> 1)) ? q_max_memory.toInt() : (1024 * 1024 * 1024);
     this->m_time_left_p1 = this->m_timeout_match;
     this->m_time_left_p2 = this->m_timeout_match;
+    this->m_turn_start_elapsed_p1 = -1;
+    this->m_turn_start_elapsed_p2 = -1;
+    this->m_overtime_used_p1 = 0;
+    this->m_overtime_used_p2 = 0;
+    this->m_prev_p1_turn = true;
 
     this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
     this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
@@ -623,21 +628,77 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawMark();
 }
 
+bool MainWindow::updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed)
+{
+    if (0 == timeLeft)
+        return false; // 已超时，不再更新
+
+    const long long elapsed = t->getElapsed();
+    if (elapsed < this->m_timeout_match)
+    {
+        // 常规阶段：尚未进入加时
+        turnStartElapsed = -1;
+        overtimeUsed = 0;
+        timeLeft = this->m_timeout_match - elapsed;
+        return false;
+    }
+
+    // 加时阶段
+    if (turnStartElapsed < 0)
+    {
+        // 刚进入加时，第一次步时机会从 timeout_match 用尽时开始计时
+        turnStartElapsed = this->m_timeout_match;
+        overtimeUsed = 0;
+    }
+
+    if (this->m_timeout_turn <= 0)
+    {
+        // 步时上限为 0：加时机会立即耗尽
+        timeLeft = 0;
+        overtimeUsed = TimeControl::OVERTIME_TURN_COUNT;
+        return true;
+    }
+
+    if (elapsed - turnStartElapsed >= this->m_timeout_turn)
+    {
+        // 当前机会超时，消耗一次机会
+        ++overtimeUsed;
+        if (overtimeUsed >= TimeControl::OVERTIME_TURN_COUNT)
+        {
+            timeLeft = 0;
+            return true;
+        }
+        // 还有剩余机会：下一次机会从头开始计时
+        turnStartElapsed = elapsed;
+    }
+
+    timeLeft = this->m_timeout_turn - (elapsed - turnStartElapsed);
+    return false;
+}
+
 void MainWindow::onRepaintTimerTimeout()
 {
     if (GAME_STATE::PLAYING == this->mState)
     {
+        // 检测落子切换：行棋方变化时，说明刚落下了一子。
+        // 将“刚刚落子一方”的加时步时起点重置到其计时器当前值，
+        // 使其下一次步时机会从头开始倒计时。
+        const bool p1Turn = this->m_manager->m_p1->m_isMyTurn;
+        if (p1Turn != this->m_prev_p1_turn)
+        {
+            if (p1Turn)
+                this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed(); // P2 刚落子
+            else
+                this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed(); // P1 刚落子
+            this->m_prev_p1_turn = p1Turn;
+        }
+
         bool bTimeout = false;
-        if (0 != this->m_time_left_p1 && this->m_timeout_match <= this->m_T1->getElapsed())
-        {
-            this->m_time_left_p1 = 0;
+        if (this->updatePlayerClock(this->m_T1, this->m_time_left_p1, this->m_turn_start_elapsed_p1, this->m_overtime_used_p1))
             bTimeout = true;
-        }
-        if (0 != this->m_time_left_p2 && this->m_timeout_match <= this->m_T2->getElapsed())
-        {
-            this->m_time_left_p2 = 0;
+        if (this->updatePlayerClock(this->m_T2, this->m_time_left_p2, this->m_turn_start_elapsed_p2, this->m_overtime_used_p2))
             bTimeout = true;
-        }
+
         if (bTimeout)
             this->OnActionEnd();
     }
@@ -776,10 +837,8 @@ void MainWindow::DrawTimeLeft()
     QPainter painter(this);
     painter.setFont(font);
 
-    if (0 != this->m_time_left_p1 && this->m_timeout_match > this->m_T1->getElapsed())
-        this->m_time_left_p1 = this->m_timeout_match - this->m_T1->getElapsed();
-    else if (0 != this->m_time_left_p1)
-        this->m_time_left_p1 = 0;
+    const long long elapsed_p1 = this->m_T1->getElapsed();
+    const long long elapsed_p2 = this->m_T2->getElapsed();
 
     if (0 == this->m_time_left_p1)
     {
@@ -788,17 +847,18 @@ void MainWindow::DrawTimeLeft()
     }
     else
     {
-        painter.setPen(QPen(QColor(Qt::black), 2));
+        const bool overtime = elapsed_p1 >= this->m_timeout_match;
+        const bool flashOn = (elapsed_p1 / TimeControl::OVERTIME_FLASH_INTERVAL_MS) % 2 == 0;
+        painter.setPen(QPen(overtime ? (flashOn ? QColor(255, 165, 0) : QColor(170, 85, 0)) : QColor(Qt::black), 2));
+        QString sTimeP1;
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText(this->RECT_WIDTH + BoardLayout::TEXT_MARGIN, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s"));
+            sTimeP1 = QString::fromStdString(to_string(this->m_time_left_p1 / 1000) + "s");
         else
-            painter.drawText(this->RECT_WIDTH + BoardLayout::TEXT_MARGIN, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, QString::fromStdString(to_string(this->m_time_left_p1) + "ms"));
+            sTimeP1 = QString::fromStdString(to_string(this->m_time_left_p1) + "ms");
+        if (overtime)
+            sTimeP1 += QString("  %1/%2").arg(TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p1).arg(TimeControl::OVERTIME_TURN_COUNT);
+        painter.drawText(this->RECT_WIDTH + BoardLayout::TEXT_MARGIN, (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignLeft, sTimeP1);
     }
-
-    if (0 != this->m_time_left_p2 && this->m_timeout_match > this->m_T2->getElapsed())
-        this->m_time_left_p2 = this->m_timeout_match - this->m_T2->getElapsed();
-    else if (0 != this->m_time_left_p2)
-        this->m_time_left_p2 = 0;
 
     if (0 == this->m_time_left_p2)
     {
@@ -807,11 +867,17 @@ void MainWindow::DrawTimeLeft()
     }
     else
     {
-        painter.setPen(QPen(QColor(Qt::black), 2));
+        const bool overtime = elapsed_p2 >= this->m_timeout_match;
+        const bool flashOn = (elapsed_p2 / TimeControl::OVERTIME_FLASH_INTERVAL_MS) % 2 == 0;
+        painter.setPen(QPen(overtime ? (flashOn ? QColor(255, 165, 0) : QColor(170, 85, 0)) : QColor(Qt::black), 2));
+        QString sTimeP2;
         if (this->pActionTimeSecond->isChecked())
-            painter.drawText((int)(this->geometry().width() - BoardLayout::TEXT_RIGHT_SPACE - this->RECT_WIDTH), (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s"));
+            sTimeP2 = QString::fromStdString(to_string(this->m_time_left_p2 / 1000) + "s");
         else
-            painter.drawText((int)(this->geometry().width() - BoardLayout::TEXT_RIGHT_SPACE - this->RECT_WIDTH), (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, QString::fromStdString(to_string(this->m_time_left_p2) + "ms"));
+            sTimeP2 = QString::fromStdString(to_string(this->m_time_left_p2) + "ms");
+        if (overtime)
+            sTimeP2 += QString("  %1/%2").arg(TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p2).arg(TimeControl::OVERTIME_TURN_COUNT);
+        painter.drawText((int)(this->geometry().width() - BoardLayout::TEXT_RIGHT_SPACE - this->RECT_WIDTH), (int)(RECT_HEIGHT * BoardLayout::TIME_TEXT_Y_RATIO + this->pMenuBar->height()), 150, 50, Qt::AlignRight, sTimeP2);
     }
 }
 
@@ -1228,6 +1294,11 @@ void MainWindow::OnActionStart()
             this->m_T2->stop();
         this->m_time_left_p1 = this->m_timeout_match;
         this->m_time_left_p2 = this->m_timeout_match;
+        this->m_turn_start_elapsed_p1 = -1;
+        this->m_turn_start_elapsed_p2 = -1;
+        this->m_overtime_used_p1 = 0;
+        this->m_overtime_used_p2 = 0;
+        this->m_prev_p1_turn = true;
 
         this->m_manager->m_p1->m_color = STONECOLOR::BLACK;
         this->m_manager->m_p2->m_color = STONECOLOR::WHITE;
@@ -1352,6 +1423,7 @@ void MainWindow::OnActionStart()
 
         this->mBoard->Notify();
 
+        this->m_prev_p1_turn = this->m_manager->m_p1->m_isMyTurn;
         this->mState = GAME_STATE::PLAYING;
 
         if (this->m_bSwap2Board)
@@ -1574,6 +1646,7 @@ void MainWindow::OnActionContinue()
             }
         }
 
+        this->m_prev_p1_turn = this->m_manager->m_p1->m_isMyTurn;
         this->mState = GAME_STATE::PLAYING;
         this->pRuleActionGroup->setDisabled(true);
     }
