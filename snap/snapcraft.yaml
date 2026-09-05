@@ -73,7 +73,7 @@ apps:
       - system-observe
       - system-trace
     environment:
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/local/lib"
+      LD_LIBRARY_PATH: "$SNAP/usr/local/lib:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$LD_LIBRARY_PATH"
       QT_PLUGIN_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/plugins"
       # --- GStreamer (Qt Multimedia audio backend) ---
       # Only use plugins bundled inside the snap; never scan host paths
