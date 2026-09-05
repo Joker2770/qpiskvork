@@ -233,6 +233,8 @@ private:
     void DrawPlayerName();
     void DrawIndication();
     void DrawOpenMind();
+    // 计算并钳制到屏幕可用区域后调整主窗口大小
+    void resizeToFitBoard();
     void updateOpenMindData(const QString &sData);
     // 更新一名玩家的计时状态（常规阶段/加时阶段）；若加时机会耗尽则返回 true
     bool updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed);

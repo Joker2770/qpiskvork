@@ -21,6 +21,8 @@
 #include <QDebug>
 #include <QInputDialog>
 #include <QPainterPath>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include "mainwindow.h"
 #include "EngineLoader.h"
@@ -204,8 +206,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_p1_name.clear();
     this->m_p2_name.clear();
 
-    this->resize((this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH,
-                 (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+    this->resizeToFitBoard();
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
     this->m_bBoard = false;
@@ -1730,9 +1731,25 @@ void MainWindow::OnActionTakeBack()
     }
 }
 
+void MainWindow::resizeToFitBoard()
+{
+    const int iWidth = (this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH;
+    const int iHeight = (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height();
+
+    const QScreen *pScreen = QGuiApplication::primaryScreen();
+    if (nullptr == pScreen)
+    {
+        this->resize(iWidth, iHeight);
+        return;
+    }
+
+    const QRect rcAvail = pScreen->availableGeometry();
+    this->resize(qMin(iWidth, rcAvail.width()), qMin(iHeight, rcAvail.height()));
+}
+
 void MainWindow::OnActionBoardSize()
 {
-    if (this->mState != GAME_STATE::PLAYING)
+    if (this->mState == GAME_STATE::IDLE || this->mState == GAME_STATE::OVER)
     {
         bool ok = false;
         int i_get = QInputDialog::getInt(this, tr("Board Size"), tr("Please input board size:"), 15, 8, 25,
@@ -1742,8 +1759,7 @@ void MainWindow::OnActionBoardSize()
             int iTmp = i_get;
             pair<int, int> pTmp(iTmp, iTmp);
             if (this->mBoard->setBSize(pTmp))
-                resize((this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH,
-                       (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height());
+                this->resizeToFitBoard();
 
             this->mBoard->Notify();
 
@@ -1837,80 +1853,85 @@ void MainWindow::OnActionOvertime()
 
 void MainWindow::OnActionGridSize()
 {
-    // if (this->mState != GAME_STATE::PLAYING)
-    // {
-    bool ok = false;
-    int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
-                                     1, &ok, Qt::MSWindowsFixedSizeDialogHint);
-    if (ok)
+    if (this->mState != GAME_STATE::PLAYING)
     {
-        this->RECT_WIDTH = i_get;
-        this->RECT_HEIGHT = i_get;
-        bool bLoad = false;
-        QPixmap pm;
-        this->m_images.clear();
-
-        switch (this->m_cur_skin_idx)
+        bool ok = false;
+        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
+                                         1, &ok, Qt::MSWindowsFixedSizeDialogHint);
+        if (ok)
         {
-        case 1:
-            bLoad = pm.load(g_szSkins[0]);
-            break;
-        case 2:
-            bLoad = pm.load(g_szSkins[1]);
-            break;
-        case 3:
-            bLoad = pm.load(g_szSkins[2]);
-            break;
-        case 4:
-            bLoad = pm.load(g_szSkins[3]);
-            break;
-        case 5:
-            bLoad = pm.load(g_szSkins[4]);
-            break;
-        case 6:
-            bLoad = pm.load(g_szSkins[5]);
-            break;
-        case 7:
-            bLoad = pm.load(g_szSkins[6]);
-            break;
-        case 8:
-            bLoad = pm.load(g_szSkins[7]);
-            break;
-        case 9:
-            bLoad = pm.load(g_szSkins[8]);
-            break;
-        case 10:
-            bLoad = pm.load(g_szSkins[9]);
-            break;
-        case 11:
-            bLoad = pm.load(g_szSkins[10]);
-            break;
-        case 12:
-            bLoad = pm.load(g_szSkins[11]);
-            break;
-        case 13:
-            bLoad = pm.load(g_szSkins[12]);
-            break;
-        default:
-            break;
-        }
+            this->RECT_WIDTH = i_get;
+            this->RECT_HEIGHT = i_get;
+            bool bLoad = false;
+            QPixmap pm;
+            this->m_images.clear();
 
-        if (!pm.isNull() && bLoad)
-        {
-            for (size_t i = 0; i < 5; i++)
-                this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            switch (this->m_cur_skin_idx)
+            {
+            case 1:
+                bLoad = pm.load(g_szSkins[0]);
+                break;
+            case 2:
+                bLoad = pm.load(g_szSkins[1]);
+                break;
+            case 3:
+                bLoad = pm.load(g_szSkins[2]);
+                break;
+            case 4:
+                bLoad = pm.load(g_szSkins[3]);
+                break;
+            case 5:
+                bLoad = pm.load(g_szSkins[4]);
+                break;
+            case 6:
+                bLoad = pm.load(g_szSkins[5]);
+                break;
+            case 7:
+                bLoad = pm.load(g_szSkins[6]);
+                break;
+            case 8:
+                bLoad = pm.load(g_szSkins[7]);
+                break;
+            case 9:
+                bLoad = pm.load(g_szSkins[8]);
+                break;
+            case 10:
+                bLoad = pm.load(g_szSkins[9]);
+                break;
+            case 11:
+                bLoad = pm.load(g_szSkins[10]);
+                break;
+            case 12:
+                bLoad = pm.load(g_szSkins[11]);
+                break;
+            case 13:
+                bLoad = pm.load(g_szSkins[12]);
+                break;
+            default:
+                break;
+            }
 
-            if (this->m_images.size() != 5)
-                this->m_bSkin = false;
+            if (!pm.isNull() && bLoad)
+            {
+                for (size_t i = 0; i < 5; i++)
+                    this->m_images.push_back(pm.copy((int)(i * (pm.width()) * 0.2), 0, (int)((pm.width()) * 0.2), pm.height()).scaled(RECT_WIDTH, RECT_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+                if (this->m_images.size() != 5)
+                    this->m_bSkin = false;
+                else
+                    this->m_bSkin = true;
+            }
             else
-                this->m_bSkin = true;
-        }
+            {
+                // 皮肤加载失败时 m_images 已清空，必须同步置 false，
+                // 否则 m_bSkin 残留 true 会让绘制代码访问空容器而崩溃。
+                this->m_bSkin = false;
+            }
 
-        resize((this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH,
-               (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height());
-        this->m_customs->setCfgValue("Board", "GridSize", i_get);
+            this->resizeToFitBoard();
+            this->m_customs->setCfgValue("Board", "GridSize", i_get);
+        }
     }
-    // }
 }
 
 void MainWindow::OnActionSkin()
