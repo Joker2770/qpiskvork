@@ -1115,6 +1115,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
                     this->m_T2->pause();
+                    this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                     this->m_T1->resume();
                     if (!this->sendTimeLeft(1))
                     {
@@ -1144,6 +1145,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 else if (this->m_manager->m_p2->m_isMyTurn)
                 {
                     this->m_T1->pause();
+                    this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                     this->m_T2->resume();
                     if (!this->sendTimeLeft(2))
                     {
@@ -2298,6 +2300,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 if (this->m_manager->m_p2->m_isMyTurn)
                 {
                     this->m_T1->pause();
+                    this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                     this->m_T2->resume();
                     if (!this->sendTimeLeft(2))
                     {
@@ -2391,6 +2394,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 if (this->m_manager->m_p1->m_isMyTurn)
                 {
                     this->m_T2->pause();
+                    this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                     this->m_T1->resume();
                     if (!this->sendTimeLeft(1))
                     {
@@ -2529,6 +2533,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
             this->mBoard->Notify();
             this->m_openMindData.clear();
             this->m_T1->pause();
+            this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
             this->m_T2->resume();
             if (!this->sendTimeLeft(2))
             {
@@ -2563,6 +2568,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->mBoard->Notify();
 
                     this->m_T2->pause();
+                    this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                     this->m_T1->resume();
                     if (!this->sendTimeLeft(1))
                     {
@@ -2623,6 +2629,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->mBoard->Notify();
             this->m_openMindData.clear();
             this->m_T1->pause();
+            this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
             this->m_T2->start();
             if (!this->sendTimeLeft(2))
             {
@@ -2655,6 +2662,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T2->pause();
+                        this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                         this->m_T1->resume();
                         if (!this->sendTimeLeft(1))
                         {
@@ -2700,6 +2708,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->mBoard->Notify();
 
                     this->m_T2->pause();
+                    this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                     this->m_T1->resume();
                     if (!this->sendTimeLeft(1))
                     {
@@ -2753,6 +2762,7 @@ void MainWindow::OnP1ResponsedSwap()
         this->mBoard->Notify();
         this->m_openMindData.clear();
         this->m_T1->pause();
+        this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
         this->m_T2->resume();
         if (!this->sendTimeLeft(2))
         {
@@ -2813,6 +2823,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
             this->mBoard->Notify();
             this->m_openMindData.clear();
             this->m_T2->pause();
+            this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
             this->m_T1->resume();
             if (!this->sendTimeLeft(1))
             {
@@ -2847,6 +2858,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
                     this->mBoard->Notify();
 
                     this->m_T1->pause();
+                    this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                     this->m_T2->resume();
                     if (!this->sendTimeLeft(2))
                     {
@@ -2907,6 +2919,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->mBoard->Notify();
             this->m_openMindData.clear();
             this->m_T2->pause();
+            this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
             this->m_T1->start();
             if (!this->sendTimeLeft(1))
             {
@@ -2939,6 +2952,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     {
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T1->pause();
+                        this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                         this->m_T2->resume();
                         if (!this->sendTimeLeft(2))
                         {
@@ -2984,6 +2998,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                     this->mBoard->Notify();
 
                     this->m_T1->pause();
+                    this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                     this->m_T2->resume();
                     if (!this->sendTimeLeft(2))
                     {
@@ -3037,6 +3052,7 @@ void MainWindow::OnP2ResponsedSwap()
         this->mBoard->Notify();
         this->m_openMindData.clear();
         this->m_T2->pause();
+        this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
         this->m_T1->resume();
         if (!this->sendTimeLeft(1))
         {
@@ -3328,6 +3344,7 @@ void MainWindow::beginSwap2Board()
                             qDebug() << "Place 3 stones successfully!";
                             this->mBoard->Notify();
                             this->m_T1->pause();
+                            this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                             this->m_T2->start();
                             if (!this->sendTimeLeft(2))
                             {
@@ -3360,6 +3377,7 @@ void MainWindow::beginSwap2Board()
                                     {
                                         qDebug() << "Place 2 stones successfully!";
                                         this->m_T2->pause();
+                                        this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                                         this->m_T1->resume();
                                         if (!this->sendTimeLeft(1))
                                         {
@@ -3400,6 +3418,7 @@ void MainWindow::beginSwap2Board()
                                             this->mBoard->Notify();
 
                                             this->m_T1->pause();
+                                            this->m_turn_start_elapsed_p1 = this->m_T1->getElapsed();
                                             this->m_T2->resume();
                                             if (!this->sendTimeLeft(2))
                                             {
@@ -3444,6 +3463,7 @@ void MainWindow::beginSwap2Board()
                                     this->mBoard->Notify();
 
                                     this->m_T2->pause();
+                                    this->m_turn_start_elapsed_p2 = this->m_T2->getElapsed();
                                     this->m_T1->resume();
                                     if (!this->sendTimeLeft(1))
                                     {
