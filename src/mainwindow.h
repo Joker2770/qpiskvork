@@ -139,6 +139,7 @@ public:
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
+    QAction *pActionOvertime;
     QAction *pActionSkin;
     QAction *pActionLanguage;
     QAction *pActionLangZHCN;
@@ -181,6 +182,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void OnActionOvertime();
     void OnActionGridSize();
     void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
@@ -261,6 +263,7 @@ private:
     long long m_timeout_match;
     long long m_timeout_turn;
     long long m_max_memory;
+    bool m_bOvertime;
     long long m_time_left_p1;
     long long m_time_left_p2;
     long long m_turn_start_elapsed_p1; // 加时阶段当前步时起点（累计毫秒），-1 表示尚未进入加时

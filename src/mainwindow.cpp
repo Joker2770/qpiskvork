@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionTimeoutMatch = new QAction(tr("Match Timeout"), this);
     this->pActionTimeoutTurn = new QAction(tr("Turn Timeout"), this);
     this->pActionMaxMemory = new QAction(tr("Max Memory"), this);
+    this->pActionOvertime = new QAction(tr("Overtime"), this);
+    this->pActionOvertime->setCheckable(true);
+    this->pActionOvertime->setChecked(true);
     this->pActionSkin = new QAction(tr("Skin"), this);
     this->pActionLanguage = new QAction(tr("Language"), this);
     this->pActionLangZHCN = new QAction(tr("zh_CN"), this);
@@ -170,6 +173,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionRenju));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionCaro));
     this->pMenuSetting->addAction(this->pRuleActionGroup->addAction(this->pActionSwap2Board));
+    this->pMenuSetting->addSeparator();
+    this->pMenuSetting->addAction(this->pActionOvertime);
     this->pActionFreeStyleGomoku->setChecked(true);
 
 #ifndef USE_DEFAULT_MENU_BAR
@@ -251,6 +256,10 @@ MainWindow::MainWindow(QWidget *parent)
     QString q_max_memory;
     this->m_customs->getCfgValue("Memory", "max_memory", q_max_memory);
     this->m_max_memory = (q_max_memory.toInt() > 0 && q_max_memory.toInt() < (int)((unsigned int)-1 >> 1)) ? q_max_memory.toInt() : (1024 * 1024 * 1024);
+    QString q_overtime;
+    this->m_customs->getCfgValue("Time", "overtime", q_overtime);
+    this->m_bOvertime = (0 == QString::compare(q_overtime, "false")) ? false : true;
+    this->pActionOvertime->setChecked(this->m_bOvertime);
     this->m_time_left_p1 = this->m_timeout_match;
     this->m_time_left_p2 = this->m_timeout_match;
     this->m_turn_start_elapsed_p1 = -1;
@@ -284,6 +293,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pActionTimeoutMatch, SIGNAL(triggered()), this, SLOT(OnActionTimeoutMatch()));
     connect(this->pActionTimeoutTurn, SIGNAL(triggered()), this, SLOT(OnActionTimeoutTurn()));
     connect(this->pActionMaxMemory, SIGNAL(triggered()), this, SLOT(OnActionMaxMemory()));
+    connect(this->pActionOvertime, SIGNAL(triggered()), this, SLOT(OnActionOvertime()));
     connect(this->pActionSkin, SIGNAL(triggered()), this, SLOT(OnActionSkin()));
     connect(this->pRuleActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedRuleActionGroup(QAction *)));
     connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
@@ -437,6 +447,11 @@ MainWindow::~MainWindow()
     {
         delete this->pActionMaxMemory;
         this->pActionMaxMemory = nullptr;
+    }
+    if (nullptr != this->pActionOvertime)
+    {
+        delete this->pActionOvertime;
+        this->pActionOvertime = nullptr;
     }
     if (nullptr != this->pActionSkin)
     {
@@ -592,6 +607,20 @@ bool MainWindow::updatePlayerClock(Timer *t, long long &timeLeft, long long &tur
         return false; // 已超时，不再更新
 
     const long long elapsed = t->getElapsed();
+    if (!this->m_bOvertime)
+    {
+        // 未启用加时：time_left 仅从 timeout_match 开始倒计时，用尽即超时
+        turnStartElapsed = -1;
+        overtimeUsed = 0;
+        if (elapsed >= this->m_timeout_match)
+        {
+            timeLeft = 0;
+            return true;
+        }
+        timeLeft = this->m_timeout_match - elapsed;
+        return false;
+    }
+
     if (elapsed < this->m_timeout_match)
     {
         // 常规阶段：尚未进入加时
@@ -642,6 +671,7 @@ bool MainWindow::sendTimeLeft(int player)
     //              （= (3 - overtimeUsed)*timeout_turn - (elapsed - turnStartElapsed)，
     //                落子后 turnStartElapsed 重置，故该值会跳回“剩余机会总量*timeout_turn”）。
     // 无限制对局（timeout_match = 2147483647）不进入加时，故不附加加时预算。
+    // 未启用加时（m_bOvertime == false）= timeout_match - 累计用时，不附加加时预算。
     const long long overtimeBudget =
         (this->m_timeout_match >= 2147483647)
             ? 0LL
@@ -654,9 +684,11 @@ bool MainWindow::sendTimeLeft(int player)
             return false;
         const long long elapsed = this->m_T1->getElapsed();
         const long long toSend =
-            (elapsed < this->m_timeout_match)
-                ? this->m_timeout_match + overtimeBudget - elapsed
-                : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p1) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p1);
+            (!this->m_bOvertime)
+                ? this->m_timeout_match - elapsed
+                : ((elapsed < this->m_timeout_match)
+                      ? this->m_timeout_match + overtimeBudget - elapsed
+                      : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p1) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p1));
         this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(toSend).c_str());
     }
     else
@@ -665,9 +697,11 @@ bool MainWindow::sendTimeLeft(int player)
             return false;
         const long long elapsed = this->m_T2->getElapsed();
         const long long toSend =
-            (elapsed < this->m_timeout_match)
-                ? this->m_timeout_match + overtimeBudget - elapsed
-                : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p2) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p2);
+            (!this->m_bOvertime)
+                ? this->m_timeout_match - elapsed
+                : ((elapsed < this->m_timeout_match)
+                      ? this->m_timeout_match + overtimeBudget - elapsed
+                      : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p2) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p2));
         this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(toSend).c_str());
     }
     return true;
@@ -844,7 +878,7 @@ void MainWindow::DrawTimeLeft()
     }
     else
     {
-        const bool overtime = elapsed_p1 >= this->m_timeout_match;
+        const bool overtime = this->m_bOvertime && (elapsed_p1 >= this->m_timeout_match);
         const bool flashOn = (elapsed_p1 / TimeControl::OVERTIME_FLASH_INTERVAL_MS) % 2 == 0;
         painter.setPen(QPen(overtime ? (flashOn ? QColor(255, 165, 0) : QColor(170, 85, 0)) : QColor(Qt::black), 2));
         QString sTimeP1;
@@ -864,7 +898,7 @@ void MainWindow::DrawTimeLeft()
     }
     else
     {
-        const bool overtime = elapsed_p2 >= this->m_timeout_match;
+        const bool overtime = this->m_bOvertime && (elapsed_p2 >= this->m_timeout_match);
         const bool flashOn = (elapsed_p2 / TimeControl::OVERTIME_FLASH_INTERVAL_MS) % 2 == 0;
         painter.setPen(QPen(overtime ? (flashOn ? QColor(255, 165, 0) : QColor(170, 85, 0)) : QColor(Qt::black), 2));
         QString sTimeP2;
@@ -1787,6 +1821,18 @@ void MainWindow::OnActionMaxMemory()
             this->m_customs->setCfgValue("Memory", "max_memory", this->m_max_memory);
         }
     }
+}
+
+void MainWindow::OnActionOvertime()
+{
+    if (this->mState == GAME_STATE::PLAYING)
+    {
+        // 对局进行中不允许切换加时控制，恢复原勾选状态
+        this->pActionOvertime->setChecked(this->m_bOvertime);
+        return;
+    }
+    this->m_bOvertime = this->pActionOvertime->isChecked();
+    this->m_customs->setCfgValue("Time", "overtime", this->m_bOvertime ? "true" : "false");
 }
 
 void MainWindow::OnActionGridSize()

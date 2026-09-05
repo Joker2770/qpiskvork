@@ -65,6 +65,11 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="54"/>
+        <source>Overtime</source>
+        <translation>加时</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="55"/>
         <location filename="../src/mainwindow.cpp" line="1764"/>
         <source>Skin</source>
         <translation>皮肤</translation>
