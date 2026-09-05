@@ -634,6 +634,45 @@ bool MainWindow::updatePlayerClock(Timer *t, long long &timeLeft, long long &tur
     return false;
 }
 
+bool MainWindow::sendTimeLeft(int player)
+{
+    // 发送给引擎的 time_left：
+    //   常规阶段（未进入加时）= timeout_match + 3*timeout_turn - 累计用时（开局即 M+3T，单调递减）；
+    //   加时阶段 = 剩余机会总量*timeout_turn - 当前机会已用时间
+    //              （= (3 - overtimeUsed)*timeout_turn - (elapsed - turnStartElapsed)，
+    //                落子后 turnStartElapsed 重置，故该值会跳回“剩余机会总量*timeout_turn”）。
+    // 无限制对局（timeout_match = 2147483647）不进入加时，故不附加加时预算。
+    const long long overtimeBudget =
+        (this->m_timeout_match >= 2147483647)
+            ? 0LL
+            : static_cast<long long>(TimeControl::OVERTIME_TURN_COUNT) * this->m_timeout_turn;
+
+    if (1 == player)
+    {
+        // 先刷新计时状态并检查是否超时
+        if (this->updatePlayerClock(this->m_T1, this->m_time_left_p1, this->m_turn_start_elapsed_p1, this->m_overtime_used_p1))
+            return false;
+        const long long elapsed = this->m_T1->getElapsed();
+        const long long toSend =
+            (elapsed < this->m_timeout_match)
+                ? this->m_timeout_match + overtimeBudget - elapsed
+                : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p1) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p1);
+        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(toSend).c_str());
+    }
+    else
+    {
+        if (this->updatePlayerClock(this->m_T2, this->m_time_left_p2, this->m_turn_start_elapsed_p2, this->m_overtime_used_p2))
+            return false;
+        const long long elapsed = this->m_T2->getElapsed();
+        const long long toSend =
+            (elapsed < this->m_timeout_match)
+                ? this->m_timeout_match + overtimeBudget - elapsed
+                : (TimeControl::OVERTIME_TURN_COUNT - this->m_overtime_used_p2) * this->m_timeout_turn - (elapsed - this->m_turn_start_elapsed_p2);
+        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(toSend).c_str());
+    }
+    return true;
+}
+
 void MainWindow::onRepaintTimerTimeout()
 {
     if (GAME_STATE::PLAYING == this->mState)
@@ -1077,11 +1116,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 {
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_time_left_p1 > 0)
-                    {
-                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(1))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, "Game Over", "Player 1 timeout!");
@@ -1110,11 +1145,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 {
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_time_left_p2 > 0)
-                    {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(2))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, "Game Over", "Player 2 timeout!");
@@ -1313,7 +1344,7 @@ void MainWindow::OnActionStart()
                 return;
             }
 
-            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
+            this->sendTimeLeft(1);
             this->m_T1->start();
         }
         else // is not continuous game
@@ -1360,8 +1391,8 @@ void MainWindow::OnActionStart()
                 return;
             }
 
-            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
+            this->sendTimeLeft(1);
+            this->sendTimeLeft(2);
 
             if (this->m_manager->m_p1->m_isMyTurn)
                 this->m_T1->start();
@@ -1480,11 +1511,7 @@ void MainWindow::OnActionContinue()
 
                 this->mBoard->Notify();
                 this->m_T1->resume();
-                if (this->m_time_left_p1 > 0)
-                {
-                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                }
-                else
+                if (!this->sendTimeLeft(1))
                 {
                     this->OnActionEnd();
                     QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -1544,11 +1571,7 @@ void MainWindow::OnActionContinue()
                 {
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_time_left_p1 > 0)
-                    {
-                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(1))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -1559,11 +1582,7 @@ void MainWindow::OnActionContinue()
                 {
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_time_left_p2 > 0)
-                    {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(2))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2280,11 +2299,7 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 {
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_time_left_p2 > 0)
-                    {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(2))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2377,11 +2392,7 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 {
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_time_left_p1 > 0)
-                    {
-                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(1))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2460,11 +2471,7 @@ void MainWindow::OnContinuousPos(int x, int y)
             {
                 this->m_openMindData.clear();
 
-                if (this->m_time_left_p1 > 0)
-                {
-                    this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                }
-                else
+                if (!this->sendTimeLeft(1))
                 {
                     this->OnActionEnd();
                     QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2523,11 +2530,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
             this->m_openMindData.clear();
             this->m_T1->pause();
             this->m_T2->resume();
-            if (this->m_time_left_p2 > 0)
-            {
-                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-            }
-            else
+            if (!this->sendTimeLeft(2))
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2561,11 +2564,7 @@ void MainWindow::OnP1Responsed2Pos(int x1, int y1, int x2, int y2)
 
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_time_left_p1 > 0)
-                    {
-                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(1))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2625,11 +2624,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->m_openMindData.clear();
             this->m_T1->pause();
             this->m_T2->start();
-            if (this->m_time_left_p2 > 0)
-            {
-                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-            }
-            else
+            if (!this->sendTimeLeft(2))
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2661,11 +2656,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T2->pause();
                         this->m_T1->resume();
-                        if (this->m_time_left_p1 > 0)
-                        {
-                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                        }
-                        else
+                        if (!this->sendTimeLeft(1))
                         {
                             this->OnActionEnd();
                             QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2710,11 +2701,7 @@ void MainWindow::OnP1Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
                     this->m_T2->pause();
                     this->m_T1->resume();
-                    if (this->m_time_left_p1 > 0)
-                    {
-                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(1))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2767,11 +2754,7 @@ void MainWindow::OnP1ResponsedSwap()
         this->m_openMindData.clear();
         this->m_T1->pause();
         this->m_T2->resume();
-        if (this->m_time_left_p2 > 0)
-        {
-            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-        }
-        else
+        if (!this->sendTimeLeft(2))
         {
             this->OnActionEnd();
             QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2831,11 +2814,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
             this->m_openMindData.clear();
             this->m_T2->pause();
             this->m_T1->resume();
-            if (this->m_time_left_p1 > 0)
-            {
-                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-            }
-            else
+            if (!this->sendTimeLeft(1))
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2869,11 +2848,7 @@ void MainWindow::OnP2Responsed2Pos(int x1, int y1, int x2, int y2)
 
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_time_left_p2 > 0)
-                    {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(2))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -2933,11 +2908,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
             this->m_openMindData.clear();
             this->m_T2->pause();
             this->m_T1->start();
-            if (this->m_time_left_p1 > 0)
-            {
-                this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-            }
-            else
+            if (!this->sendTimeLeft(1))
             {
                 this->OnActionEnd();
                 QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -2969,11 +2940,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
                         qDebug() << "Place 2 stones successfully!";
                         this->m_T1->pause();
                         this->m_T2->resume();
-                        if (this->m_time_left_p2 > 0)
-                        {
-                            this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                        }
-                        else
+                        if (!this->sendTimeLeft(2))
                         {
                             this->OnActionEnd();
                             QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -3018,11 +2985,7 @@ void MainWindow::OnP2Responsed3Pos(int x1, int y1, int x2, int y2, int x3, int y
 
                     this->m_T1->pause();
                     this->m_T2->resume();
-                    if (this->m_time_left_p2 > 0)
-                    {
-                        this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                    }
-                    else
+                    if (!this->sendTimeLeft(2))
                     {
                         this->OnActionEnd();
                         QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -3075,11 +3038,7 @@ void MainWindow::OnP2ResponsedSwap()
         this->m_openMindData.clear();
         this->m_T2->pause();
         this->m_T1->resume();
-        if (this->m_time_left_p1 > 0)
-        {
-            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-        }
-        else
+        if (!this->sendTimeLeft(1))
         {
             this->OnActionEnd();
             QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -3370,11 +3329,7 @@ void MainWindow::beginSwap2Board()
                             this->mBoard->Notify();
                             this->m_T1->pause();
                             this->m_T2->start();
-                            if (this->m_time_left_p2 > 0)
-                            {
-                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                            }
-                            else
+                            if (!this->sendTimeLeft(2))
                             {
                                 this->OnActionEnd();
                                 QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -3406,11 +3361,7 @@ void MainWindow::beginSwap2Board()
                                         qDebug() << "Place 2 stones successfully!";
                                         this->m_T2->pause();
                                         this->m_T1->resume();
-                                        if (this->m_time_left_p1 > 0)
-                                        {
-                                            this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                                        }
-                                        else
+                                        if (!this->sendTimeLeft(1))
                                         {
                                             this->OnActionEnd();
                                             QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));
@@ -3450,11 +3401,7 @@ void MainWindow::beginSwap2Board()
 
                                             this->m_T1->pause();
                                             this->m_T2->resume();
-                                            if (this->m_time_left_p2 > 0)
-                                            {
-                                                this->m_manager->infoMatch_p2(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p2).c_str());
-                                            }
-                                            else
+                                            if (!this->sendTimeLeft(2))
                                             {
                                                 this->OnActionEnd();
                                                 QMessageBox::information(this, tr("Game Over"), tr("Player 2 timeout!"));
@@ -3498,11 +3445,7 @@ void MainWindow::beginSwap2Board()
 
                                     this->m_T2->pause();
                                     this->m_T1->resume();
-                                    if (this->m_time_left_p1 > 0)
-                                    {
-                                        this->m_manager->infoMatch_p1(INFO_KEY::TIME_LEFT, to_string(this->m_time_left_p1).c_str());
-                                    }
-                                    else
+                                    if (!this->sendTimeLeft(1))
                                     {
                                         this->OnActionEnd();
                                         QMessageBox::information(this, tr("Game Over"), tr("Player 1 timeout!"));

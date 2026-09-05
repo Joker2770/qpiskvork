@@ -234,6 +234,8 @@ private:
     void updateOpenMindData(const QString &sData);
     // 更新一名玩家的计时状态（常规阶段/加时阶段）；若加时机会耗尽则返回 true
     bool updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed);
+    // 刷新指定玩家的计时状态并发送 info time_left（常规阶段=总预算、加时阶段=剩余机会总量*timeout_turn-当前机会已用）；若该玩家超时则返回 false
+    bool sendTimeLeft(int player);
 
     void connectP1Signals();
     void connectP2Signals();
