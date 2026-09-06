@@ -154,6 +154,7 @@ public:
     QAction *pActionTimeoutMatch;
     QAction *pActionTimeoutTurn;
     QAction *pActionMaxMemory;
+    QAction *pActionOvertime;
     QAction *pActionSkin;
     QAction *pActionLanguage;
     QAction *pActionLangZHCN;
@@ -198,6 +199,7 @@ public slots:
     void OnActionTimeoutMatch();
     void OnActionTimeoutTurn();
     void OnActionMaxMemory();
+    void OnActionOvertime();
     void OnActionGridSize();
     void OnActionSkin();
     void On_ClickedRuleActionGroup(QAction *);
@@ -248,9 +250,13 @@ private:
     void DrawPlayerName();
     void DrawIndication();
     void DrawOpenMind();
+    // 计算并钳制到屏幕可用区域后调整主窗口大小
+    void resizeToFitBoard();
     void updateOpenMindData(const QString &sData);
     // 更新一名玩家的计时状态（常规阶段/加时阶段）；若加时机会耗尽则返回 true
     bool updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed);
+    // 刷新指定玩家的计时状态并发送 info time_left（常规阶段=总预算、加时阶段=剩余机会总量*timeout_turn-当前机会已用）；若该玩家超时则返回 false
+    bool sendTimeLeft(int player);
 
     void connectP1Signals();
     void connectP2Signals();
@@ -280,6 +286,7 @@ private:
     long long m_timeout_match;
     long long m_timeout_turn;
     long long m_max_memory;
+    bool m_bOvertime;
     long long m_time_left_p1;
     long long m_time_left_p2;
     long long m_turn_start_elapsed_p1; // 加时阶段当前步时起点（累计毫秒），-1 表示尚未进入加时
