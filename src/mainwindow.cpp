@@ -1207,13 +1207,6 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                         this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
                     }
                 }
-
-                if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                    return;
-                }
             }
             else
                 return;
@@ -1294,6 +1287,15 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 }
                 QMessageBox::information(this, tr("game over!"), info);
             }
+        }
+
+        // A full board without a winner is a draw. This has to be checked after
+        // the win check above, otherwise the move that fills the board and
+        // completes a winning line at the same time would be called a draw.
+        if ((GAME_STATE::PLAYING == this->mState) && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
         }
     }
 }
@@ -2260,8 +2262,9 @@ void MainWindow::OnActionLicense()
 namespace {
 // Check whether the game is over due to a connect-five win or an illegal
 // renju move; if so, report the result through the onGameOver callback.
+// Returns true when the game has been ended by this call.
 template <typename TBoard, typename TFreeStyle, typename TStandard, typename TRenju, typename TCaro, typename TOnGameOver>
-void CheckConnectFiveAndFinish(TBoard *board,
+bool CheckConnectFiveAndFinish(TBoard *board,
                                TFreeStyle *freeStyle,
                                TStandard *standard,
                                TRenju *renju,
@@ -2269,6 +2272,11 @@ void CheckConnectFiveAndFinish(TBoard *board,
                                int rule,
                                TOnGameOver onGameOver)
 {
+    // An empty board can neither be won nor contain an illegal move, and the
+    // rules must not be queried with an empty record (they use back()).
+    if ((nullptr == board) || board->getVRecord().empty())
+        return false;
+
     bool isWin = freeStyle->checkWin(board);
     int i_win = 0;
     if (GAME_RULE::STANDARDGOMOKU == (rule & GAME_RULE::STANDARDGOMOKU))
@@ -2307,6 +2315,7 @@ void CheckConnectFiveAndFinish(TBoard *board,
                    (board->getVRecord().back().second == STONECOLOR::BLACK)
                        ? QObject::tr("Black win!")
                        : QObject::tr("White win!"));
+        return true;
     }
     else if (0x04 == (rule & 0x04))
     {
@@ -2328,8 +2337,11 @@ void CheckConnectFiveAndFinish(TBoard *board,
                 break;
             }
             onGameOver(QObject::tr("game over!"), info);
+            return true;
         }
     }
+
+    return false;
 }
 } // namespace
 
@@ -2401,13 +2413,6 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2416,14 +2421,21 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 
@@ -2495,13 +2507,6 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 2!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2510,14 +2515,21 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 
@@ -2555,13 +2567,6 @@ void MainWindow::OnContinuousPos(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2570,14 +2575,21 @@ void MainWindow::OnContinuousPos(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 

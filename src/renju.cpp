@@ -490,6 +490,10 @@ bool Renju::isThree(Board *board)
 
 bool Renju::isLegal(Board *board)
 {
+    // There is no illegal move without a last move.
+    if ((nullptr == board) || board->getVRecord().empty())
+        return true;
+
     if (board->getVRecord().back().second == STONECOLOR::BLACK)
     {
         if (this->isOverLine(board))
@@ -539,6 +543,10 @@ int Renju::getRenjuState()
 
 bool Renju::checkWin(Board *board)
 {
+    // An empty board has no last move and can never be a win.
+    if ((nullptr == board) || board->getVRecord().empty())
+        return false;
+
     pair<int, int> p_drt_up(0, -1), p_drt_down(0, 1), p_drt_left(-1, 0), p_drt_right(1, 0), p_drt_leftup(-1, -1), p_drt_rightdown(1, 1), p_drt_rightup(1, -1), p_drt_leftdown(-1, 1);
     int i_up = countNearStone(board, p_drt_up);
     int i_down = countNearStone(board, p_drt_down);
