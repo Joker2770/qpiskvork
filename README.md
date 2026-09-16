@@ -69,6 +69,27 @@ xmake config --mode=release
 xmake
 ```
 
+## test
+
+Regression tests of the rule engines are based on the RIF renju rules
+([https://www.renju.net/rifrules/](https://www.renju.net/rifrules/)).
+They are not part of the application build, turn them on with
+`-DQPISKVORK_BUILD_TESTS=ON`.
+
+```shell
+cd qpiskvork
+cmake -S . -B build -DQPISKVORK_BUILD_TESTS=ON
+cmake --build build --target renju_rules_test
+ctest --test-dir build --output-on-failure
+```
+
+The test binary can also be run directly, every case prints one line and the
+process returns the number of failed cases:
+
+```shell
+./build/renju_rules_test
+```
+
 ## references
 
 1. [https://sourceforge.net/projects/piskvork/](https://sourceforge.net/projects/piskvork/).
