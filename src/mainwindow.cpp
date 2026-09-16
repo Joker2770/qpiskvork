@@ -1780,7 +1780,7 @@ void MainWindow::OnActionTimeoutMatch()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), 900000, 0, 86400000,
+        int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), this->m_timeout_match, 0, 86400000,
                                          1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1812,7 +1812,7 @@ void MainWindow::OnActionTimeoutTurn()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 0, 600000,
+        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), this->m_timeout_turn, 0, 600000,
                                          1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1828,7 +1828,7 @@ void MainWindow::OnActionMaxMemory()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), 1024 * 1024 * 1024, 0, (int)((unsigned int)-1 >> 1),
+        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), this->m_max_memory, 0, (int)((unsigned int)-1 >> 1),
                                          1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1856,7 +1856,7 @@ void MainWindow::OnActionGridSize()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
+        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), this->RECT_WIDTH, 20, 50,
                                          1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
