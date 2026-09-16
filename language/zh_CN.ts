@@ -151,6 +151,11 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="71"/>
+        <source>Forbidden Points</source>
+        <translation>禁手点</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="71"/>
         <source>Display AI Mind</source>
         <translation>显示AI思路</translation>
     </message>

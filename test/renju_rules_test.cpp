@@ -51,6 +51,7 @@
 #include <QtGlobal>
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <utility>
 using namespace std;
@@ -94,6 +95,72 @@ void Check(const string &s_name, const string &s_rif, Board &board, Renju &renju
     cout << (b_ok ? "PASS  " : "FAIL  ") << s_name << " (" << board.getVRecord().size() << " stones)"
          << ": win=" << i_win << " legal=" << i_legal << " pattern=" << i_pattern
          << "  | RIF: " << s_rif << "\n";
+}
+
+// A forbidden point is a point where black may not play.  It is asked for a
+// given intersection and does not depend on the last move of the board, so the
+// question is "which pattern would a black stone on (x, y) make?".
+void CheckForbidden(const string &s_name, const string &s_rif, Board &board, Renju &renju,
+                    int x, int y, int i_expect_pattern)
+{
+    const int i_pattern = renju.getForbiddenPatternAt(&board, x, y);
+    const bool b_ok = (i_expect_pattern == i_pattern);
+
+    if (!b_ok)
+        ++g_i_failures;
+
+    cout << (b_ok ? "PASS  " : "FAIL  ") << s_name << " (" << x << "," << y << ")"
+         << ": pattern=" << i_pattern
+         << "  | RIF: " << s_rif << "\n";
+}
+
+// collectForbiddenPoints() prunes the intersections it examines to the
+// neighbourhood of the black stones.  That pruning must not lose a single
+// forbidden point, so its result is compared with a brute force scan of every
+// intersection of the board.
+void CheckForbiddenScan(const string &s_name, Board &board, Renju &renju)
+{
+    vector<pair<pair<int, int>, int>> vFast;
+    renju.collectForbiddenPoints(&board, vFast);
+
+    set<pair<int, int>> sFast;
+    for (size_t i = 0; i < vFast.size(); ++i)
+        sFast.insert(vFast[i].first);
+
+    const unsigned int i_width = board.getBSize().first;
+    const unsigned int i_height = board.getBSize().second;
+
+    int i_brute = 0;
+    bool b_ok = true;
+    for (unsigned int y = 0; y < i_height; ++y)
+    {
+        for (unsigned int x = 0; x < i_width; ++x)
+        {
+            const pair<int, int> idx((int)x, (int)y);
+            if (!board.isPosEmpty(idx))
+                continue;
+
+            const int i_pattern = renju.getForbiddenPatternAt(&board, (int)x, (int)y);
+            const bool b_reported = (sFast.end() != sFast.find(idx));
+            if (PATTERN::ROW == i_pattern)
+            {
+                if (b_reported)
+                    b_ok = false; // a point that is not forbidden was reported
+            }
+            else
+            {
+                ++i_brute;
+                if (!b_reported)
+                    b_ok = false; // a forbidden point was missed by the pruning
+            }
+        }
+    }
+
+    if (!b_ok)
+        ++g_i_failures;
+
+    cout << (b_ok ? "PASS  " : "FAIL  ") << s_name << ": pruned=" << vFast.size()
+         << " brute_force=" << i_brute << "\n";
 }
 } // namespace
 
@@ -299,6 +366,146 @@ int main()
         Put(board, 7, 7, WHITE); // the move
         Check("white double-three", "LEGAL (9.2 restricts black only)",
               board, renju, NO, YES, PATTERN::ROW);
+    }
+
+    // ---- getForbiddenPatternAt(): the forbidden points of a position --------
+    // The very same shapes as above, but now asked for the empty intersection
+    // where the stone would be played, without playing it.
+    {
+        Board board;
+        Renju renju;
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        CheckForbidden("forbidden point of a double-three", "DOUBLE_THREE",
+                       board, renju, 7, 7, PATTERN::DOUBLE_THREE);
+    }
+
+    {
+        Board board;
+        Renju renju;
+        Put(board, 4, 7, BLACK);
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 4, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        CheckForbidden("forbidden point of a double-four", "DOUBLE_FOUR",
+                       board, renju, 7, 7, PATTERN::DOUBLE_FOUR);
+    }
+
+    {
+        Board board;
+        Renju renju;
+        Put(board, 0, 0, BLACK);
+        Put(board, 1, 0, BLACK);
+        Put(board, 2, 0, BLACK);
+        Put(board, 4, 0, BLACK);
+        Put(board, 5, 0, BLACK);
+        Put(board, 6, 0, BLACK);
+        CheckForbidden("forbidden point of an overline", "OVERLINE",
+                       board, renju, 3, 0, PATTERN::OVERLINE);
+    }
+
+    {
+        // A stone on 7,7 makes five in a row (x=3..7 on y=7) and a double-four
+        // (y=4..7 and y=7,9..11 on x=7) at the same time.  RIF 9.2 forbids a
+        // move only "without at the same time attaining five in a row", so the
+        // point is not forbidden at all, it wins.  Reported as forbidden it
+        // would be a wrong hint on the board.
+        Board board;
+        Renju renju;
+        Put(board, 3, 7, BLACK);
+        Put(board, 4, 7, BLACK);
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 4, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        Put(board, 7, 9, BLACK);
+        Put(board, 7, 10, BLACK);
+        Put(board, 7, 11, BLACK);
+        CheckForbidden("five in a row and double-four at the same time",
+                       "NOT forbidden (9.2 requires \"without attaining five\")",
+                       board, renju, 7, 7, PATTERN::ROW);
+    }
+
+    {
+        // A point without any black stone around can never make a three or a
+        // four; an occupied point and a point outside of the board are no legal
+        // moves either.
+        Board board;
+        Renju renju;
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        CheckForbidden("point without any shape", "not forbidden", board, renju, 20, 20, PATTERN::ROW);
+        CheckForbidden("occupied point", "not forbidden", board, renju, 5, 7, PATTERN::ROW);
+        CheckForbidden("point outside of the board", "not forbidden", board, renju, 100, 100, PATTERN::ROW);
+    }
+
+    {
+        // The hint and the real verdict have to agree: the point reported as
+        // forbidden is exactly the point where black loses by playing it.
+        Board board;
+        Renju renju;
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        const int i_hint = renju.getForbiddenPatternAt(&board, 7, 7);
+        Put(board, 7, 7, BLACK); // played for real
+        const bool b_legal = renju.isLegal(&board);
+        const int i_verdict = renju.getRenjuState();
+        const bool b_ok = (PATTERN::DOUBLE_THREE == i_hint) && !b_legal &&
+                          (PATTERN::DOUBLE_THREE == i_verdict);
+
+        if (!b_ok)
+            ++g_i_failures;
+
+        cout << (b_ok ? "PASS  " : "FAIL  ") << "hint equals the verdict of the real move"
+             << ": hint=" << i_hint << " legal=" << b_legal << " pattern=" << i_verdict
+             << "  | RIF: 9.2.c\n";
+    }
+
+    // ---- collectForbiddenPoints(): the pruned scan of the board ------------
+    {
+        Board board;
+        Renju renju;
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        CheckForbiddenScan("pruned scan of a double-three position", board, renju);
+    }
+
+    {
+        // Several shapes at once: a double-three, an overline point, a
+        // four-three (legal) and a white stone in between.
+        Board board;
+        Renju renju;
+        Put(board, 5, 7, BLACK);
+        Put(board, 6, 7, BLACK);
+        Put(board, 7, 5, BLACK);
+        Put(board, 7, 6, BLACK);
+        Put(board, 1, 1, BLACK);
+        Put(board, 2, 1, BLACK);
+        Put(board, 4, 1, BLACK);
+        Put(board, 5, 1, BLACK);
+        Put(board, 6, 1, BLACK);
+        Put(board, 3, 11, BLACK);
+        Put(board, 4, 11, BLACK);
+        Put(board, 5, 11, BLACK);
+        Put(board, 6, 10, BLACK);
+        Put(board, 6, 9, BLACK);
+        Put(board, 11, 11, WHITE);
+        CheckForbiddenScan("pruned scan of several shapes at once", board, renju);
+    }
+
+    {
+        Board board;
+        Renju renju;
+        CheckForbiddenScan("pruned scan of an empty board", board, renju);
     }
 
     if (0 == g_i_failures)

@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju = new QAction(tr("Renju"), this);
     this->pActionCaro = new QAction(tr("Caro"), this);
     this->pActionNumOfMove = new QAction(tr("Number of move"), this);
+    this->pActionShowForbidden = new QAction(tr("Forbidden Points"), this);
     this->pActionToggleOpenMind = new QAction(tr("Display AI Mind"), this);
     this->pActionXAxisLetter = new QAction(tr("X-axis Letter"), this);
     this->pActionYAxisLetter = new QAction(tr("Y-axis Letter"), this);
@@ -104,6 +105,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
     this->pActionNumOfMove->setCheckable(true);
     this->pActionNumOfMove->setChecked(false);
+    // 禁手点提示：默认不勾选、不启用，需要时由用户显式打开。
+    this->pActionShowForbidden->setShortcut(QKeySequence(Qt::Key_D));
+    this->pActionShowForbidden->setCheckable(true);
+    this->pActionShowForbidden->setChecked(false);
     this->pActionToggleOpenMind->setShortcut(QKeySequence(Qt::Key_A));
     this->pActionToggleOpenMind->setCheckable(true);
     this->pActionToggleOpenMind->setChecked(false);
@@ -143,6 +148,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuShow->addAction(this->pActionToggleOpenMind);
     this->pMenuShow->addAction(this->pActionNumOfMove);
+    this->pMenuShow->addAction(this->pActionShowForbidden);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
     this->pMenuShow->addAction(this->pActionXAxisStartFrom_1);
@@ -214,7 +220,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bS2B_over = false;
     this->m_bSkin = true;
     this->m_bNumOfMove = false;
+    this->m_bShowForbidden = false;
     this->m_bOpenMind = false;
+    this->m_forbiddenKey = 0;
 
     QString q_skin_idx;
     this->m_customs->getCfgValue("View", "skin", q_skin_idx);
@@ -300,6 +308,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
+    connect(this->pActionShowForbidden, SIGNAL(triggered()), this, SLOT(OnActionShowForbidden()));
     connect(this->pActionToggleOpenMind, SIGNAL(triggered()), this, SLOT(OnActionToggleOpenMind()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
@@ -499,6 +508,11 @@ MainWindow::~MainWindow()
         delete this->pActionNumOfMove;
         this->pActionNumOfMove = nullptr;
     }
+    if (nullptr != this->pActionShowForbidden)
+    {
+        delete this->pActionShowForbidden;
+        this->pActionShowForbidden = nullptr;
+    }
     if (nullptr != this->pActionToggleOpenMind)
     {
         delete this->pActionToggleOpenMind;
@@ -597,6 +611,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawPlayerName();
     DrawIndication();
     DrawItems();
+    DrawForbiddenPoints();
     DrawOpenMind();
     DrawStepNum();
     DrawMark();
@@ -855,6 +870,84 @@ void MainWindow::DrawStepNum()
             painter.setPen(QPen(QColor(Qt::white), 1));
             painter.drawText(QPointF((i_x + BoardLayout::CELL_CENTER) * RECT_WIDTH + textWidth * (-0.5), (i_y + BoardLayout::CELL_CENTER) * RECT_HEIGHT + textHeight * (0.5) + this->pMenuBar->height()), s_idx);
         }
+    }
+}
+
+// 重算黑方的禁手点。枚举与判定都在规则引擎里完成（Renju::collectForbiddenPoints）。
+void MainWindow::updateForbiddenPoints()
+{
+    this->m_forbiddenPoints.clear();
+
+    if ((nullptr == this->mBoard) || (nullptr == this->m_renju))
+        return;
+
+    this->m_renju->collectForbiddenPoints(this->mBoard, this->m_forbiddenPoints);
+}
+
+void MainWindow::DrawForbiddenPoints()
+{
+    // 只在对局规则包含连珠、提示已开启、且棋盘上有棋子时才有禁手点。
+    if ((nullptr == this->mBoard) || (nullptr == this->m_renju) || !this->m_bShowForbidden ||
+        (0 == (this->m_Rule & GAME_RULE::RENJU)) || this->mBoard->getVRecord().empty() ||
+        (this->m_bSwap2Board && (3 > (int)this->mBoard->getVRecord().size())))
+    {
+        this->m_forbiddenPoints.clear();
+        this->m_forbiddenKey = 0;
+        return;
+    }
+
+    // 局面指纹（FNV-1a）：重绘定时器每 100ms 触发一次 update()，逐帧重算禁手点
+    // 是不可接受的，所以只在棋盘或规则真正变化时重算。
+    unsigned int i_key = 2166136261u;
+    i_key = (i_key ^ (unsigned int)this->m_Rule) * 16777619u;
+    i_key = (i_key ^ this->mBoard->getBSize().first) * 16777619u;
+    i_key = (i_key ^ this->mBoard->getBSize().second) * 16777619u;
+    const vector<pair<int, int>> &vRecord = this->mBoard->getVRecord();
+    for (size_t i = 0; i < vRecord.size(); ++i)
+    {
+        i_key = (i_key ^ (unsigned int)vRecord[i].first) * 16777619u;
+        i_key = (i_key ^ (unsigned int)vRecord[i].second) * 16777619u;
+    }
+
+    if (i_key != this->m_forbiddenKey)
+    {
+        this->m_forbiddenKey = i_key;
+        this->updateForbiddenPoints();
+    }
+
+    if (this->m_forbiddenPoints.empty())
+        return;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setBrush(Qt::NoBrush);
+
+    for (size_t i = 0; i < this->m_forbiddenPoints.size(); ++i)
+    {
+        const pair<int, int> idx = this->m_forbiddenPoints[i].first;
+
+        // 用颜色区分禁手类型：长连=深红、双四=紫、双三=橙。
+        QColor color;
+        switch (this->m_forbiddenPoints[i].second)
+        {
+        case PATTERN::OVERLINE:
+            color = QColor(200, 0, 0, 220);
+            break;
+        case PATTERN::DOUBLE_FOUR:
+            color = QColor(150, 0, 200, 220);
+            break;
+        default:
+            color = QColor(255, 102, 0, 220);
+            break;
+        }
+
+        painter.setPen(QPen(color, BoardLayout::FORBIDDEN_PEN_WIDTH));
+        // 与 DrawItems/DrawStepNum 一致：棋盘索引要先加上左侧/顶部留白格。
+        const QPointF ptCenter((idx.first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::CELL_CENTER) * RECT_WIDTH,
+                               (idx.second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
+        painter.drawEllipse(ptCenter,
+                            RECT_WIDTH * BoardLayout::FORBIDDEN_RADIUS_RATIO,
+                            RECT_HEIGHT * BoardLayout::FORBIDDEN_RADIUS_RATIO);
     }
 }
 
@@ -2212,6 +2305,24 @@ void MainWindow::OnActionNumOfMove()
         qDebug() << "Cancel number of move.";
         this->m_bNumOfMove = false;
     }
+}
+
+void MainWindow::OnActionShowForbidden()
+{
+    if (this->pActionShowForbidden->isChecked())
+    {
+        qDebug() << "Show forbidden points.";
+        this->m_bShowForbidden = true;
+    }
+    else
+    {
+        qDebug() << "Cancel forbidden points.";
+        this->m_bShowForbidden = false;
+        this->m_forbiddenPoints.clear();
+        this->m_forbiddenKey = 0;
+    }
+
+    this->update();
 }
 
 void MainWindow::OnActionToggleOpenMind()

@@ -53,6 +53,17 @@ public:
     bool checkWin(Board *board) override;
     // after checkWin
     bool isLegal(Board *board);
+    // RIF 9.2 for one single intersection: the forbidden pattern that a black
+    // move on (x, y) would make, PATTERN::ROW when black is allowed to play
+    // there (a stone that attains exactly five in a row is a win and never a
+    // forbidden move).  Unlike isLegal() this does not depend on the last move
+    // of the board and it leaves m_renju_state untouched.
+    int getForbiddenPatternAt(Board *board, int x, int y);
+    // Every empty intersection where black would make a forbidden move (RIF
+    // 9.2), with the pattern that would be made there.  Meant to be asked after
+    // every move of a game, so the candidates are pruned to the neighbourhood
+    // of the black stones: a three or a four spans at most five intersections.
+    void collectForbiddenPoints(Board *board, vector<pair<pair<int, int>, int>> &vPoints);
     int getRenjuState();
 
 private:

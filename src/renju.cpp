@@ -456,6 +456,90 @@ bool Renju::isLegal(Board *board)
     return true;
 }
 
+int Renju::getForbiddenPatternAt(Board *board, int x, int y)
+{
+    if (nullptr == board)
+        return PATTERN::ROW;
+
+    const pair<int, int> idx(x, y);
+    if (board->isPosOutOfBoard(idx) || !board->isPosEmpty(idx))
+        return PATTERN::ROW;
+
+    BoardView view(board);
+    view.AddStone(x, y, STONE_BLACK);
+
+    // RIF 9.2 forbids a move only "without at the same time attaining five in a
+    // row": an exact five wins and is never forbidden.  When a move is played
+    // for real checkWin() is asked first and short circuits isLegal(), so the
+    // very same test has to be made here for a stone played "in mind".
+    bool b_five = false;
+    for (int i_dir = 0; (i_dir < 4) && !b_five; ++i_dir)
+        b_five = (5 == RunLength(view, x, y, DIRECTIONS[i_dir][0], DIRECTIONS[i_dir][1], STONE_BLACK));
+
+    int i_pattern = PATTERN::ROW;
+    if (!b_five)
+    {
+        if (HasOverLine(view, x, y, STONE_BLACK)) // RIF 9.2.a
+            i_pattern = PATTERN::OVERLINE;
+        else if (2 <= CountFours(view, x, y, STONE_BLACK)) // RIF 9.2.b
+            i_pattern = PATTERN::DOUBLE_FOUR;
+        else if (IsForbiddenDoubleThree(view, x, y, STONE_BLACK, 0)) // RIF 9.2.c
+            i_pattern = PATTERN::DOUBLE_THREE;
+    }
+
+    view.RemoveStone();
+
+    return i_pattern;
+}
+
+void Renju::collectForbiddenPoints(Board *board, vector<pair<pair<int, int>, int>> &vPoints)
+{
+    vPoints.clear();
+
+    if ((nullptr == board) || board->getVRecord().empty())
+        return;
+
+    static const int i_dirs[4][2] = {{0, -1}, {-1, 0}, {-1, -1}, {-1, 1}};
+
+    const int i_width = (int)board->getBSize().first;
+    const int i_height = (int)board->getBSize().second;
+    const vector<pair<int, int>> &vRecord = board->getVRecord();
+
+    set<int> sCandidates;
+    for (size_t i = 0; i < vRecord.size(); ++i)
+    {
+        if (STONE_BLACK != vRecord[i].second)
+            continue;
+
+        const pair<int, int> idx = board->coord2idx(vRecord[i].first);
+        for (int i_dir = 0; i_dir < 4; ++i_dir)
+        {
+            for (int i_off = -4; i_off <= 4; ++i_off)
+            {
+                if (0 == i_off)
+                    continue;
+
+                const pair<int, int> p(idx.first + (i_off * i_dirs[i_dir][0]),
+                                       idx.second + (i_off * i_dirs[i_dir][1]));
+                if ((0 > p.first) || (0 > p.second) || (i_width <= p.first) || (i_height <= p.second))
+                    continue;
+                if (!board->isPosEmpty(p))
+                    continue;
+
+                sCandidates.insert(board->idx2Coord(p));
+            }
+        }
+    }
+
+    for (set<int>::const_iterator it = sCandidates.begin(); it != sCandidates.end(); ++it)
+    {
+        const pair<int, int> idx = board->coord2idx(*it);
+        const int i_pattern = this->getForbiddenPatternAt(board, idx.first, idx.second);
+        if (PATTERN::ROW != i_pattern)
+            vPoints.push_back(make_pair(idx, i_pattern));
+    }
+}
+
 int Renju::getRenjuState()
 {
     return this->m_renju_state;
