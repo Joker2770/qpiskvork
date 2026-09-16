@@ -222,6 +222,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bNumOfMove = false;
     this->m_bShowForbidden = false;
     this->m_bOpenMind = false;
+    this->m_bFitBoardOnShow = false;
     this->m_forbiddenKey = 0;
 
     QString q_skin_idx;
@@ -1831,15 +1832,36 @@ void MainWindow::resizeToFitBoard()
     const int iWidth = (this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH;
     const int iHeight = (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height();
 
+    int iTargetWidth = iWidth;
+    int iTargetHeight = iHeight;
+
     const QScreen *pScreen = QGuiApplication::primaryScreen();
-    if (nullptr == pScreen)
+    if (nullptr != pScreen)
     {
-        this->resize(iWidth, iHeight);
-        return;
+        const QRect rcAvail = pScreen->availableGeometry();
+        iTargetWidth = qMin(iTargetWidth, rcAvail.width());
+        iTargetHeight = qMin(iTargetHeight, rcAvail.height());
     }
 
-    const QRect rcAvail = pScreen->availableGeometry();
-    this->resize(qMin(iWidth, rcAvail.width()), qMin(iHeight, rcAvail.height()));
+    // 窗口已经显示时，尺寸要稍后再设：在 Wayland 下，输入对话框（网格大小/
+    // 棋盘大小）刚关闭时，合成器会在窗口重新映射的过程中把自己记住的旧尺寸再
+    // 配置回来，把主窗口此刻发出的 resize 覆盖掉，表现为"改了网格大小，棋盘变
+    // 小了，窗口却没跟着缩放"。等窗口稳定后再设置即可；稍后再确认一次尺寸是否
+    // 已经落定。构造阶段窗口尚未显示，直接设置尺寸即可。
+    if (this->isVisible())
+    {
+        QTimer::singleShot(50, this, [this, iTargetWidth, iTargetHeight]() {
+            this->resize(iTargetWidth, iTargetHeight);
+        });
+        QTimer::singleShot(250, this, [this, iTargetWidth, iTargetHeight]() {
+            if ((this->width() != iTargetWidth) || (this->height() != iTargetHeight))
+                this->resize(iTargetWidth, iTargetHeight);
+        });
+    }
+    else
+    {
+        this->resize(iTargetWidth, iTargetHeight);
+    }
 }
 
 void MainWindow::OnActionBoardSize()
@@ -3790,6 +3812,20 @@ void MainWindow::disconnectP2Signals()
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP2Thinking(QString)));
+    }
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+
+    // 构造函数里算窗口尺寸时菜单栏还没完成布局，pMenuBar->height() 拿到的是默认
+    // 值（偏大），窗口会比棋盘所需的高出一截。首次显示后菜单栏高度才确定，此时
+    // 再校准一次；只在首次显示做，避免用户手动调整过的窗口被拉回来。
+    if (!this->m_bFitBoardOnShow)
+    {
+        this->m_bFitBoardOnShow = true;
+        this->resizeToFitBoard();
     }
 }
 

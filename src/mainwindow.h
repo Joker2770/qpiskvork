@@ -222,6 +222,8 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    // 首次显示时按最终的菜单栏高度重新校准窗口尺寸
+    void showEvent(QShowEvent *);
     void closeEvent(QCloseEvent *event);
 
 private:
@@ -293,6 +295,7 @@ private:
     bool m_bNumOfMove;
     bool m_bShowForbidden;
     bool m_bOpenMind;
+    bool m_bFitBoardOnShow;
     bool m_bOK_P1;
     bool m_bOK_P2;
     vector<pair<pair<int, int>, double>> m_openMindData;
