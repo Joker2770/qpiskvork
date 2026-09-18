@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(qpiskvork VERSION 0.10.15 LANGUAGES CXX)
+project(qpiskvork VERSION 0.10.20 LANGUAGES CXX)
 
 # add submodule
 # add_subdirectory(libsgfcplusplus)
@@ -117,4 +117,34 @@ install(TARGETS ${PROJECT_NAME}
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
+endif()
+
+# ---------------------------------------------------------------------------
+# Regression tests of the rule engines.  They are not part of the application
+# build, enable them explicitly:
+#
+#   cmake -S . -B build -DQPISKVORK_BUILD_TESTS=ON
+#   cmake --build build --target renju_rules_test
+#   ctest --test-dir build --output-on-failure
+# ---------------------------------------------------------------------------
+option(QPISKVORK_BUILD_TESTS "Build the qpiskvork rule regression tests" OFF)
+
+if(QPISKVORK_BUILD_TESTS)
+    enable_testing()
+
+    add_executable(renju_rules_test
+        test/renju_rules_test.cpp
+        src/renju.cpp
+        src/board.cpp
+        src/renju.h
+        src/board.h
+        src/rules.h
+        src/subject.h
+        src/observer.h
+    )
+
+    target_include_directories(renju_rules_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_link_libraries(renju_rules_test PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+
+    add_test(NAME renju_rules COMMAND renju_rules_test)
 endif()

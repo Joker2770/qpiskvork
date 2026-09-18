@@ -45,43 +45,33 @@ typedef enum pattern
     DOUBLE_THREE
 } PATTERN;
 
-// 0 - pos empty, 1 - pos black, 2 - pos white
-const int A4_SHAPES[][5] = {
-    {0, 1, 1, 1, 1},
-    {1, 0, 1, 1, 1},
-    {1, 1, 0, 1, 1},
-    {1, 1, 1, 0, 1},
-    {1, 1, 1, 1, 0}};
-// A3 is that add one stone could be A4, especially '2011102', '|01110|', '|011102' and '201110|' are Dead-Three. (| - boarder)
-const int A3_SHAPES[][6] = {
-    {0, 1, 1, 1, 0, 0},
-    {0, 0, 1, 1, 1, 0},
-    {0, 1, 0, 1, 1, 0},
-    {0, 1, 1, 0, 1, 0}};
-
 class Renju final : public rules
 {
 public:
+    Renju();
+
     bool checkWin(Board *board) override;
     // after checkWin
     bool isLegal(Board *board);
+    // RIF 9.2 for one single intersection: the forbidden pattern that a black
+    // move on (x, y) would make, PATTERN::ROW when black is allowed to play
+    // there (a stone that attains exactly five in a row is a win and never a
+    // forbidden move).  Unlike isLegal() this does not depend on the last move
+    // of the board and it leaves m_renju_state untouched.
+    int getForbiddenPatternAt(Board *board, int x, int y);
+    // Every empty intersection where black would make a forbidden move (RIF
+    // 9.2), with the pattern that would be made there.  Meant to be asked after
+    // every move of a game, so the candidates are pruned to the neighbourhood
+    // of the black stones: a three or a four spans at most five intersections.
+    void collectForbiddenPoints(Board *board, vector<pair<pair<int, int>, int>> &vPoints);
     int getRenjuState();
 
 private:
-    bool isOverLine(Board *board);
-    // after overline, include 44*
-    bool isDoubleFour(Board *board);
-    // after double-four, only 43
-    bool isFourThree(Board *board);
-    // after four-three, only 4 and no 3
-    bool isFour(Board *board);
-    // after four, include 433*, 33*
-    bool isDoubleThree(Board *board);
-    // after double-three, only 3
-    bool isThree(Board *board);
-    int countA4(Board *board, const pair<int, int> &p_drt);
-    int countA3(Board *board, const pair<int, int> &p_drt);
-    int countNearStone(Board *board, const pair<int, int> &p_drt);
+    // RIF 9.2 - the moves that are forbidden for black only.  Every judgment is
+    // made for the stone that has just been played.
+    bool isOverLine(Board *board);    // 9.2.a
+    bool isDoubleFour(Board *board);  // 9.2.b
+    bool isDoubleThree(Board *board); // 9.2.c, the exceptions of 9.3 applied
 
     int m_renju_state;
 };
