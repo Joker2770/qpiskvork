@@ -78,6 +78,8 @@ namespace BoardLayout
     // ---- 棋子与标记尺寸（占格宽/格高的比例）----
     constexpr double STONE_RADIUS_RATIO = 0.46;      // 棋子半径
     constexpr double MARK_RADIUS_RATIO = 0.25;      // 最后一手标记半径
+    constexpr double FORBIDDEN_RADIUS_RATIO = 0.36; // 禁手点提示圆环半径
+    constexpr int FORBIDDEN_PEN_WIDTH = 3;          // 禁手点提示圆环线宽（像素）
     constexpr double STATE_DOT_RADIUS_RATIO = 0.25; // 玩家状态圆点半径
     constexpr double STATE_DOT_X_RATIO = 0.8;       // 玩家状态圆点横向位置
 
@@ -172,6 +174,7 @@ public:
     QAction *pActionRenju;
     QAction *pActionCaro;
     QAction *pActionNumOfMove;
+    QAction *pActionShowForbidden;
     QAction *pActionToggleOpenMind;
     QAction *pActionXAxisLetter;
     QAction *pActionYAxisLetter;
@@ -206,6 +209,7 @@ public slots:
     void On_ClickedLanguageActionGroup(QAction *);
     void OnActionPlayerSetting();
     void OnActionNumOfMove();
+    void OnActionShowForbidden();
     void OnActionToggleOpenMind();
     void OnActionVer();
     void OnActionFeedback();
@@ -235,6 +239,8 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    // 首次显示时按最终的菜单栏高度重新校准窗口尺寸
+    void showEvent(QShowEvent *);
     void closeEvent(QCloseEvent *event);
 
 private:
@@ -250,6 +256,10 @@ private:
     void DrawPlayerName();
     void DrawIndication();
     void DrawOpenMind();
+    // 绘制当前局面下黑方的禁手点（仅对局规则含连珠且开启提示时）
+    void DrawForbiddenPoints();
+    // 重算禁手点缓存（棋盘或规则未变时不重复计算）
+    void updateForbiddenPoints();
     // 计算并钳制到屏幕可用区域后调整主窗口大小
     void resizeToFitBoard();
     void updateOpenMindData(const QString &sData);
@@ -304,9 +314,15 @@ private:
     bool m_bS2B_over;
     bool m_bSkin;
     bool m_bNumOfMove;
+    bool m_bShowForbidden;
     bool m_bOpenMind;
+    bool m_bFitBoardOnShow;
     bool m_bOK_P1;
     bool m_bOK_P2;
     vector<pair<pair<int, int>, double>> m_openMindData;
+    // 禁手点提示：second 为该点的禁手类型（PATTERN），m_forbiddenKey 是缓存
+    // 对应的局面指纹（棋盘尺寸 + 记录 + 规则）。
+    vector<pair<pair<int, int>, int>> m_forbiddenPoints;
+    unsigned int m_forbiddenKey;
 };
 #endif // MAINWINDOW_H

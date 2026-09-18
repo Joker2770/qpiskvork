@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionRenju = new QAction(tr("Renju"), this);
     this->pActionCaro = new QAction(tr("Caro"), this);
     this->pActionNumOfMove = new QAction(tr("Number of move"), this);
+    this->pActionShowForbidden = new QAction(tr("Forbidden Points"), this);
     this->pActionToggleOpenMind = new QAction(tr("Display AI Mind"), this);
     this->pActionXAxisLetter = new QAction(tr("X-axis Letter"), this);
     this->pActionYAxisLetter = new QAction(tr("Y-axis Letter"), this);
@@ -112,6 +113,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->pActionNumOfMove->setShortcut(QKeySequence(Qt::Key_V));
     this->pActionNumOfMove->setCheckable(true);
     this->pActionNumOfMove->setChecked(false);
+    // 禁手点提示：默认不勾选、不启用，需要时由用户显式打开。
+    this->pActionShowForbidden->setShortcut(QKeySequence(Qt::Key_D));
+    this->pActionShowForbidden->setCheckable(true);
+    this->pActionShowForbidden->setChecked(false);
     this->pActionToggleOpenMind->setShortcut(QKeySequence(Qt::Key_A));
     this->pActionToggleOpenMind->setCheckable(true);
     this->pActionToggleOpenMind->setChecked(false);
@@ -153,6 +158,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->pMenuPlayer->addAction(this->pActionPlayerSetting);
     this->pMenuShow->addAction(this->pActionToggleOpenMind);
     this->pMenuShow->addAction(this->pActionNumOfMove);
+    this->pMenuShow->addAction(this->pActionShowForbidden);
     this->pMenuShow->addAction(this->pActionXAxisLetter);
     this->pMenuShow->addAction(this->pActionYAxisLetter);
     this->pMenuShow->addAction(this->pActionXAxisStartFrom_1);
@@ -227,7 +233,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->m_bS2B_over = false;
     this->m_bSkin = true;
     this->m_bNumOfMove = false;
+    this->m_bShowForbidden = false;
     this->m_bOpenMind = false;
+    this->m_bFitBoardOnShow = false;
+    this->m_forbiddenKey = 0;
 
     QString q_skin_idx;
     this->m_customs->getCfgValue("View", "skin", q_skin_idx);
@@ -317,6 +326,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->pLanguageActionGroup, SIGNAL(triggered(QAction *)), this, SLOT(On_ClickedLanguageActionGroup(QAction *)));
     connect(this->pActionPlayerSetting, SIGNAL(triggered()), this, SLOT(OnActionPlayerSetting()));
     connect(this->pActionNumOfMove, SIGNAL(triggered()), this, SLOT(OnActionNumOfMove()));
+    connect(this->pActionShowForbidden, SIGNAL(triggered()), this, SLOT(OnActionShowForbidden()));
     connect(this->pActionToggleOpenMind, SIGNAL(triggered()), this, SLOT(OnActionToggleOpenMind()));
     connect(this->pActionGridSize, SIGNAL(triggered()), this, SLOT(OnActionGridSize()));
     connect(this->pActionVer, SIGNAL(triggered()), this, SLOT(OnActionVer()));
@@ -521,6 +531,11 @@ MainWindow::~MainWindow()
         delete this->pActionNumOfMove;
         this->pActionNumOfMove = nullptr;
     }
+    if (nullptr != this->pActionShowForbidden)
+    {
+        delete this->pActionShowForbidden;
+        this->pActionShowForbidden = nullptr;
+    }
     if (nullptr != this->pActionToggleOpenMind)
     {
         delete this->pActionToggleOpenMind;
@@ -639,6 +654,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     DrawPlayerName();
     DrawIndication();
     DrawItems();
+    DrawForbiddenPoints();
     DrawOpenMind();
     DrawStepNum();
     DrawMark();
@@ -897,6 +913,84 @@ void MainWindow::DrawStepNum()
             painter.setPen(QPen(QColor(Qt::white), 1));
             painter.drawText(QPointF((i_x + BoardLayout::CELL_CENTER) * RECT_WIDTH + textWidth * (-0.5), (i_y + BoardLayout::CELL_CENTER) * RECT_HEIGHT + textHeight * (0.5) + this->pMenuBar->height()), s_idx);
         }
+    }
+}
+
+// 重算黑方的禁手点。枚举与判定都在规则引擎里完成（Renju::collectForbiddenPoints）。
+void MainWindow::updateForbiddenPoints()
+{
+    this->m_forbiddenPoints.clear();
+
+    if ((nullptr == this->mBoard) || (nullptr == this->m_renju))
+        return;
+
+    this->m_renju->collectForbiddenPoints(this->mBoard, this->m_forbiddenPoints);
+}
+
+void MainWindow::DrawForbiddenPoints()
+{
+    // 只在对局规则包含连珠、提示已开启、且棋盘上有棋子时才有禁手点。
+    if ((nullptr == this->mBoard) || (nullptr == this->m_renju) || !this->m_bShowForbidden ||
+        (0 == (this->m_Rule & GAME_RULE::RENJU)) || this->mBoard->getVRecord().empty() ||
+        (this->m_bSwap2Board && (3 > (int)this->mBoard->getVRecord().size())))
+    {
+        this->m_forbiddenPoints.clear();
+        this->m_forbiddenKey = 0;
+        return;
+    }
+
+    // 局面指纹（FNV-1a）：重绘定时器每 100ms 触发一次 update()，逐帧重算禁手点
+    // 是不可接受的，所以只在棋盘或规则真正变化时重算。
+    unsigned int i_key = 2166136261u;
+    i_key = (i_key ^ (unsigned int)this->m_Rule) * 16777619u;
+    i_key = (i_key ^ this->mBoard->getBSize().first) * 16777619u;
+    i_key = (i_key ^ this->mBoard->getBSize().second) * 16777619u;
+    const vector<pair<int, int>> &vRecord = this->mBoard->getVRecord();
+    for (size_t i = 0; i < vRecord.size(); ++i)
+    {
+        i_key = (i_key ^ (unsigned int)vRecord[i].first) * 16777619u;
+        i_key = (i_key ^ (unsigned int)vRecord[i].second) * 16777619u;
+    }
+
+    if (i_key != this->m_forbiddenKey)
+    {
+        this->m_forbiddenKey = i_key;
+        this->updateForbiddenPoints();
+    }
+
+    if (this->m_forbiddenPoints.empty())
+        return;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setBrush(Qt::NoBrush);
+
+    for (size_t i = 0; i < this->m_forbiddenPoints.size(); ++i)
+    {
+        const pair<int, int> idx = this->m_forbiddenPoints[i].first;
+
+        // 用颜色区分禁手类型：长连=深红、双四=紫、双三=橙。
+        QColor color;
+        switch (this->m_forbiddenPoints[i].second)
+        {
+        case PATTERN::OVERLINE:
+            color = QColor(200, 0, 0, 220);
+            break;
+        case PATTERN::DOUBLE_FOUR:
+            color = QColor(150, 0, 200, 220);
+            break;
+        default:
+            color = QColor(255, 102, 0, 220);
+            break;
+        }
+
+        painter.setPen(QPen(color, BoardLayout::FORBIDDEN_PEN_WIDTH));
+        // 与 DrawItems/DrawStepNum 一致：棋盘索引要先加上左侧/顶部留白格。
+        const QPointF ptCenter((idx.first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::CELL_CENTER) * RECT_WIDTH,
+                               (idx.second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::CELL_CENTER) * RECT_HEIGHT + this->pMenuBar->height());
+        painter.drawEllipse(ptCenter,
+                            RECT_WIDTH * BoardLayout::FORBIDDEN_RADIUS_RATIO,
+                            RECT_HEIGHT * BoardLayout::FORBIDDEN_RADIUS_RATIO);
     }
 }
 
@@ -1251,13 +1345,6 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                         this->m_manager->turn_2_p2(p_idx.first, p_idx.second);
                     }
                 }
-
-                if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-                {
-                    this->OnActionEnd();
-                    QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                    return;
-                }
             }
             else
                 return;
@@ -1338,6 +1425,15 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
                 }
                 QMessageBox::information(this, tr("game over!"), info);
             }
+        }
+
+        // A full board without a winner is a draw. This has to be checked after
+        // the win check above, otherwise the move that fills the board and
+        // completes a winning line at the same time would be called a draw.
+        if ((GAME_STATE::PLAYING == this->mState) && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
         }
     }
 }
@@ -1800,15 +1896,36 @@ void MainWindow::resizeToFitBoard()
     const int iWidth = (this->mBoard->getBSize().first + BoardLayout::LEFT_MARGIN_CELLS + BoardLayout::RIGHT_MARGIN_CELLS) * RECT_WIDTH;
     const int iHeight = (this->mBoard->getBSize().second + BoardLayout::TOP_MARGIN_CELLS + BoardLayout::BOTTOM_MARGIN_CELLS) * RECT_HEIGHT + 2 * this->pMenuBar->height();
 
+    int iTargetWidth = iWidth;
+    int iTargetHeight = iHeight;
+
     const QScreen *pScreen = QGuiApplication::primaryScreen();
-    if (nullptr == pScreen)
+    if (nullptr != pScreen)
     {
-        this->resize(iWidth, iHeight);
-        return;
+        const QRect rcAvail = pScreen->availableGeometry();
+        iTargetWidth = qMin(iTargetWidth, rcAvail.width());
+        iTargetHeight = qMin(iTargetHeight, rcAvail.height());
     }
 
-    const QRect rcAvail = pScreen->availableGeometry();
-    this->resize(qMin(iWidth, rcAvail.width()), qMin(iHeight, rcAvail.height()));
+    // 窗口已经显示时，尺寸要稍后再设：在 Wayland 下，输入对话框（网格大小/
+    // 棋盘大小）刚关闭时，合成器会在窗口重新映射的过程中把自己记住的旧尺寸再
+    // 配置回来，把主窗口此刻发出的 resize 覆盖掉，表现为"改了网格大小，棋盘变
+    // 小了，窗口却没跟着缩放"。等窗口稳定后再设置即可；稍后再确认一次尺寸是否
+    // 已经落定。构造阶段窗口尚未显示，直接设置尺寸即可。
+    if (this->isVisible())
+    {
+        QTimer::singleShot(50, this, [this, iTargetWidth, iTargetHeight]() {
+            this->resize(iTargetWidth, iTargetHeight);
+        });
+        QTimer::singleShot(250, this, [this, iTargetWidth, iTargetHeight]() {
+            if ((this->width() != iTargetWidth) || (this->height() != iTargetHeight))
+                this->resize(iTargetWidth, iTargetHeight);
+        });
+    }
+    else
+    {
+        this->resize(iTargetWidth, iTargetHeight);
+    }
 }
 
 void MainWindow::OnActionBoardSize()
@@ -1844,7 +1961,7 @@ void MainWindow::OnActionTimeoutMatch()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), 900000, 0, 86400000,
+        int i_get = QInputDialog::getInt(this, tr("Match Timeout"), tr("Please input Match-Timeout(ms):"), this->m_timeout_match, 0, 86400000,
                                          1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1876,7 +1993,7 @@ void MainWindow::OnActionTimeoutTurn()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), 30000, 0, 600000,
+        int i_get = QInputDialog::getInt(this, tr("Turn Timeout"), tr("Please input Turn-Timeout(ms):"), this->m_timeout_turn, 0, 600000,
                                          1000, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1892,7 +2009,7 @@ void MainWindow::OnActionMaxMemory()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), 1024 * 1024 * 1024, 0, (int)((unsigned int)-1 >> 1),
+        int i_get = QInputDialog::getInt(this, tr("Max Memory"), tr("Please input Max-Memory(byte):"), this->m_max_memory, 0, (int)((unsigned int)-1 >> 1),
                                          1024, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -1920,7 +2037,7 @@ void MainWindow::OnActionGridSize()
     if (this->mState != GAME_STATE::PLAYING)
     {
         bool ok = false;
-        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), 36, 20, 50,
+        int i_get = QInputDialog::getInt(this, tr("Grid Size"), tr("Please input grid size:"), this->RECT_WIDTH, 20, 50,
                                          1, &ok, Qt::MSWindowsFixedSizeDialogHint);
         if (ok)
         {
@@ -2276,6 +2393,24 @@ void MainWindow::OnActionNumOfMove()
     }
 }
 
+void MainWindow::OnActionShowForbidden()
+{
+    if (this->pActionShowForbidden->isChecked())
+    {
+        qDebug() << "Show forbidden points.";
+        this->m_bShowForbidden = true;
+    }
+    else
+    {
+        qDebug() << "Cancel forbidden points.";
+        this->m_bShowForbidden = false;
+        this->m_forbiddenPoints.clear();
+        this->m_forbiddenKey = 0;
+    }
+
+    this->update();
+}
+
 void MainWindow::OnActionToggleOpenMind()
 {
     if (this->pActionToggleOpenMind->isChecked())
@@ -2293,7 +2428,7 @@ void MainWindow::OnActionToggleOpenMind()
 
 void MainWindow::OnActionVer()
 {
-    const QString strVerNum = tr("Ver Num: ") + "0.10.15-features" + "\n";
+    const QString strVerNum = tr("Ver Num: ") + "0.10.20-features" + "\n";
     QString strBuildTime = tr("Build at ");
     strBuildTime.append(__TIMESTAMP__);
     strBuildTime.append("\n");
@@ -2324,8 +2459,9 @@ void MainWindow::OnActionLicense()
 namespace {
 // Check whether the game is over due to a connect-five win or an illegal
 // renju move; if so, report the result through the onGameOver callback.
+// Returns true when the game has been ended by this call.
 template <typename TBoard, typename TFreeStyle, typename TStandard, typename TRenju, typename TCaro, typename TOnGameOver>
-void CheckConnectFiveAndFinish(TBoard *board,
+bool CheckConnectFiveAndFinish(TBoard *board,
                                TFreeStyle *freeStyle,
                                TStandard *standard,
                                TRenju *renju,
@@ -2333,6 +2469,11 @@ void CheckConnectFiveAndFinish(TBoard *board,
                                int rule,
                                TOnGameOver onGameOver)
 {
+    // An empty board can neither be won nor contain an illegal move, and the
+    // rules must not be queried with an empty record (they use back()).
+    if ((nullptr == board) || board->getVRecord().empty())
+        return false;
+
     bool isWin = freeStyle->checkWin(board);
     int i_win = 0;
     if (GAME_RULE::STANDARDGOMOKU == (rule & GAME_RULE::STANDARDGOMOKU))
@@ -2371,6 +2512,7 @@ void CheckConnectFiveAndFinish(TBoard *board,
                    (board->getVRecord().back().second == STONECOLOR::BLACK)
                        ? QObject::tr("Black win!")
                        : QObject::tr("White win!"));
+        return true;
     }
     else if (0x04 == (rule & 0x04))
     {
@@ -2392,8 +2534,11 @@ void CheckConnectFiveAndFinish(TBoard *board,
                 break;
             }
             onGameOver(QObject::tr("game over!"), info);
+            return true;
         }
     }
+
+    return false;
 }
 } // namespace
 
@@ -2467,13 +2612,6 @@ void MainWindow::OnP1PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2482,14 +2620,21 @@ void MainWindow::OnP1PlaceStone(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 
@@ -2563,13 +2708,6 @@ void MainWindow::OnP2PlaceStone(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 2!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2578,14 +2716,21 @@ void MainWindow::OnP2PlaceStone(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 
@@ -2625,13 +2770,6 @@ void MainWindow::OnContinuousPos(int x, int y)
                 QMessageBox::information(this, tr("Game Error"), tr("Might be illegal move from player 1!"));
                 return;
             }
-
-            if (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL)
-            {
-                this->OnActionEnd();
-                QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
-                return;
-            }
         }
         else
         {
@@ -2640,14 +2778,21 @@ void MainWindow::OnContinuousPos(int x, int y)
             return;
         }
 
-        // if connect five
-        CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
-                                  [this](const QString &sTitle, const QString &sMsg) {
-                                      this->OnActionEnd();
-                                      this->mState = GAME_STATE::OVER;
-                                      this->pRuleActionGroup->setEnabled(true);
-                                      QMessageBox::information(this, sTitle, sMsg);
-                                  });
+        // if connect five (the win has priority over a full board)
+        const bool bGameOver = CheckConnectFiveAndFinish(this->mBoard, this->m_freeStyleGomoku, this->m_standardGomoku, this->m_renju, this->m_caro, this->m_Rule,
+                                                         [this](const QString &sTitle, const QString &sMsg) {
+                                                             this->OnActionEnd();
+                                                             this->mState = GAME_STATE::OVER;
+                                                             this->pRuleActionGroup->setEnabled(true);
+                                                             QMessageBox::information(this, sTitle, sMsg);
+                                                         });
+
+        if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
+        {
+            this->OnActionEnd();
+            QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
+            return;
+        }
     }
 }
 
@@ -3747,6 +3892,20 @@ void MainWindow::disconnectP2Signals()
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_error()), this, SLOT(OnP2ResponseError()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_unknown()), this, SLOT(OnP2ResponseUnknown()));
         disconnect(this->m_manager->m_engine_2, SIGNAL(responsed_thinking(QString)), this, SLOT(OnP2Thinking(QString)));
+    }
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+
+    // 构造函数里算窗口尺寸时菜单栏还没完成布局，pMenuBar->height() 拿到的是默认
+    // 值（偏大），窗口会比棋盘所需的高出一截。首次显示后菜单栏高度才确定，此时
+    // 再校准一次；只在首次显示做，避免用户手动调整过的窗口被拉回来。
+    if (!this->m_bFitBoardOnShow)
+    {
+        this->m_bFitBoardOnShow = true;
+        this->resizeToFitBoard();
     }
 }
 
