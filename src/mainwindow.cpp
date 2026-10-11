@@ -1308,6 +1308,8 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
         else
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -1389,6 +1391,8 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
         if ((GAME_STATE::PLAYING == this->mState) && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
         }
     }
@@ -2550,6 +2554,8 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         else
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -2566,6 +2572,8 @@ void MainWindow::OnP1PlaceStone(int x, int y)
         if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -2644,6 +2652,8 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         else
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -2660,6 +2670,8 @@ void MainWindow::OnP2PlaceStone(int x, int y)
         if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -2704,6 +2716,8 @@ void MainWindow::OnContinuousPos(int x, int y)
         else
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
@@ -2720,6 +2734,8 @@ void MainWindow::OnContinuousPos(int x, int y)
         if (!bGameOver && (this->mBoard->GetState() == BOARDSTATUS::BOARDFULL))
         {
             this->OnActionEnd();
+            this->mState = GAME_STATE::OVER;
+            this->pRuleActionGroup->setEnabled(true);
             QMessageBox::information(this, tr("Game Over"), tr("Draw!"));
             return;
         }
