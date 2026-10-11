@@ -621,7 +621,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 bool MainWindow::updatePlayerClock(Timer *t, long long &timeLeft, long long &turnStartElapsed, int &overtimeUsed)
 {
     if (0 == timeLeft)
-        return false; // 已超时，不再更新
+        return true; // 超时状态持续有效，避免暂停后恢复时重新获得落子机会
 
     const long long elapsed = t->getElapsed();
     if (!this->m_bOvertime)
@@ -1750,6 +1750,7 @@ void MainWindow::OnActionEnd()
 {
     if (GAME_STATE::PLAYING == this->mState)
     {
+        const bool bTimedOut = (0 == this->m_time_left_p1) || (0 == this->m_time_left_p2);
         this->m_openMindData.clear();
 
         if (nullptr != this->m_manager)
@@ -1775,9 +1776,11 @@ void MainWindow::OnActionEnd()
         this->m_p1_name.clear();
         this->m_p2_name.clear();
 
-        this->mState = GAME_STATE::PAUSING;
+        this->mState = bTimedOut ? GAME_STATE::OVER : GAME_STATE::PAUSING;
+        if (bTimedOut)
+            this->pRuleActionGroup->setEnabled(true);
 
-        if (this->mBoard->GetState() == BOARDSTATUS::BOARDEMPTY)
+        if (!bTimedOut && (this->mBoard->GetState() == BOARDSTATUS::BOARDEMPTY))
         {
             this->mState = GAME_STATE::IDLE;
             this->pRuleActionGroup->setEnabled(true);
@@ -1825,7 +1828,8 @@ void MainWindow::OnActionTakeBack()
         else
         {
             this->mBoard->Notify();
-            if (this->mState == GAME_STATE::OVER)
+            if ((this->mState == GAME_STATE::OVER) &&
+                (0 != this->m_time_left_p1) && (0 != this->m_time_left_p2))
                 this->mState = GAME_STATE::PAUSING;
         }
     }
